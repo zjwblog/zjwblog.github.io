@@ -275,7 +275,7 @@
 </li>
 </ul>
 <p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
-<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="./cas.png" alt="Kerberos" title="Kerberos原理"></p>
+<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="/images/cas.png" alt="Kerberos" title="Kerberos原理"></p>
 <ol>
 <li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
 <p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
