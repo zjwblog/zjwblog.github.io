@@ -257,19 +257,98 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+                <h1 id="基于Kerberos认证的Hadoop-Token过期问题Debug分享"><a href="#基于Kerberos认证的Hadoop-Token过期问题Debug分享" class="headerlink" title="基于Kerberos认证的Hadoop Token过期问题Debug分享"></a>基于Kerberos认证的Hadoop Token过期问题Debug分享</h1><hr>
+<h2 id="1-Kerberos"><a href="#1-Kerberos" class="headerlink" title="1 Kerberos"></a>1 Kerberos</h2><p><code>Kerberos</code>是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解<code>Kerberos</code>认证的流程将有助于解决<code>Hadoop</code>集群中的安全配置过程中的问题。</p>
+<h3 id="1-1-Kerberos可以用来做什么"><a href="#1-1-Kerberos可以用来做什么" class="headerlink" title="1.1 Kerberos可以用来做什么"></a>1.1 Kerberos可以用来做什么</h3><p>简单地说，<code>Kerberos</code>提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器。这些服务器都有认证的需求。很自然的，不可能让每个服务器自己实现一套认证系统，而是提供一个中心认证服务器（AS-Authentication Server）供这些服务器使用。这样任何客户端就只需维护一个密码就能登录所有服务器。</p>
+<p>因此，在<code>Kerberos</code>系统中至少有三个角色：认证服务器（AS），客户端（Client）和普通服务器（Server）。客户端和服务器将在AS的帮助下完成相互认证。在<code>Kerberos</code>系统中，客户端和服务器都有一个唯一的名字，叫做<code>Principal</code>。同时，客户端和服务器都有自己的密码，并且它们的密码只有自己和认证服务器AS知道。</p>
+<h3 id="1-2-Kerberos术语"><a href="#1-2-Kerberos术语" class="headerlink" title="1.2 Kerberos术语"></a>1.2 Kerberos术语</h3><ul>
+<li>KDC(key distribution center): 密钥发放中心</li>
+<li>AS(authentication service): 认证服务，索取credential，发放 TGT</li>
+<li>TGS(ticket granting service): 票据授权服务，索取TGT，发放ST</li>
+<li><strong>TGT(ticket granting ticket)</strong>: 票据授权票据，由KDC的AS发放；获得这样一张票据后，以后申请其他应用的服务票据（ST）时，就不需要向KDC提交身份认证信息（credential），TGT具有一定的有效期，就像是kerberos进行kinit以后只是具有固定时间的有效期，需要不断的去renew来续约。</li>
+<li>ST(service ticket): 服务票据，由KDC的TGS发放，任何一个应用（application）都需要一张有效的服务票据才能访问；如果能正确接受ST，说明client和server之间的信任关系已经被建立，通常为一张数字加密的证书。</li>
+<li>Principal: 一个用户会以一个独一无二的身份来被KDC认证，该身份被称为principal。一个Principal由三个部分组成：primary, instance以及realm，其组成形式为primary/instance@realm。<ul>
+<li>primary: 可以是OS中的username，也可以是service name；</li>
+<li>instance: 用于区分属于同一个user或者service的多个principals，该项为optional；</li>
+<li>realm: 类似于DNS中的domain，定义了一组principals.</li>
+</ul>
+</li>
+</ul>
+<p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
+<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="./cas.png" alt="Kerberos" title="Kerberos原理"></p>
+<ol>
+<li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
+<p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
+</li>
+<li><p>User向KDC中的TGS请求访问某个Service的ST，发送[ TGT, Authenticator ]；</p>
+<p> 其中，Authenticator用于验证发送该请求的user就是TGT中所声明的user，内容为：{ user, addresss, start_time, lifetime}；Authenticator使用的TGS和user之间的session key加密的，防止TGT被盗。TGS先使用自己的密码解开TGT获得它与user之间的session key，然后使用session key解密Authenticator，验证用户和有效期。</p>
+</li>
+<li><p>TGS判断无误后，为user和Service之间生成一个新的session key：SK_Service；然后发送给user一个包：[ {SK_Service} SK_TGS, ST ]；</p>
+<p> 其中，ST是使用Service的密码加密的，SK_Service使用TGS和user之间的session key加密的；ST的内容为：{ user, address, start_time, lifetime, SK_Service } K_Service</p>
+</li>
+<li><p>User使用与TGS之间的会话秘钥解开包得到与Service之间的会话秘钥SK_Service，然后使用SK_Service生成一个Authenticator，向Service发送[ ST, Authenticator ]；</p>
+<p> 其中，此处的Authenticator是使用user和service之间的会话秘钥加密的，Service收到包后先使用自己的密码解密ST，或者会话秘钥SK_Service，然后使用SK_Service解密Authenticator来验证发送请求的用户就是票中所声明的用户。</p>
+</li>
+<li><p>Service向用户发送一个包以证明自己的身份，这个包使用SK_Service加密。</p>
+<p> 此后user与Service之间使用SK_Service进行通信，且在TGT有效期内，user直接跳过第一步直接从第二步使用TGT向TGS证明自己的身份。注意：user client会等待service server发送确认信息，如果不是正确的service server，就无法解开ST，也就无法获得会话秘钥，从而避免用户使用错误的服务器。</p>
+</li>
+</ol>
+<h3 id="1-4-类比学习"><a href="#1-4-类比学习" class="headerlink" title="1.4 类比学习"></a>1.4 类比学习</h3><ol>
+<li><p>用户要去游乐场，首先要在门口检查用户的身份(即 CHECK 用户的 ID 和 PASS), 如果用户通过验证，游乐场的门卫 (AS) 即提供给用户一张门卡 (TGT)。</p>
+</li>
+<li><p>这张卡片的用处就是告诉游乐场的各个场所，用户是通过正门进来，而不是后门偷爬进来的，并且也是获取进入场所一把钥匙。</p>
+</li>
+<li><p>现在用户有张卡，但是这对用户来不重要，因为用户来游乐场不是为了拿这张卡的而是为了游览游乐项目，这时用户摩天楼，并想游玩。</p>
+</li>
+<li><p>这时摩天轮的服务员 (client) 拦下用户，向用户要求摩天轮的 (ST) 票据，用户说用户只有一个门卡 (TGT), 那用户只要把 TGT 放在一旁的票据授权机 (TGS) 上刷一下。</p>
+</li>
+<li><p>票据授权机 (TGS) 就根据用户现在所在的摩天轮，给用户一张摩天轮的票据 (ST), 这样用户有了摩天轮的票据，现在用户可以畅通无阻的进入摩天轮里游玩了。</p>
+</li>
+<li><p>当然如果用户玩完摩天轮后，想去游乐园的咖啡厅休息下，那用户一样只要带着那张门卡 (TGT). 到相应的咖啡厅的票据授权机 (TGS) 刷一下，得到咖啡厅的票据 (ST) 就可以进入咖啡厅</p>
+</li>
+<li><p>当用户离开游乐场后，想用这张 TGT 去刷打的回家的费用，对不起，用户的 TGT 已经过期了，在用户离开游乐场那刻开始，用户的 TGT 就已经销毁了。</p>
+</li>
+</ol>
+<h2 id="2-HDFS-认证"><a href="#2-HDFS-认证" class="headerlink" title="2 HDFS 认证"></a>2 HDFS 认证</h2><h3 id="2-1-什么是-Delegation-Token"><a href="#2-1-什么是-Delegation-Token" class="headerlink" title="2.1 什么是 Delegation Token"></a>2.1 什么是 Delegation Token</h3><p>delegation token其实就是hadoop里一种轻量级认证方法，作为kerberos认证的一种补充。理论上只使用kerberos来认证是足够了，为什么hadoop还要自己开发一套使用delegation token的认证方式呢？这是因为如果在一个很大的分布式系统当中，如果每个节点访问某个服务的时候都使用kerberos来作为认证方式，那么势必对KDC造成很大的压力，KDC就会成为一个系统的瓶颈。</p>
+<h3 id="2-2-Delegation-Token-期限"><a href="#2-2-Delegation-Token-期限" class="headerlink" title="2.2 Delegation Token 期限"></a>2.2 Delegation Token 期限</h3><p>delegation token有过期时间，需要定期刷新才能保证token有效。但是刷新次数不是无限的，也就是说每个token都有个最大生存时间，超过该时间，该token就失效。比如token每个24小时需要刷新一次，否则就失效。同时每个token最大生命值为7天，那么七天后该token就不能在被使用。</p>
+<h3 id="2-3-Delegation-Token-过期的原因和解决思路"><a href="#2-3-Delegation-Token-过期的原因和解决思路" class="headerlink" title="2.3 Delegation Token 过期的原因和解决思路"></a>2.3 Delegation Token 过期的原因和解决思路</h3><p>delegation token会失效，集群默认配置是renew的间隔为一天，token最大生存时间为7天。对于像mapreduce这种批处理任务可能不会面临token失效的问题，但对于spark streaming, storm等这种长时运行应用来说，不得不面临一个问题：token存在最大生命周期。当token达到其最大生命周期的时候，比如七天，所有的工作节点（比如spark streaming的executor）中使用的token都会失效，此时在使用该token去访问hdfs就会被namenode拒绝，导致应用异常退出。</p>
+<p>一种解决思路是将keytab文件分发给Am及每个container，让am和container去访问kdc来认证，但这种方式会造成文章开头所说的问题：对KDC造成很大的访问压力，导致KDC会误认为自己遭受了DDos攻击，从而影响程序性能。</p>
+<p>另一种解决思路是先由client把keytab文件放到hdfs上。然后在Am中使用keytab登录，并申请delegation token。AM在启动worker的时候把该token分发给相应的容器。当token快要过期的时候，AM重新登录一次，并重新获取delegation token，并告知所有的worker使用更新后的token访问服务。</p>
+<h3 id="2-4-Spark中怎么解决-Delegation-Token-过期问题"><a href="#2-4-Spark中怎么解决-Delegation-Token-过期问题" class="headerlink" title="2.4 Spark中怎么解决 Delegation Token 过期问题"></a>2.4 Spark中怎么解决 Delegation Token 过期问题</h3><p>spark 为了解决DT失效问题，加了两个参数”–keytab”和”–principal”，分别指定用于kerberos登录的keytab文件和principal。</p>
+<p><code>--keytab</code>参数指定一个keytab文件，Spark会根据<code>--keytab</code>指定的Kerberos认证文件生成 HDFS Token，然后再将生成的Token信息放到HDFS的某一个目录中供Executor和Driver使用。</p>
+<p>流程如下：</p>
+<ol>
+<li>Spark ApplicationMaster在Delegation Token将要失效的时候（75% of the renewal interval) 会通过Keytab文件重新认证并获取一个新的Delegation Token，然后将新的Delegation Token写入到指定的HDFS文件中；</li>
+<li>Spark Executor在Delegation Token将要失效的时候（80% of the validity)读取HDFS上的最新的Delegation Token文件，然后更新自己的Delegation Token；</li>
+</ol>
+<p>理论上这样就能解决掉Token过期的问题，然而在配置了HA的Hadoop集群上2.9.0之前的版本依然存在问题，问题在于配置了HA的Hadoop集群中，Executor读取新的Token信息之后只更新的HDFS的逻辑地址，而未同步更新真正的<code>HDFS Namenode URI</code>对应的Token，从而导致Namenode URI下面的Token会慢慢过期失效。</p>
+<h3 id="2-5-问题复现与原因分析"><a href="#2-5-问题复现与原因分析" class="headerlink" title="2.5 问题复现与原因分析"></a>2.5 问题复现与原因分析</h3><ol>
+<li>修改Hadoop的默认Token过期时间和刷新时间，Hadoop Token的默认过期时间为7天，刷新时间为24小时，将其修改为过期时间10分钟，刷新时间5分钟</li>
+<li>编写一个Spark-Streaming的WordCount程序，每一分钟访问一次HDFS将WordCount的结果写入到HDFS的一个目录中</li>
+<li>在HDFS的Token最大期限（10分钟）之后就复现了线上的HDFS Token过期问题，最终导致WordCount异常退出</li>
+</ol>
+<p>原因分析：如果Namenode URI下面的Token一直不变，那这个Token短时间内是不应该失效的，因为前面说过Yarn Server一直在为这个Token进行定期更新操作（假设Token配置的可更新时间足够长，并且没有出现Token更新操作的异常），问题就在于其实Namenode URI对应的Token也会更新，只不过永远比“逻辑地址”对应的Token的更新慢一步，导致Namenode URI下面的Token比较旧所以会失效。</p>
+<p>Namenode URI对应的Token是这样被更新的：</p>
+<ul>
+<li>在Spark Executor读取新的Token文件的时候，需要获取一个FileSystem；默认FileSystem是缓存的，每次通过FileSystem.get(hadoopConf)获取的应该都是同一个FileSystem；但是Spark在此处是强制初始化了一个新的FileSystem（通过配置Hadoop Conf的fs.hdfs.impl.disable.cache为true实现的）；</li>
+<li>FileSystem的运行类型为DistributedFileSystem，在初始化的时候会生成新的DFSClient, DFSClient在初始化的时候会生成新的Failover Proxy：ZkConfiguredFailoverProxyProvider；</li>
+<li>ZkConfiguredFailoverProxyProvider在初始化的时候会将“逻辑地址”下面的Token拷贝到Namenode URI下面；</li>
+</ul>
+<p>例如：</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1001</li>
+<li>NameNode1     -&gt; Token 1000</li>
+<li>NameNode2     -&gt; Token 1000</li>
+</ol>
+<p>经过一次Token更新之后</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1002</li>
+<li>NameNode1     -&gt; Token 1001</li>
+<li>NameNode2     -&gt; Token 1001</li>
+</ol>
+<p>其中1001是在逻辑地址的Token还有20%的有效期时被更新的，而1001在经过一次Token更新之后依然被NameNode1和NameNode2所使用，所以在过去一小段时间之后应用程序再通过1001访问HDFS将出现Token过期的异常</p>
+<h3 id="2-6-解决办法"><a href="#2-6-解决办法" class="headerlink" title="2.6 解决办法"></a>2.6 解决办法</h3><p>1、UserGroupInformation.getCurrentUser.addCredentials(newCredentials)的时候，把Namenode URI下面的Token一并更新了。社区HDFSissue为：<a href="https://issues.apache.org/jira/browse/HDFS-9276" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HDFS-9276</a></p>
+<p>2、可以设法将Token更新的时间设置为小于50%，这样可以是更新到NameNode1和NameNode2下的Token依然有至少50%的有效期时长，保证在下一次更新Token时依然有效</p>
 
                 
 
