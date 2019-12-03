@@ -235,7 +235,7 @@
 <td>它只可以用于本地，多个Actor共享一个邮箱，一个空闲就处理邮箱中的任务，这个策略的的优点是可以确保所有Actor都处于繁忙状态，对于本地集群可以使用它。</td>
 </tr>
 </tbody></table>
-<h4 id="向􏵚􏵛􏵜同一个Router-Group-Pool中的所有􏵞Actor发送􏵟消息"><a href="#向􏵚􏵛􏵜同一个Router-Group-Pool中的所有􏵞Actor发送􏵟消息" class="headerlink" title="向􏵚􏵛􏵜同一个Router Group/Pool中的所有􏵞Actor发送􏵟消息"></a>向􏵚􏵛􏵜同一个Router Group/Pool中的所有􏵞Actor发送􏵟消息</h4><p>无论是使用Group还是Pool的形式来创建Router，都可以通过广播，将一条数据发送给所有的Actor，例如，如果Actor都链接到一个远程数据库，运行中的系统由于发生了错误需要修改使用的数据库，那么就可以通过一条更新广播消息更新Group/Pool中的所有Actor，如下：</p>
+<h4 id="向同一个Router-Group-Pool中的所有Actor发送消息"><a href="#向同一个Router-Group-Pool中的所有Actor发送消息" class="headerlink" title="向同一个Router Group/Pool中的所有Actor发送消息"></a>向同一个Router Group/Pool中的所有Actor发送消息</h4><p>无论是使用Group还是Pool的形式来创建Router，都可以通过广播，将一条数据发送给所有的Actor，例如，如果Actor都链接到一个远程数据库，运行中的系统由于发生了错误需要修改使用的数据库，那么就可以通过一条更新广播消息更新Group/Pool中的所有Actor，如下：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">router.tell(<span class="keyword">new</span> akka.routing.<span class="type">Broadcast</span>(msg))</span><br><span class="line">router ! akka.routing.<span class="type">Broadcast</span>(msg)</span><br></pre></td></tr></table></figure>
 
 <h4 id="监督Router-Pool中的路由对象"><a href="#监督Router-Pool中的路由对象" class="headerlink" title="监督Router Pool中的路由对象"></a>监督Router Pool中的路由对象</h4><p>如果使用Pool方式创建的Router，由Router负责创建Actor，那么这些路由对象会成为Router的子节点，创建Router时，可以给Router提供一个自定义的监控策略。创建Router的时候，可以调用withSuperisorStrategy方法指定Router对Pool中路由对象的监督策略，如下：</p>
@@ -493,6 +493,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">大数据</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
@@ -513,23 +525,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">大数据</a>
+                <a href="javascript:void(0)" class="js-tag color3">旧事</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">旧事</a>
               </li>
             
             <div class="clearfix"></div>
