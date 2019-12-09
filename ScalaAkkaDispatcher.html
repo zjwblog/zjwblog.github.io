@@ -180,7 +180,7 @@
       
         <h3 id="1-Dispatcher解析"><a href="#1-Dispatcher解析" class="headerlink" title="1. Dispatcher解析"></a>1. Dispatcher解析</h3><p>Dispatcher用于对任务与运行任务进行解藕（即异步运行任务），一般来说，Dispatcher会包含一些线程，这些线程会负责调度并运行任务，比如处理Actor的消息已经线程中的Future事件。Dispatcher是Akka能够支持响应式异步编程的关键，是负责完成任务的机制。</p>
 <p>所有Actor/Future的工作都是由Executor/Dispatcher分配的资源来完成的。</p>
-<p><a href="https://postimg.cc/Snv5szJQ" target="_blank" rel="noopener"><img src="https://i.postimg.cc/25kf0QYW/dispatcher.png" alt="dispatcher.png"></a></p>
+<p><a href=""><img src="https://i.postimg.cc/25kf0QYW/dispatcher.png" alt="dispatcher.png"></a></p>
 <p>Dispatcher负责将工作分配给Actor，除此之外Dispatcher还可以分配资源用于处理Future的回调函数。我们会发现Future API接受Executor/ExecutionContext作为参数，由于Akka的Dispatcher扩展了这些API，因此Dispatcher具备双重功能。</p>
 <p>在Akka中，Dispatcher实现了scala.concurrent.ExecutionContextExecutor接口，而这个接口实现了java.util.concurrent.Executor和scala.concurrent.ExrcutionContext。可以将Executor传递给Java的Future，把ExecutionContext传递给Scala的Future。</p>
 <p>用于Future时，可以通过ActorSystem中的一个引用来获取Dispatcher（ActorSystem.dispatcher）。可以在ActorSystem中的ID查询得到配置文件中定义的某个Dispatcher：</p>
@@ -209,7 +209,7 @@
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system.actorOf(<span class="type">Props</span>[<span class="type">MyActor</span>].withDispatcher(<span class="string">"my-dispatcher"</span>))</span><br></pre></td></tr></table></figure>
 
 <h3 id="4-Dispatcher-类型的选择原则"><a href="#4-Dispatcher-类型的选择原则" class="headerlink" title="4. Dispatcher 类型的选择原则"></a>4. Dispatcher 类型的选择原则</h3><p>在进行系统优化的时候，我们需要理解程序运行的各个环节，以及理解哪一个环节的响应及时性对整体性能的影响最大，对这些重要的环节可能会发生的资源竞争的地方做全面的统计分析。如果只使用默认的Dispatcher，如果有1000个请求，其中500个会阻塞（例如JDBC操作），另外500个是非阻塞的操作，那么我们不希望所有用于响应的重要请求的线程都被阻塞操作占用，如下图所示的情况：</p>
-<p><a href="https://postimg.cc/N21mhNfV" target="_blank" rel="noopener"><img src="https://i.postimg.cc/yxGPZtqV/ce1f0f33-df6a-4fac-accf-70972a69aaab.png" alt="ce1f0f33-df6a-4fac-accf-70972a69aaab.png"></a></p>
+<p><a href=""><img src="https://i.postimg.cc/yxGPZtqV/ce1f0f33-df6a-4fac-accf-70972a69aaab.png" alt="ce1f0f33-df6a-4fac-accf-70972a69aaab.png"></a></p>
 <p>由于所有的可用线程都被占据，所以其他请求都必须等待。直到有线程资源被释放，才可以开始处理其他请求。而处于等待状态的请求可能只是需要进行很快的读取缓存的操作。但是却必须要排队等待空闲资源。</p>
 <p>为了改善这种情况，可以把处于运行高风险任务的资源和运行重要任务的资源隔离开来，如果我们新建一些Dispatcher，把运行时间较长或者会被阻塞的任务分配到这个Dispatcher上运行，就可以确保应用程序剩下部分仍然能够保持响应的及时性。</p>
 <blockquote>
@@ -512,18 +512,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">logging</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Scala</a>
               </li>
              
@@ -533,6 +521,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">logging</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
               </li>
              
               <li class="article-tag-list-item">
