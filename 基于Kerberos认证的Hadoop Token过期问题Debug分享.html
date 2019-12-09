@@ -9,7 +9,7 @@
   <title>基于Kerberos认证的Hadoop Token过期问题Debug分享 | 筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="1 KerberosKerberos是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解Kerberos认证的流程将有助于解决Hadoop集群中的安全配置过程中的问题。 1.1 Kerberos可以用来做什么简单地说，Kerberos提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器">
-<meta name="keywords" content="旧事">
+<meta name="keywords" content="Kerberos,bigdata">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于Kerberos认证的Hadoop Token过期问题Debug分享">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">
@@ -312,7 +312,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">旧事</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
         		</li>
       		
 		</ul>
@@ -382,18 +386,18 @@
   
 <nav id="article-nav">
   
-    <a href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Apollo Client 使用说明
+          精尽 Netty 源码分析 —— Netty 简介（二）之核心组件
         
       </div>
     </a>
   
   
-    <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">精尽 Netty 源码分析 —— Netty 简介（二）之核心组件</div>
+    <a href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">正则表达式</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -515,6 +519,30 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">logging</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Akka</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
               </li>
              
@@ -535,23 +563,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color4">Kerberos</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">logging</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">旧事</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
+                <a href="javascript:void(0)" class="js-tag color3">bigdata</a>
               </li>
             
             <div class="clearfix"></div>
