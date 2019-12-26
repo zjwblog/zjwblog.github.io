@@ -6,16 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.zjwblog.cn">
-  <title>筑梦空间</title>
+  <title>Akka Cluster 使用教程 | 筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="张建委的博客空间">
-<meta name="keywords" content="blog zjwblog chdaring">
-<meta property="og:type" content="website">
-<meta property="og:title" content="筑梦空间">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;index.html">
+  <meta name="description" content="1. 集群的定义集群就是一组可以相互通信的服务器。集群中的每台服务器称为一个节点或者成员。集群可以动态修改大小，并且在发生错误时继续运行，把影响降到最低。所以集群需要具备两个功能：失败发现以及使得集群中的成员最终能够提供一致的视图。 1.1 失败检查方式随着我们向集群中添加节点，节点很可能会发生错误，某些网络分区也可能暂时不可访问。因此集群是一个动态的实体，在服务器宕机或是不可用时会变小，而在添加">
+<meta name="keywords" content="Scala,Akka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Akka Cluster 使用教程">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;AkkaCluster.html">
 <meta property="og:site_name" content="筑梦空间">
-<meta property="og:description" content="张建委的博客空间">
+<meta property="og:description" content="1. 集群的定义集群就是一组可以相互通信的服务器。集群中的每台服务器称为一个节点或者成员。集群可以动态修改大小，并且在发生错误时继续运行，把影响降到最低。所以集群需要具备两个功能：失败发现以及使得集群中的成员最终能够提供一致的视图。 1.1 失败检查方式随着我们向集群中添加节点，节点很可能会发生错误，某些网络分区也可能暂时不可访问。因此集群是一个动态的实体，在服务器宕机或是不可用时会变小，而在添加">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-21T11:39:51.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="筑梦空间" type="application/atom+xml">
@@ -154,16 +155,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-AkkaCluster" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-AkkaCluster" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/AkkaCluster.html">Akka Cluster 使用教程</a>
+    <h1 class="article-title" itemprop="name">
+      Akka Cluster 使用教程
     </h1>
   
 
@@ -275,6 +274,37 @@
       
 
       
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你的赞赏<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/alipy.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
     </div>
     <div class="article-info article-info-index">
       
@@ -312,16 +342,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/AkkaCluster.html">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.zjwblog.cn/AkkaCluster.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/ScalaAkkaDispatcher.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Scala Dispatcher 使用规范</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -341,1534 +430,14 @@
 
 
 
-
   
-    <article id="post-ScalaAkkaDispatcher" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/ScalaAkkaDispatcher.html">Scala Dispatcher 使用规范</a>
-    </h1>
   
 
-        
-        <a href="/ScalaAkkaDispatcher.html" class="archive-article-date">
-  	<time datetime="2019-12-02T07:25:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="1-Dispatcher解析"><a href="#1-Dispatcher解析" class="headerlink" title="1. Dispatcher解析"></a>1. Dispatcher解析</h3><p>Dispatcher用于对任务与运行任务进行解藕（即异步运行任务），一般来说，Dispatcher会包含一些线程，这些线程会负责调度并运行任务，比如处理Actor的消息已经线程中的Future事件。Dispatcher是Akka能够支持响应式异步编程的关键，是负责完成任务的机制。</p>
-<p>所有Actor/Future的工作都是由Executor/Dispatcher分配的资源来完成的。</p>
-<p><a href=""><img src="https://i.postimg.cc/25kf0QYW/dispatcher.png" alt="dispatcher.png"></a></p>
-<p>Dispatcher负责将工作分配给Actor，除此之外Dispatcher还可以分配资源用于处理Future的回调函数。我们会发现Future API接受Executor/ExecutionContext作为参数，由于Akka的Dispatcher扩展了这些API，因此Dispatcher具备双重功能。</p>
-<p>在Akka中，Dispatcher实现了scala.concurrent.ExecutionContextExecutor接口，而这个接口实现了java.util.concurrent.Executor和scala.concurrent.ExrcutionContext。可以将Executor传递给Java的Future，把ExecutionContext传递给Scala的Future。</p>
-<p>用于Future时，可以通过ActorSystem中的一个引用来获取Dispatcher（ActorSystem.dispatcher）。可以在ActorSystem中的ID查询得到配置文件中定义的某个Dispatcher：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">system.dispatcher <span class="comment">// actor system's dispatcher</span></span><br><span class="line">system.dispatcher.lookup(<span class="string">"my-dispatcher"</span>) <span class="comment">// 自定义dispatcher</span></span><br></pre></td></tr></table></figure>
-
-<p>由于我们可以创建并获取这些基于Executor的dispatcher，因此能使用他们定义ThreadPool/ForkJoinPool来隔离运行任务的环境。</p>
-<h3 id="2-Executor简介"><a href="#2-Executor简介" class="headerlink" title="2. Executor简介"></a>2. Executor简介</h3><p>Dispatcher基于Executor，所以在具体介绍Dispatcher之前，我们将介绍两种主要的Executor类型（ForkJoinPool和ThreadPool）。</p>
-<p>ThreadPool Executor有一个工作队列，队列中包含了要分配给各线程的工作。线程空闲时就会从队列中认领工作。由于线程资源的创建和销毁开销很大，而ThreadPool运行线程重用，所以可以减少创建和销毁线程的次数，提高效率。</p>
-<p>ForkJoinPool Executor使用一种分治算法，递归的将任务进行拆分成小任务，然后把小任务分配给不同的线程运行，接着再把运行结果组合起来。由于提交的任务不一定都能够递归拆分成ForkJoinTask，所以ForJoinPool Executor有一个工作窃取算法，允许空闲线程“窃取”分配给另一个线程的工作。由于工作可能无法平均分配并完成，所以工作窃取算法能够更高效地利用硬件资源。</p>
-<p>ForkJoinPool Executor几乎总数比ThreadPool效率高，所以我们默认选择ForkJoinPool Executor。</p>
-<h3 id="3-创建Dispatcher"><a href="#3-创建Dispatcher" class="headerlink" title="3. 创建Dispatcher"></a>3. 创建Dispatcher</h3><p>要在application.conf中定义一个Dispatcher，需要指定Dispatcher的类型和Executor。还可以指定Executor的具体配置细节，比如使用的线程数量，或者每一个Actor一次性处理的消息数量等。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">my-dispatcher &#123;</span><br><span class="line">  type = Dispatcher</span><br><span class="line">  executor = &quot;fork-join-executor&quot;</span><br><span class="line">  fork-join-executor &#123;</span><br><span class="line">    parallelism-min = 2 # Minimum threads</span><br><span class="line">    parallelism-factor = 2.0 # Maximum threads per core</span><br><span class="line">    parallelism-max = 10 # Maximum total threads</span><br><span class="line">  &#125;</span><br><span class="line">  throughput = 100 # Max messages to process in an actor before moving on.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>存在四种类型的Dispatcher可以用于描述如何在Actor直接共享线程：</p>
-<ul>
-<li><p><strong>Dispatcher</strong>: 默认的Dispatcher类型，将会使用定义的Executor，在Actor中处理消息。在大多数情况下，这种类型能够提供更好的性能。</p>
-</li>
-<li><p><strong>PinnedDispatcher</strong>: 给每一个Actor都分配自己独有的线程。这种类型的Dispatcher为每个Actor都创建一个ThreadPool Executor，每一个Executor中都包含一个线程。如果希望确保每个Actor都能够立即响应，那么这似乎是一个不错的方法，不过PinnedDispatcher比其他共享资源的方法效率更高的情况其实并不多，可以在单个Actor必须处理很多重要工作的时候试试这种Dispatcher，否则不推荐使用。</p>
-</li>
-<li><p><strong>CallingThreadDispatcher</strong>: 这个Dispatcher比较特殊，它没有Executor，而是在发起调用的线程上执行工作。这种Dispatcher主要用于测试。由于发起调用的线程负责完成工作，所以可以清楚的看到栈追踪信息，了解所执行方法的完整上下文。这对于理解异常时非常有用的。每一个Actor会获得一个锁，所以每次只有一个线程可以在Actor中执行代码，而如果多个线程向一个Actor发送信息，就会导致除了拥有锁的线程之外的所有线程都处于等待状态。用于测试的TestActorRef就是基于CallingThreadDispatcher实现支持在测试中同步执行工作的。</p>
-</li>
-<li><p><strong>BalancingDispatcher</strong>: Pool中的所有Actor都共享一个邮箱，并且会为Pool中的每个Actor创建一个线程。使用BalancingDispatcher的Actor从邮箱中拉取消息，所以只要有Actor处于空闲，就不会有任何Actor的工作队列中存在任务。这是工作窃取的一个变种，所以Actor都会从一个共享的邮箱中拉取任务。</p>
-</li>
-</ul>
-<p>创建Actor时，可以给Props提供在application.conf中配置好的Dispatcher名称：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system.actorOf(<span class="type">Props</span>[<span class="type">MyActor</span>].withDispatcher(<span class="string">"my-dispatcher"</span>))</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-Dispatcher-类型的选择原则"><a href="#4-Dispatcher-类型的选择原则" class="headerlink" title="4. Dispatcher 类型的选择原则"></a>4. Dispatcher 类型的选择原则</h3><p>在进行系统优化的时候，我们需要理解程序运行的各个环节，以及理解哪一个环节的响应及时性对整体性能的影响最大，对这些重要的环节可能会发生的资源竞争的地方做全面的统计分析。如果只使用默认的Dispatcher，如果有1000个请求，其中500个会阻塞（例如JDBC操作），另外500个是非阻塞的操作，那么我们不希望所有用于响应的重要请求的线程都被阻塞操作占用，如下图所示的情况：</p>
-<p><a href=""><img src="https://i.postimg.cc/yxGPZtqV/ce1f0f33-df6a-4fac-accf-70972a69aaab.png" alt="ce1f0f33-df6a-4fac-accf-70972a69aaab.png"></a></p>
-<p>由于所有的可用线程都被占据，所以其他请求都必须等待。直到有线程资源被释放，才可以开始处理其他请求。而处于等待状态的请求可能只是需要进行很快的读取缓存的操作。但是却必须要排队等待空闲资源。</p>
-<p>为了改善这种情况，可以把处于运行高风险任务的资源和运行重要任务的资源隔离开来，如果我们新建一些Dispatcher，把运行时间较长或者会被阻塞的任务分配到这个Dispatcher上运行，就可以确保应用程序剩下部分仍然能够保持响应的及时性。</p>
-<blockquote>
-<p>千万不要将阻塞IO的操作放在Akka的Dispatcher中。</p>
-</blockquote>
-<h3 id="5-默认的Dispatcher"><a href="#5-默认的Dispatcher" class="headerlink" title="5. 默认的Dispatcher"></a>5. 默认的Dispatcher</h3><p>有很多种使用默认Dispatcher的方式，可以把所有工作都分离出去，只由Akka本身来使用默认Dispatcher。也可以只在默认的Dispatcher中执行异步操作，把高风险的操作移到其他地方执行。无论怎么选择，都不能阻塞运行默认Dispatcher的线程，而且要对于运行在默认Dispatcher中的任务多加小心，防止资源饥饿情况的发生。</p>
-<p>要创建或使用默认的Dispatcher其实什么都不需要做。如果需要的话，只需要在classpath内的application.conf文件中定义并配置默认Dispatcher即可。如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">akka &#123;</span><br><span class="line">  actor &#123;</span><br><span class="line">    default-dispatcher &#123;</span><br><span class="line">      parallelism-min = 8 # 基于因子的并行度的最小线程数</span><br><span class="line">      parallelism-factor = 3.0 # 并行度因子用于使用以下公式确定线程池大小:ceil(可用处理器*因子)。得到的大小然后以最小线程数和最大线程数值为界。</span><br><span class="line">      parallelism-max = 64 # 基于因子的并行度的最大线程数</span><br><span class="line">      throughput = 10 # 默认调度程序的吞吐量，设置为1表示尽可能公平</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>我们可以在自己的application.conf文件中定义任意值覆盖默认值。</p>
-</blockquote>
-<p>默认情况下，Actor完成所有工作都会在这个Dispatcher中执行，如果需要复用ExecutionContext并在其中创建Future，那么可以通过ActorSystem访问到默认的线程池，然后将它传递给Future。</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> system = <span class="type">ActorSystem</span>()</span><br><span class="line"><span class="keyword">implicit</span> <span class="keyword">val</span> ec = system.dispatcher</span><br><span class="line"><span class="keyword">val</span> f = <span class="type">Future</span>(()=&gt; logger.info(<span class="string">"run in ec."</span>))</span><br><span class="line">println(<span class="type">Await</span>.result(f, <span class="number">5.</span>seconds))</span><br></pre></td></tr></table></figure>
-
-<p>在Scala中，扩展自Actor的类中都存在一个隐式变量的Dispatcher，所有在Actor中使用Future的时候就不需要再指定Dispatcher了，不过在在Actor中使用Future不多见，要记住相对于aks，应该优先使用tell，所以如果发现有很多在Actor中使用Future的情况，那么可能需要衡量一下方法是否合理。</p>
-<h3 id="6-使用Future的阻塞IO-Dispatcher"><a href="#6-使用Future的阻塞IO-Dispatcher" class="headerlink" title="6. 使用Future的阻塞IO Dispatcher"></a>6. 使用Future的阻塞IO Dispatcher</h3><p>如果需要执行阻塞的操作，那么就不应该将这些操作放到主Dispatcher中执行。如果不这么做，将会使重要且运行耗时较少的Actor阻塞而无法进行服务。</p>
-<p>这需要将阻塞IO操作的任务放到另一个Dispatcher中运行。</p>
-<p>首先在application.conf文件中创建Dispatcher，并多给它一些资源：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">blocking-io-dispatcher &#123;</span><br><span class="line">  type = Dispatcher</span><br><span class="line">  executor = &quot;fork-join-executor&quot;</span><br><span class="line">  fork-join-executor &#123;</span><br><span class="line">    parallelism-min = 10</span><br><span class="line">    parallelism-factor = 50</span><br><span class="line">    parallelism-max = 100</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后在代码中使用：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> ec = context.system.dispathcers.lookup(<span class="string">"blocking-io-dispatcher"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> future = <span class="type">Future</span> &#123;</span><br><span class="line">  <span class="comment">// 进行阻塞操作</span></span><br><span class="line">&#125;(ec)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>上面的优化方法也适用于CPU密集型的任务，将执行计算的过程移到另一个Dispatcher中，确保Actor能够继续执行。</p>
-</blockquote>
-<h3 id="7-将Actor完全交给另一个Dispatcher运行"><a href="#7-将Actor完全交给另一个Dispatcher运行" class="headerlink" title="7. 将Actor完全交给另一个Dispatcher运行"></a>7. 将Actor完全交给另一个Dispatcher运行</h3><h4 id="7-1-在Actor中使用配置好的Dispatcher"><a href="#7-1-在Actor中使用配置好的Dispatcher" class="headerlink" title="7.1 在Actor中使用配置好的Dispatcher"></a>7.1 在Actor中使用配置好的Dispatcher</h4><p>在 application.conf中配置一个Dispatcher：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xxx-dispatcher &#123;</span><br><span class="line">  type = Dispatcher</span><br><span class="line">  executor = &quot;fork-join-executor&quot;</span><br><span class="line">  fork-join-executor &#123;</span><br><span class="line">    parallelism-min = 2</span><br><span class="line">    parallelism-factor = 2.0</span><br><span class="line">    parallelism-max = 8</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>创建Actor并将其分配给配置好的Dispatcher，只要在创建Props的时候直接调用withDispatcher方法即可。我们将使用一个范围来创建一个Actor列表，然后将这些Actor分配给Dispatcher。</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> actors = (<span class="number">1</span> to <span class="number">7</span>).map(x =&gt; &#123;</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(classOf[<span class="type">XXXActor</span>]).withDispatcher(<span class="string">"xxx-dispatcher"</span>))</span><br><span class="line">&#125;).toList</span><br></pre></td></tr></table></figure>
-
-<p>将Actor列表放到一个Router中，这样能够轻松地使用这些Actor执行并行操作：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义router</span></span><br><span class="line"><span class="keyword">val</span> router = system.actorOf(</span><br><span class="line">  <span class="type">RoundRobinGroup</span>(actors.map(_.path.toStringWithoutAddress).toList).props(),</span><br><span class="line">  <span class="string">"worker-router"</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line">router.tell(...)</span><br></pre></td></tr></table></figure>
-
-<h4 id="7-2-使用BalancingPool-BalancingDispatcher"><a href="#7-2-使用BalancingPool-BalancingDispatcher" class="headerlink" title="7.2 使用BalancingPool/BalancingDispatcher"></a>7.2 使用BalancingPool/BalancingDispatcher</h4><p>还是首先在application.conf中配置默认的BalancingDispatcher的Executor，使用8个线程</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pool-dispatcher &#123;</span><br><span class="line">  fork-join-executor &#123;</span><br><span class="line">    parallelism-min = <span class="number">8</span></span><br><span class="line">    parallelism-max = <span class="number">8</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后创建一个包含8个Actor的Pool</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> workerRouter = system.actorOf(</span><br><span class="line">  <span class="type">BalancingPool</span>(<span class="number">8</span>).props(<span class="type">Props</span>(classOf[<span class="type">XXXActor</span>])),</span><br><span class="line">  <span class="string">"balancing-pool-router"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Akka</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Dispatcher</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Scala//" class="article-tag-list-link color1">Scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Akka//" class="article-tag-list-link color5">Akka</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/ScalaAkkaDispatcher.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-说说Scala中的异步编程方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E8%AF%B4%E8%AF%B4Scala%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F.html">说说Scala中的并发（异步）编程方式</a>
-    </h1>
   
 
-        
-        <a href="/%E8%AF%B4%E8%AF%B4Scala%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F.html" class="archive-article-date">
-  	<time datetime="2019-11-27T03:55:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>Scala</code>中如果要实现异步编程可以选中的方式有两种，分别是<code>Future</code>和<code>Actor</code>，我们首先介绍<code>Future</code>实现异步编程。</p>
-<h3 id="1-Future实现Scala异步编程"><a href="#1-Future实现Scala异步编程" class="headerlink" title="1. Future实现Scala异步编程"></a>1. <code>Future</code>实现<code>Scala</code>异步编程</h3><p>在<code>scala.concurrent</code>包中存在一个<code>Future</code>对象，可以使用它实现<code>Scala</code>异步编程。首先我们来看看同步编程方式，如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.future</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.&#123;<span class="type">Await</span>, <span class="type">ExecutionContext</span>, <span class="type">Future</span>&#125;</span><br><span class="line"><span class="keyword">import</span> scala.concurrent.duration._</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">SyncTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">syncFunc</span></span>(): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> value = &#123;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">1000</span>)</span><br><span class="line">      <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    value</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> result = asyncFunc()</span><br><span class="line">    <span class="keyword">val</span> resultValue= <span class="type">Await</span>.result(result, <span class="number">2.</span>seconds)</span><br><span class="line">    println(resultValue)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接下来采用Future方式修改为异步方式</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.future</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.<span class="type">Future</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">AsyncTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">asyncFunc</span></span>(): <span class="type">Future</span>[<span class="type">Int</span>] = &#123;</span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line">    <span class="type">Future</span> &#123;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">1000</span>)</span><br><span class="line">      <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="1-1-通过阻塞方式获取异步调用结果（等于是同步）"><a href="#1-1-通过阻塞方式获取异步调用结果（等于是同步）" class="headerlink" title="1.1 通过阻塞方式获取异步调用结果（等于是同步）"></a>1.1 通过阻塞方式获取异步调用结果（等于是同步）</h4><p>传入最大等待时长，在这期间阻塞获取future的值，超时后报错，通常用于测试用例。如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.future</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.&#123;<span class="type">Await</span>, <span class="type">ExecutionContext</span>, <span class="type">Future</span>&#125;</span><br><span class="line"><span class="keyword">import</span> scala.concurrent.duration._</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">AwaitTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">asyncFunc</span></span>(): <span class="type">Future</span>[<span class="type">Int</span>] = &#123;</span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line">    <span class="type">Future</span> &#123;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">1000</span>)</span><br><span class="line">      <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> value = asyncFunc()</span><br><span class="line">    <span class="keyword">val</span> resultValue= <span class="type">Await</span>.result(value, <span class="number">2.</span>seconds)</span><br><span class="line">    println(resultValue)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="1-2-通过回调函数方式"><a href="#1-2-通过回调函数方式" class="headerlink" title="1.2. 通过回调函数方式"></a>1.2. 通过回调函数方式</h4><p>可一个为Future对象实例增加事件响应函数，如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.future</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.<span class="type">Future</span></span><br><span class="line"><span class="keyword">import</span> scala.util.&#123;<span class="type">Failure</span>, <span class="type">Success</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">CallBackTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">asyncFunc</span></span>(): <span class="type">Future</span>[<span class="type">Int</span>] = &#123;</span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line"></span><br><span class="line">    <span class="type">Future</span> &#123;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">1000</span>)</span><br><span class="line">      <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> ret = asyncFunc()</span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line">    ret.onComplete &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Success</span>(value) =&gt; println(<span class="string">s"result is: <span class="subst">$value</span>"</span>)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Failure</span>(t) =&gt; println(<span class="string">s"An error has accured: <span class="subst">$&#123;t.getMessage&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 为了让主程序不退出，不然主程序退出，子程序也会退出.</span></span><br><span class="line">    <span class="type">Thread</span>.sleep(<span class="number">5000</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-Actor实现Scala异步编程"><a href="#2-Actor实现Scala异步编程" class="headerlink" title="2. Actor实现Scala异步编程"></a>2. <code>Actor</code>实现<code>Scala</code>异步编程</h3><p>在<code>Scala</code>中，还可以使用<code>Actor</code>方式实现异步编程，首先将业务代码放入到Actor中，如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.actor</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> akka.actor.<span class="type">Actor</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;0</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ResultIntActor</span> <span class="keyword">extends</span> <span class="title">Actor</span></span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">Receive</span> = &#123;</span><br><span class="line">    <span class="keyword">case</span> _ =&gt;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">2000</span>)</span><br><span class="line">      sender() ! <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>要实现异步并行任务，我们需要先了解<code>Router</code>的概念，用于将任务分发给不同的<code>Actor</code>。</p>
-<h4 id="2-1-Scala-Router"><a href="#2-1-Scala-Router" class="headerlink" title="2.1 Scala Router"></a>2.1 Scala Router</h4><p>在<code>Scala</code>中，<code>Router</code>是一个用于负载均衡和路由的抽象，创建<code>Router</code>是，必须传入一个<code>Actor Group</code>或者由<code>Router</code>来创建一个<code>Actor Pool</code>。</p>
-<p><code>Group</code>和<code>Pool</code>存在本质的区别，这是两种创建<code>Router</code>背后的<code>Actor</code>集合的机制，<code>Group</code>是将一个<code>Actor</code>列表传递给<code>Router</code>，而<code>Pool</code>则是由<code>Router</code>创建一批<code>Actor</code>。在创建<code>Router</code>之后，由<code>Router</code>接收消息，将消息传递给<code>Group/Pool</code>中的一个或者多个<code>Actor</code>。有多种策略可以用来决定<code>Router</code>选择下一个消息发送对象的顺序。</p>
-<p>采用Group创建Actor：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line"><span class="keyword">val</span> actors = <span class="type">Array</span>(</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-1"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-2"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-3"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-4"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-5"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-6"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-7"</span>),</span><br><span class="line">  system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">"actor-8"</span>)</span><br><span class="line">)</span><br><span class="line"><span class="keyword">val</span> paths = actors.map(actor =&gt; <span class="string">s"<span class="subst">$&#123;actor.path&#125;</span>"</span>).toList</span><br><span class="line"><span class="keyword">val</span> router = system.actorOf(<span class="type">RoundRobinGroup</span>(paths).props(), <span class="string">"router"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>采用Pool方式创建Actor:</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line"><span class="comment">// 使用 Actor Pool的􏰎式􏰊创建Router</span></span><br><span class="line"><span class="keyword">val</span> router = system.actorOf(</span><br><span class="line">  <span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()).withRouter(<span class="keyword">new</span> <span class="type">RoundRobinPool</span>(<span class="number">8</span>)),</span><br><span class="line">  <span class="string">"router"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line"><span class="keyword">val</span> router = system.actorOf(</span><br><span class="line">  <span class="type">RoundRobinPool</span>(<span class="number">8</span>).props(<span class="type">Props</span>(classOf[<span class="type">ArticleParseActor</span>])),</span><br><span class="line">  <span class="string">"router"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<h4 id="路由逻辑"><a href="#路由逻辑" class="headerlink" title="路由逻辑"></a>路由逻辑</h4><p>在上面的Router创建中，我们使用了<code>RoundRobinPool/RoundRobinGroup</code>，用于指定Router将消息发送给各Actor的顺序。Akka内置了一些路由策略，对于一般情况而言，RoundRobin和Random都是不错的选择。下表给出了常见策略：</p>
-<table>
-<thead>
-<tr>
-<th>路由策略</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Round Robin</td>
-<td>依次向Group/Pool中的各个节点发送消息，Random则是随机向一个节点发送消息</td>
-</tr>
-<tr>
-<td>Smallest Mailbox</td>
-<td>向当前包含消息数最少的Actor发送消息，由于远程Actor的邮箱大小未知，因此假设他们的队列中已经有消息在排队，所以会优先将消息发送给本地空闲的Actor</td>
-</tr>
-<tr>
-<td>Scatter Gather</td>
-<td>向Group/Pool中的所有Actor都发送消息，使用接收到的第一个响应，丢弃之后收到的任何其他响应，如果需要确保能够尽快收到响应，可以使用该策略。</td>
-</tr>
-<tr>
-<td>Tail Chopping</td>
-<td>和Scatter Gather类似，但不是向所有的Actor都发送消息，而是每向一个Actor发送消息之后等待一小段时间，有着和Scatter/Gather类似的优点，同时又可以减少网络负载。</td>
-</tr>
-<tr>
-<td>Consistent Hashing</td>
-<td>给Router一个Key，根据Key的hash值确定将消息发送到哪一个Actor，如果想将特定的数据发送到指定的目标，则可以使用这个。</td>
-</tr>
-<tr>
-<td>BalancingPool</td>
-<td>它只可以用于本地，多个Actor共享一个邮箱，一个空闲就处理邮箱中的任务，这个策略的的优点是可以确保所有Actor都处于繁忙状态，对于本地集群可以使用它。</td>
-</tr>
-</tbody></table>
-<h4 id="向同一个Router-Group-Pool中的所有Actor发送消息"><a href="#向同一个Router-Group-Pool中的所有Actor发送消息" class="headerlink" title="向同一个Router Group/Pool中的所有Actor发送消息"></a>向同一个Router Group/Pool中的所有Actor发送消息</h4><p>无论是使用Group还是Pool的形式来创建Router，都可以通过广播，将一条数据发送给所有的Actor，例如，如果Actor都链接到一个远程数据库，运行中的系统由于发生了错误需要修改使用的数据库，那么就可以通过一条更新广播消息更新Group/Pool中的所有Actor，如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">router.tell(<span class="keyword">new</span> akka.routing.<span class="type">Broadcast</span>(msg))</span><br><span class="line">router ! akka.routing.<span class="type">Broadcast</span>(msg)</span><br></pre></td></tr></table></figure>
-
-<h4 id="监督Router-Pool中的路由对象"><a href="#监督Router-Pool中的路由对象" class="headerlink" title="监督Router Pool中的路由对象"></a>监督Router Pool中的路由对象</h4><p>如果使用Pool方式创建的Router，由Router负责创建Actor，那么这些路由对象会成为Router的子节点，创建Router时，可以给Router提供一个自定义的监控策略。创建Router的时候，可以调用withSuperisorStrategy方法指定Router对Pool中路由对象的监督策略，如下：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> router = system.actorOf(</span><br><span class="line">  <span class="type">Props</span>.create(classOf[<span class="type">MyActor</span>])</span><br><span class="line">    .withRouter(<span class="keyword">new</span> <span class="type">RoundRobinPool</span>(<span class="number">10</span>))</span><br><span class="line">    .withSupervisorStrategy(strategy)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>如果使用的是Group方式创建Router，由于传入的是事先存在的Actor，所以没有办法使用Router来监督Group中的Actor。</p>
-<h4 id="2-2-实现异步并发例子"><a href="#2-2-实现异步并发例子" class="headerlink" title="2.2 实现异步并发例子"></a>2.2 实现异步并发例子</h4><p>定义Actor：</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.zjw.actor</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.util.<span class="type">Random</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> akka.actor.<span class="type">Actor</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ResultIntActor</span> <span class="keyword">extends</span> <span class="title">Actor</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>: <span class="type">Receive</span> = &#123;</span><br><span class="line">    <span class="keyword">case</span> x: <span class="type">Int</span> =&gt;</span><br><span class="line">      println(<span class="string">s"ResultIntActor Received: <span class="subst">$x</span>"</span>)</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="type">Random</span>.nextInt(<span class="number">100</span>))</span><br><span class="line">      sender() ! <span class="type">Random</span>.nextInt(<span class="number">100</span>) + x</span><br><span class="line">    <span class="keyword">case</span> _ =&gt;</span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="type">Random</span>.nextInt(<span class="number">100</span>))</span><br><span class="line">      sender() ! <span class="type">Random</span>.nextInt(<span class="number">100</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>采用Pool方式实现异步并发</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.zjw.router</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.duration._</span><br><span class="line"><span class="keyword">import</span> scala.util.&#123;<span class="type">Failure</span>, <span class="type">Success</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> akka.actor.&#123;<span class="type">ActorSystem</span>, <span class="type">Props</span>&#125;</span><br><span class="line"><span class="keyword">import</span> akka.pattern.ask</span><br><span class="line"><span class="keyword">import</span> akka.routing.<span class="type">RoundRobinPool</span></span><br><span class="line"><span class="keyword">import</span> akka.util.<span class="type">Timeout</span></span><br><span class="line"><span class="keyword">import</span> com.zjw.actor.<span class="type">ResultIntActor</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">RouterActorTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line">    <span class="comment">// 使用 Actor Pool的􏰎式􏰊创建Router</span></span><br><span class="line">    <span class="keyword">val</span> router = system.actorOf(</span><br><span class="line">      <span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()).withRouter(<span class="keyword">new</span> <span class="type">RoundRobinPool</span>(<span class="number">100</span>)),</span><br><span class="line">      <span class="string">"router"</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">implicit</span> <span class="keyword">val</span> timeout = <span class="type">Timeout</span>(<span class="number">10.</span>seconds) <span class="comment">// 用于设置ask的超时时间</span></span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line">    <span class="keyword">val</span> f = (<span class="number">1</span> to <span class="number">1000</span>).map(ask(router, _).mapTo[<span class="type">Int</span>])</span><br><span class="line">    f.foreach(e =&gt; &#123;</span><br><span class="line">      e.onComplete &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">Success</span>(ret) =&gt; println(<span class="string">s"Result is: <span class="subst">$ret</span>"</span>)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">Failure</span>(t) =&gt; println(<span class="string">s"An error has accured: <span class="subst">$&#123;t.getMessage&#125;</span>"</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>采用Group方式实现异步并发</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.zjw.router</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.duration._</span><br><span class="line"><span class="keyword">import</span> scala.util.&#123;<span class="type">Failure</span>, <span class="type">Success</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> akka.actor.&#123;<span class="type">ActorSystem</span>, <span class="type">Props</span>&#125;</span><br><span class="line"><span class="keyword">import</span> akka.pattern.ask</span><br><span class="line"><span class="keyword">import</span> akka.routing.<span class="type">RoundRobinGroup</span></span><br><span class="line"><span class="keyword">import</span> akka.util.<span class="type">Timeout</span></span><br><span class="line"><span class="keyword">import</span> com.zjw.actor.<span class="type">ResultIntActor</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">RouterActorGroupTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line">    <span class="comment">// 使用Group方式</span></span><br><span class="line">    <span class="keyword">val</span> actors = (<span class="number">1</span> to <span class="number">20</span>).map &#123;</span><br><span class="line">      index =&gt; system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">s"actor-<span class="subst">$index</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> paths = actors.map(actor =&gt; <span class="string">s"<span class="subst">$&#123;actor.path&#125;</span>"</span>).toList</span><br><span class="line">    <span class="keyword">val</span> router = system.actorOf(<span class="type">RoundRobinGroup</span>(paths).props(), <span class="string">"router"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">implicit</span> <span class="keyword">val</span> timeout = <span class="type">Timeout</span>(<span class="number">10.</span>seconds) <span class="comment">// 用于设置ask的超时时间</span></span><br><span class="line">    <span class="keyword">import</span> scala.concurrent.<span class="type">ExecutionContext</span>.<span class="type">Implicits</span>.global</span><br><span class="line">    <span class="keyword">val</span> f = (<span class="number">1</span> to <span class="number">1000</span>).map(ask(router, _).mapTo[<span class="type">Int</span>])</span><br><span class="line">    f.foreach(e =&gt; &#123;</span><br><span class="line">      e.onComplete &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">Success</span>(ret) =&gt; println(<span class="string">s"Result is: <span class="subst">$ret</span>"</span>)</span><br><span class="line">        <span class="keyword">case</span> <span class="type">Failure</span>(t) =&gt; println(<span class="string">s"An error has accured: <span class="subst">$&#123;t.getMessage&#125;</span>"</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>如果是需要同步等待Actor处理结果，可以使用如下方式：</li>
-</ul>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.zjw.router</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.<span class="type">Await</span></span><br><span class="line"><span class="keyword">import</span> scala.concurrent.duration._</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> akka.actor.&#123;<span class="type">ActorSystem</span>, <span class="type">Props</span>&#125;</span><br><span class="line"><span class="keyword">import</span> akka.pattern.ask</span><br><span class="line"><span class="keyword">import</span> akka.routing.<span class="type">RoundRobinGroup</span></span><br><span class="line"><span class="keyword">import</span> akka.util.<span class="type">Timeout</span></span><br><span class="line"><span class="keyword">import</span> com.zjw.actor.<span class="type">ResultIntActor</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @author zjw &lt;cn.zjwblog@gmail.com&gt;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">RouterActorSycnTest</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> system = <span class="type">ActorSystem</span>(<span class="string">"router-system"</span>)</span><br><span class="line">    <span class="comment">// 使用Group方式</span></span><br><span class="line">    <span class="keyword">val</span> actors = (<span class="number">1</span> to <span class="number">20</span>).map &#123;</span><br><span class="line">      index =&gt; system.actorOf(<span class="type">Props</span>(<span class="keyword">new</span> <span class="type">ResultIntActor</span>()), <span class="string">s"actor-<span class="subst">$index</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> paths = actors.map(actor =&gt; <span class="string">s"<span class="subst">$&#123;actor.path&#125;</span>"</span>).toList</span><br><span class="line">    <span class="keyword">val</span> router = system.actorOf(<span class="type">RoundRobinGroup</span>(paths).props(), <span class="string">"router"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">implicit</span> <span class="keyword">val</span> timeout = <span class="type">Timeout</span>(<span class="number">10.</span>seconds)</span><br><span class="line">    <span class="keyword">val</span> f = (<span class="number">1</span> to <span class="number">1000</span>).map(ask(router, _).mapTo[<span class="type">Int</span>])</span><br><span class="line">    <span class="keyword">val</span> results = f.map(<span class="type">Await</span>.result(_, <span class="number">3.</span>seconds)).toArray</span><br><span class="line">    println(<span class="string">s"所有返回的结果: <span class="subst">$&#123;results.mkString(",")&#125;</span>"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Scala</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E8%AF%B4%E8%AF%B4Scala%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E5%BC%8F.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Python中Logging模块使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Python%E4%B8%ADLogging%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8.html">Python中Logging模块使用</a>
-    </h1>
   
 
-        
-        <a href="/Python%E4%B8%ADLogging%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8.html" class="archive-article-date">
-  	<time datetime="2019-11-10T05:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="在普通项目中使用"><a href="#在普通项目中使用" class="headerlink" title="在普通项目中使用"></a>在普通项目中使用</h3><ul>
-<li><p>编写一个日志配置文件</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line">logging.basicConfig(...)</span><br><span class="line"></span><br><span class="line">logger = logging.getLogger(__name__)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在需要使用日志的文件中<code>import</code>日志配置文件即可使用</p>
-</li>
-</ul>
-<h3 id="在Scrapy项目中使用"><a href="#在Scrapy项目中使用" class="headerlink" title="在Scrapy项目中使用"></a>在<code>Scrapy</code>项目中使用</h3><ul>
-<li><p>在项目设置文件中加入以下内容，如果设置了LOG_FILE，在终端将不会再显示</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LOG_LEVEL=<span class="string">"INFO"</span></span><br><span class="line">LOG_FILE=<span class="string">"./log.log"</span></span><br></pre></td></tr></table></figure></li>
-<li><p>在项目文件中如下使用</p>
-</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line">logger = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line">logger.info(<span class="string">"xxx"</span>)</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">logging</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">scrapy</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/python//" class="article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/Python%E4%B8%ADLogging%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Apollo Client 使用说明" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html">Apollo Client 使用说明</a>
-    </h1>
-  
-
-        
-        <a href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Apollo-Java-Client使用方式介绍"><a href="#Apollo-Java-Client使用方式介绍" class="headerlink" title="Apollo Java Client使用方式介绍"></a>Apollo Java Client使用方式介绍</h2><h3 id="1-POM依赖"><a href="#1-POM依赖" class="headerlink" title="1. POM依赖"></a>1. POM依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.ctrip.framework.apollo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>apollo-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="2-Java-运行时JVM参数配置及说明"><a href="#2-Java-运行时JVM参数配置及说明" class="headerlink" title="2. Java 运行时JVM参数配置及说明"></a>2. Java 运行时JVM参数配置及说明</h3><ul>
-<li><code>-Denv=xxx</code></li>
-</ul>
-<p>这里可以配置自己的环境，如DEV、FAT、UAT、PRO等，也可以配置为LOCAL，如果配置为LOCAL则从本地文件读取，配置文件路径为项目的classpath:/META-INF/config/xxx.properties</p>
-<ul>
-<li><code>-Dapollo.meta=http://xxx:8080</code></li>
-</ul>
-<p>env 环境对应的meta-service地址</p>
-<ul>
-<li><code>-Dapollo.cacheDir=/Users/zjw-pc/workspace/apollo-client-test/cache</code></li>
-</ul>
-<p>配置的本地缓存地址</p>
-<ul>
-<li><code>-Dapollo.cluster=hangzhou</code></li>
-</ul>
-<p>当有多个集群是配置集群名称，默认为default，当配置集群之后，如果Apollo在指定集群获取不到配置数据，则还会去默认集群获取</p>
-<blockquote>
-<p>注：本地调试可以使用LOCAL环境</p>
-</blockquote>
-<h3 id="3-Java-获取-default-集群下的-application-properties-Namespace-下的配置信息"><a href="#3-Java-获取-default-集群下的-application-properties-Namespace-下的配置信息" class="headerlink" title="3. Java 获取 default 集群下的 application properties Namespace 下的配置信息"></a>3. Java 获取 default 集群下的 application properties Namespace 下的配置信息</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Config config = ConfigService.getAppConfig();</span><br><span class="line"><span class="comment">// 0.11.x-SNAPSHOT配置方式: Config config</span></span><br><span class="line"><span class="comment">//  = ConfigService.getAppConfig("localhost", "8080");</span></span><br><span class="line">String key = <span class="string">"xxx_key"</span>;</span><br><span class="line">String defaultValue = <span class="string">"default value"</span>;</span><br><span class="line">String value = config.getProperty(key, defaultValue);</span><br><span class="line">System.out.println(<span class="string">"value: "</span> + value);</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-Java-获取-default-集群下-jdbc-Namespace-下配置信息"><a href="#4-Java-获取-default-集群下-jdbc-Namespace-下配置信息" class="headerlink" title="4. Java 获取 default 集群下 jdbc Namespace 下配置信息"></a>4. Java 获取 default 集群下 jdbc Namespace 下配置信息</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Config config = ConfigService.getConfig(<span class="string">"jdbc"</span>);</span><br><span class="line"><span class="comment">// 0.11.x-SNAPSHOT配置方式: Config config</span></span><br><span class="line"><span class="comment">//  = ConfigService.getAppConfig("jdbc", "localhost", "8080");</span></span><br><span class="line">String key = <span class="string">"jdbc.url"</span>;</span><br><span class="line">String defaultValue = <span class="string">"default value"</span>;</span><br><span class="line">String value = config.getProperty(key, defaultValue);</span><br><span class="line">System.out.println(<span class="string">"value: "</span> + value);</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/bigdata//" class="article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-精尽 Netty 源码分析 —— Netty 简介（二）之核心组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">精尽 Netty 源码分析 —— Netty 简介（二）之核心组件</a>
-    </h1>
-  
-
-        
-        <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>什么是 Netty ？</p>
-<blockquote>
-<p>Netty 是一款提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序。</p>
-<p>也就是说，Netty 是一个基于 NIO 的客户、服务器端编程框架。使用 Netty 可以确保你快速和简单地开发出一个网络应用，例如实现了某种协议的客户，服务端应用。Netty 相当简化和流线化了网络应用的编程开发过程，例如，TCP 和 UDP 的 socket 服务开发。</p>
-<p>（以上摘自百度百科）。</p>
-</blockquote>
-<p>Netty 具有如下特性( 摘自《Netty in Action》 )</p>
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>Netty的特性</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>设计</td>
-<td>1. 统一的 API ，支持多种传输类型( 阻塞和非阻塞的 ) <br>2. 简单而强大的线程模型 <br>3. 真正的无连接数据报套接字( UDP )支持 <br>4. 连接逻辑组件( ChannelHander 中顺序处理消息 )以及组件复用( 一个 ChannelHandel 可以被多个 ChannelPipeLine 复用 )</td>
-</tr>
-<tr>
-<td>易于使用</td>
-<td>1. 详实的 Javadoc 和大量的示例集 <br>2. 不需要超过 JDK 1.6+ 的依赖</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>拥有比 Java 的核心 API 更高的吞吐量以及更低的延迟( 得益于池化和复用 )，更低的资源消耗以及最少的内存复制</td>
-</tr>
-<tr>
-<td>健壮性</td>
-<td>1. 不会因为慢速、快速或者超载的连接而导致 OutOfMemoryError <br>2. 消除在高速网络中 NIO 应用程序常见的不公平读 / 写比率</td>
-</tr>
-<tr>
-<td>安全性</td>
-<td>完整的 SSL/TLS 以及 StartTLs 支持，可用于受限环境下，如 Applet 和 OSGI</td>
-</tr>
-<tr>
-<td>社区驱动</td>
-<td>发布快速而且频繁</td>
-</tr>
-</tbody></table>
-<h2 id="2-Netty-核心组件"><a href="#2-Netty-核心组件" class="headerlink" title="2. Netty 核心组件"></a>2. Netty 核心组件</h2><p>为了后期更好地理解和进一步深入 Netty，有必要总体认识一下 Netty 所用到的核心组件以及他们在整个 Netty 架构中是如何协调工作的。</p>
-<p>Netty 有如下几个核心组件：</p>
-<ul>
-<li>Bootstrap &amp; ServerBootstrap</li>
-<li>Channel</li>
-<li>ChannelFuture</li>
-<li>EventLoop &amp; EventLoopGroup</li>
-<li>ChannelHandler</li>
-<li>ChannelPipeline</li>
-</ul>
-<p>核心组件的高层类图如下：</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/scala//" class="article-tag-list-link color1">scala</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-基于Kerberos认证的Hadoop Token过期问题Debug分享" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
-    </h1>
-  
-
-        
-        <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-Kerberos"><a href="#1-Kerberos" class="headerlink" title="1 Kerberos"></a>1 Kerberos</h2><p><code>Kerberos</code>是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解<code>Kerberos</code>认证的流程将有助于解决<code>Hadoop</code>集群中的安全配置过程中的问题。</p>
-<h3 id="1-1-Kerberos可以用来做什么"><a href="#1-1-Kerberos可以用来做什么" class="headerlink" title="1.1 Kerberos可以用来做什么"></a>1.1 Kerberos可以用来做什么</h3><p>简单地说，<code>Kerberos</code>提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器。这些服务器都有认证的需求。很自然的，不可能让每个服务器自己实现一套认证系统，而是提供一个中心认证服务器（AS-Authentication Server）供这些服务器使用。这样任何客户端就只需维护一个密码就能登录所有服务器。</p>
-<p>因此，在<code>Kerberos</code>系统中至少有三个角色：认证服务器（AS），客户端（Client）和普通服务器（Server）。客户端和服务器将在AS的帮助下完成相互认证。在<code>Kerberos</code>系统中，客户端和服务器都有一个唯一的名字，叫做<code>Principal</code>。同时，客户端和服务器都有自己的密码，并且它们的密码只有自己和认证服务器AS知道。</p>
-<h3 id="1-2-Kerberos术语"><a href="#1-2-Kerberos术语" class="headerlink" title="1.2 Kerberos术语"></a>1.2 Kerberos术语</h3><ul>
-<li>KDC(key distribution center): 密钥发放中心</li>
-<li>AS(authentication service): 认证服务，索取credential，发放 TGT</li>
-<li>TGS(ticket granting service): 票据授权服务，索取TGT，发放ST</li>
-<li><strong>TGT(ticket granting ticket)</strong>: 票据授权票据，由KDC的AS发放；获得这样一张票据后，以后申请其他应用的服务票据（ST）时，就不需要向KDC提交身份认证信息（credential），TGT具有一定的有效期，就像是kerberos进行kinit以后只是具有固定时间的有效期，需要不断的去renew来续约。</li>
-<li>ST(service ticket): 服务票据，由KDC的TGS发放，任何一个应用（application）都需要一张有效的服务票据才能访问；如果能正确接受ST，说明client和server之间的信任关系已经被建立，通常为一张数字加密的证书。</li>
-<li>Principal: 一个用户会以一个独一无二的身份来被KDC认证，该身份被称为principal。一个Principal由三个部分组成：primary, instance以及realm，其组成形式为primary/instance@realm。<ul>
-<li>primary: 可以是OS中的username，也可以是service name；</li>
-<li>instance: 用于区分属于同一个user或者service的多个principals，该项为optional；</li>
-<li>realm: 类似于DNS中的domain，定义了一组principals.</li>
-</ul>
-</li>
-</ul>
-<p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
-<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="/images/cas.png" alt="Kerberos" title="Kerberos原理"></p>
-<ol>
-<li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
-<p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
-</li>
-<li><p>User向KDC中的TGS请求访问某个Service的ST，发送[ TGT, Authenticator ]；</p>
-<p> 其中，Authenticator用于验证发送该请求的user就是TGT中所声明的user，内容为：{ user, addresss, start_time, lifetime}；Authenticator使用的TGS和user之间的session key加密的，防止TGT被盗。TGS先使用自己的密码解开TGT获得它与user之间的session key，然后使用session key解密Authenticator，验证用户和有效期。</p>
-</li>
-<li><p>TGS判断无误后，为user和Service之间生成一个新的session key：SK_Service；然后发送给user一个包：[ {SK_Service} SK_TGS, ST ]；</p>
-<p> 其中，ST是使用Service的密码加密的，SK_Service使用TGS和user之间的session key加密的；ST的内容为：{ user, address, start_time, lifetime, SK_Service } K_Service</p>
-</li>
-<li><p>User使用与TGS之间的会话秘钥解开包得到与Service之间的会话秘钥SK_Service，然后使用SK_Service生成一个Authenticator，向Service发送[ ST, Authenticator ]；</p>
-<p> 其中，此处的Authenticator是使用user和service之间的会话秘钥加密的，Service收到包后先使用自己的密码解密ST，或者会话秘钥SK_Service，然后使用SK_Service解密Authenticator来验证发送请求的用户就是票中所声明的用户。</p>
-</li>
-<li><p>Service向用户发送一个包以证明自己的身份，这个包使用SK_Service加密。</p>
-<p> 此后user与Service之间使用SK_Service进行通信，且在TGT有效期内，user直接跳过第一步直接从第二步使用TGT向TGS证明自己的身份。注意：user client会等待service server发送确认信息，如果不是正确的service server，就无法解开ST，也就无法获得会话秘钥，从而避免用户使用错误的服务器。</p>
-</li>
-</ol>
-<h3 id="1-4-类比学习"><a href="#1-4-类比学习" class="headerlink" title="1.4 类比学习"></a>1.4 类比学习</h3><ol>
-<li><p>用户要去游乐场，首先要在门口检查用户的身份(即 CHECK 用户的 ID 和 PASS), 如果用户通过验证，游乐场的门卫 (AS) 即提供给用户一张门卡 (TGT)。</p>
-</li>
-<li><p>这张卡片的用处就是告诉游乐场的各个场所，用户是通过正门进来，而不是后门偷爬进来的，并且也是获取进入场所一把钥匙。</p>
-</li>
-<li><p>现在用户有张卡，但是这对用户来不重要，因为用户来游乐场不是为了拿这张卡的而是为了游览游乐项目，这时用户摩天楼，并想游玩。</p>
-</li>
-<li><p>这时摩天轮的服务员 (client) 拦下用户，向用户要求摩天轮的 (ST) 票据，用户说用户只有一个门卡 (TGT), 那用户只要把 TGT 放在一旁的票据授权机 (TGS) 上刷一下。</p>
-</li>
-<li><p>票据授权机 (TGS) 就根据用户现在所在的摩天轮，给用户一张摩天轮的票据 (ST), 这样用户有了摩天轮的票据，现在用户可以畅通无阻的进入摩天轮里游玩了。</p>
-</li>
-<li><p>当然如果用户玩完摩天轮后，想去游乐园的咖啡厅休息下，那用户一样只要带着那张门卡 (TGT). 到相应的咖啡厅的票据授权机 (TGS) 刷一下，得到咖啡厅的票据 (ST) 就可以进入咖啡厅</p>
-</li>
-<li><p>当用户离开游乐场后，想用这张 TGT 去刷打的回家的费用，对不起，用户的 TGT 已经过期了，在用户离开游乐场那刻开始，用户的 TGT 就已经销毁了。</p>
-</li>
-</ol>
-<h2 id="2-HDFS-认证"><a href="#2-HDFS-认证" class="headerlink" title="2 HDFS 认证"></a>2 HDFS 认证</h2><h3 id="2-1-什么是-Delegation-Token"><a href="#2-1-什么是-Delegation-Token" class="headerlink" title="2.1 什么是 Delegation Token"></a>2.1 什么是 Delegation Token</h3><p>delegation token其实就是hadoop里一种轻量级认证方法，作为kerberos认证的一种补充。理论上只使用kerberos来认证是足够了，为什么hadoop还要自己开发一套使用delegation token的认证方式呢？这是因为如果在一个很大的分布式系统当中，如果每个节点访问某个服务的时候都使用kerberos来作为认证方式，那么势必对KDC造成很大的压力，KDC就会成为一个系统的瓶颈。</p>
-<h3 id="2-2-Delegation-Token-期限"><a href="#2-2-Delegation-Token-期限" class="headerlink" title="2.2 Delegation Token 期限"></a>2.2 Delegation Token 期限</h3><p>delegation token有过期时间，需要定期刷新才能保证token有效。但是刷新次数不是无限的，也就是说每个token都有个最大生存时间，超过该时间，该token就失效。比如token每个24小时需要刷新一次，否则就失效。同时每个token最大生命值为7天，那么七天后该token就不能在被使用。</p>
-<h3 id="2-3-Delegation-Token-过期的原因和解决思路"><a href="#2-3-Delegation-Token-过期的原因和解决思路" class="headerlink" title="2.3 Delegation Token 过期的原因和解决思路"></a>2.3 Delegation Token 过期的原因和解决思路</h3><p>delegation token会失效，集群默认配置是renew的间隔为一天，token最大生存时间为7天。对于像mapreduce这种批处理任务可能不会面临token失效的问题，但对于spark streaming, storm等这种长时运行应用来说，不得不面临一个问题：token存在最大生命周期。当token达到其最大生命周期的时候，比如七天，所有的工作节点（比如spark streaming的executor）中使用的token都会失效，此时在使用该token去访问hdfs就会被namenode拒绝，导致应用异常退出。</p>
-<p>一种解决思路是将keytab文件分发给Am及每个container，让am和container去访问kdc来认证，但这种方式会造成文章开头所说的问题：对KDC造成很大的访问压力，导致KDC会误认为自己遭受了DDos攻击，从而影响程序性能。</p>
-<p>另一种解决思路是先由client把keytab文件放到hdfs上。然后在Am中使用keytab登录，并申请delegation token。AM在启动worker的时候把该token分发给相应的容器。当token快要过期的时候，AM重新登录一次，并重新获取delegation token，并告知所有的worker使用更新后的token访问服务。</p>
-<h3 id="2-4-Spark中怎么解决-Delegation-Token-过期问题"><a href="#2-4-Spark中怎么解决-Delegation-Token-过期问题" class="headerlink" title="2.4 Spark中怎么解决 Delegation Token 过期问题"></a>2.4 Spark中怎么解决 Delegation Token 过期问题</h3><p>spark 为了解决DT失效问题，加了两个参数”–keytab”和”–principal”，分别指定用于kerberos登录的keytab文件和principal。</p>
-<p><code>--keytab</code>参数指定一个keytab文件，Spark会根据<code>--keytab</code>指定的Kerberos认证文件生成 HDFS Token，然后再将生成的Token信息放到HDFS的某一个目录中供Executor和Driver使用。</p>
-<p>流程如下：</p>
-<ol>
-<li>Spark ApplicationMaster在Delegation Token将要失效的时候（75% of the renewal interval) 会通过Keytab文件重新认证并获取一个新的Delegation Token，然后将新的Delegation Token写入到指定的HDFS文件中；</li>
-<li>Spark Executor在Delegation Token将要失效的时候（80% of the validity)读取HDFS上的最新的Delegation Token文件，然后更新自己的Delegation Token；</li>
-</ol>
-<p>理论上这样就能解决掉Token过期的问题，然而在配置了HA的Hadoop集群上2.9.0之前的版本依然存在问题，问题在于配置了HA的Hadoop集群中，Executor读取新的Token信息之后只更新的HDFS的逻辑地址，而未同步更新真正的<code>HDFS Namenode URI</code>对应的Token，从而导致Namenode URI下面的Token会慢慢过期失效。</p>
-<h3 id="2-5-问题复现与原因分析"><a href="#2-5-问题复现与原因分析" class="headerlink" title="2.5 问题复现与原因分析"></a>2.5 问题复现与原因分析</h3><ol>
-<li>修改Hadoop的默认Token过期时间和刷新时间，Hadoop Token的默认过期时间为7天，刷新时间为24小时，将其修改为过期时间10分钟，刷新时间5分钟</li>
-<li>编写一个Spark-Streaming的WordCount程序，每一分钟访问一次HDFS将WordCount的结果写入到HDFS的一个目录中</li>
-<li>在HDFS的Token最大期限（10分钟）之后就复现了线上的HDFS Token过期问题，最终导致WordCount异常退出</li>
-</ol>
-<p>原因分析：如果Namenode URI下面的Token一直不变，那这个Token短时间内是不应该失效的，因为前面说过Yarn Server一直在为这个Token进行定期更新操作（假设Token配置的可更新时间足够长，并且没有出现Token更新操作的异常），问题就在于其实Namenode URI对应的Token也会更新，只不过永远比“逻辑地址”对应的Token的更新慢一步，导致Namenode URI下面的Token比较旧所以会失效。</p>
-<p>Namenode URI对应的Token是这样被更新的：</p>
-<ul>
-<li>在Spark Executor读取新的Token文件的时候，需要获取一个FileSystem；默认FileSystem是缓存的，每次通过FileSystem.get(hadoopConf)获取的应该都是同一个FileSystem；但是Spark在此处是强制初始化了一个新的FileSystem（通过配置Hadoop Conf的fs.hdfs.impl.disable.cache为true实现的）；</li>
-<li>FileSystem的运行类型为DistributedFileSystem，在初始化的时候会生成新的DFSClient, DFSClient在初始化的时候会生成新的Failover Proxy：ZkConfiguredFailoverProxyProvider；</li>
-<li>ZkConfiguredFailoverProxyProvider在初始化的时候会将“逻辑地址”下面的Token拷贝到Namenode URI下面；</li>
-</ul>
-<p>例如：</p>
-<ol>
-<li>逻辑地址       -&gt; Token 1001</li>
-<li>NameNode1     -&gt; Token 1000</li>
-<li>NameNode2     -&gt; Token 1000</li>
-</ol>
-<p>经过一次Token更新之后</p>
-<ol>
-<li>逻辑地址       -&gt; Token 1002</li>
-<li>NameNode1     -&gt; Token 1001</li>
-<li>NameNode2     -&gt; Token 1001</li>
-</ol>
-<p>其中1001是在逻辑地址的Token还有20%的有效期时被更新的，而1001在经过一次Token更新之后依然被NameNode1和NameNode2所使用，所以在过去一小段时间之后应用程序再通过1001访问HDFS将出现Token过期的异常</p>
-<h3 id="2-6-解决办法"><a href="#2-6-解决办法" class="headerlink" title="2.6 解决办法"></a>2.6 解决办法</h3><p>1、UserGroupInformation.getCurrentUser.addCredentials(newCredentials)的时候，把Namenode URI下面的Token一并更新了。社区HDFSissue为：<a href="https://issues.apache.org/jira/browse/HDFS-9276" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HDFS-9276</a></p>
-<p>2、可以设法将Token更新的时间设置为小于50%，这样可以是更新到NameNode1和NameNode2下的Token依然有至少50%的有效期时长，保证在下一次更新Token时依然有效</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-正则表达式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">正则表达式</a>
-    </h1>
-  
-
-        
-        <a href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-两种模糊匹配"><a href="#1-两种模糊匹配" class="headerlink" title="1.  两种模糊匹配"></a>1.  两种模糊匹配</h2><p>模糊匹配，有两个方向上的“模糊”：横向模糊和纵向模糊</p>
-<h3 id="1-1-横向模糊匹配"><a href="#1-1-横向模糊匹配" class="headerlink" title="1.1 横向模糊匹配"></a>1.1 横向模糊匹配</h3><p>横向模糊指的是，一个正则可匹配的字符串的长度不是固定的，可以是多种情况的。其实现的方式是使用量词。譬如{m,n}，表示连续出现最少m次，最多n次。比如/ab{2,5}c/表示匹配这样一个字符串：第一个字符是“a”，接下来是2到5个字符“b”，最后是字符“c”<br>例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /ab&#123;2,5&#125;c/g;</span><br><span class="line">var string = &quot;abc abbc abbbc abbbbc abbbbbc abbbbbbc&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;abbc&quot;, &quot;abbbc&quot;, &quot;abbbbc&quot;, &quot;abbbbbc&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>注意：案例中用的正则是/ab{2,5}c/g，后面多了g，它是正则的一个修饰符。表示全局匹配，即在目标字符串中按顺序找到满足匹配模式的所有子串，强调的是“所有”，而不只是“第一个”。g是单词global的首字母。</p>
-<h3 id="1-2-纵向模糊匹配"><a href="#1-2-纵向模糊匹配" class="headerlink" title="1.2 纵向模糊匹配"></a>1.2 纵向模糊匹配</h3><p>纵向模糊指的是，一个正则匹配的字符串，具体到某一位字符时，它可以不是某个确定的字符，可以有多种可能。其实现的方式是使用字符组。譬如[abc]，表示该字符是可以字符“a”、“b”、“c”中的任何一个。比如/a[123]b/可以匹配如下三种字符串：”a1b”、”a2b”、”a3b”。<br>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/a[123]b/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"a0b a1b a2b a3b a4b"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["a1b", "a2b", "a3b"]</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="2-字符组"><a href="#2-字符组" class="headerlink" title="2. 字符组"></a>2. 字符组</h2><p>需要强调的是，虽叫字符组（字符类），但只是其中一个字符。例如[abc]，表示匹配一个字符，它可以是“a”、“b”、“c”之一。</p>
-<h3 id="2-1-范围表示法"><a href="#2-1-范围表示法" class="headerlink" title="2.1 范围表示法"></a>2.1 范围表示法</h3><p>如果字符组里的字符特别多的话，怎么办？可以使用范围表示法。比如[123456abcdefGHIJKLM]，可以写成[1-6a-fG-M]。用连字符-来省略和简写。因为连字符有特殊用途，那么要匹配“a”、“-”、“z”这三者中任意一个字符，该怎么做呢？不能写成[a-z]，因为其表示小写字符中的任何一个字符。可以写成如下的方式：[-az]或[az-]或[a-z]。即要么放在开头，要么放在结尾，要么转义。总之不会让引擎认为是范围表示法就行了。</p>
-<h3 id="2-2-排除字符组"><a href="#2-2-排除字符组" class="headerlink" title="2.2 排除字符组"></a>2.2 排除字符组</h3><p>纵向模糊匹配，还有一种情形就是，某位字符可以是任何东西，但就不能是”a”、”b”、”c”。此时就是排除字符组（反义字符组）的概念。例如[^abc]，表示是一个除”a”、”b”、”c”之外的任意一个字符。字符组的第一位放^（脱字符），表示求反的概念。</p>
-<h3 id="2-3-常见的简写形式"><a href="#2-3-常见的简写形式" class="headerlink" title="2.3 常见的简写形式"></a>2.3 常见的简写形式</h3><p>有了字符组的概念后，一些常见的符号我们也就理解了。因为它们都是系统自带的简写形式。</p>
-<blockquote>
-<p>\d就是[0-9]。表示是一位数字。记忆方式：其英文是digit（数字）。<br>\D就是[^0-9]。表示除数字外的任意字符。<br>\w就是[0-9a-zA-Z_]。表示数字、大小写字母和下划线。记忆方式：w是word的简写，也称单词字符。<br>\W是[^0-9a-zA-Z_]。非单词字符。<br>\s是[ \t\v\n\r\f]。表示空白符，包括空格、水平制表符、垂直制表符、换行符、回车符、换页符。记忆方式：s是space character的首字母。<br>\S是[^ \t\v\n\r\f]。 非空白符。<br>.就是[^\n\r\u2028\u2029]。通配符，表示几乎任意字符。换行符、回车符、行分隔符和段分隔符除外。记忆方式：想想省略号…中的每个点，都可以理解成占位符，表示任何类似的东西。</p>
-</blockquote>
-<p>如果要匹配任意字符怎么办？可以使用[\d\D]、[\w\W]、[\s\S]和[^]中任何的一个。</p>
-<h2 id="3-量词"><a href="#3-量词" class="headerlink" title="3. 量词"></a>3. 量词</h2><p>量词也称重复。掌握{m,n}的准确含义后，只需要记住一些简写形式。</p>
-<h3 id="3-1-简写形式"><a href="#3-1-简写形式" class="headerlink" title="3.1 简写形式"></a>3.1 简写形式</h3><blockquote>
-<p>{m,} 表示至少出现m次。<br>{m} 等价于{m,m}，表示出现m次。<br>? 等价于{0,1}，表示出现或者不出现。记忆方式：问号的意思表示，有吗？</p>
-<ul>
-<li>等价于{1,}，表示出现至少一次。记忆方式：加号是追加的意思，得先有一个，然后才考虑追加。</li>
-</ul>
-<ul>
-<li>等价于{0,}，表示出现任意次，有可能不出现。记忆方式：看看天上的星星，可能一颗没有，可能零散有几颗，可能数也数不过来。</li>
-</ul>
-</blockquote>
-<h3 id="3-2-贪婪匹配和惰性匹配"><a href="#3-2-贪婪匹配和惰性匹配" class="headerlink" title="3.2 贪婪匹配和惰性匹配"></a>3.2 贪婪匹配和惰性匹配</h3><p>看如下的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;123&quot;, &quot;1234&quot;, &quot;12345&quot;, &quot;12345&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>其中正则/\d{2,5}/，表示数字连续出现2到5次。会匹配2位、3位、4位、5位连续数字</p>
-<p>但是其是贪婪的，它会尽可能多的匹配。你能给我6个，我就要6个。你能给我3个，我就3要个。反正只要在能力范围内，越多越好。</p>
-<p>我们知道有时贪婪不是一件好事（请看文章最后一个例子）。而惰性匹配，就是尽可能少的匹配：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;?/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;12&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;56&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>其中/\d{2,5}?/表示，虽然2到5次都行，当2个就够的时候，就不在往下尝试了。</p>
-<p>通过在量词后面加个问号就能实现惰性匹配，因此所有惰性匹配情形如下：</p>
-<blockquote>
-<p>{m,n}?<br>{m,}?<br>??<br>+?<br>*?</p>
-</blockquote>
-<p>对惰性匹配的记忆方式是：量词后面加个问号，问一问你知足了吗，你很贪婪吗？</p>
-<h2 id="4-多选分支"><a href="#4-多选分支" class="headerlink" title="4. 多选分支"></a>4. 多选分支</h2><p>一个模式可以实现横向和纵向模糊匹配。而多选分支可以支持多个子模式任选其一。</p>
-<p>具体形式如下：(p1|p2|p3)，其中p1、p2和p3是子模式，用|（管道符）分隔，表示其中任何之一。</p>
-<p>例如要匹配”good”和”nice”可以使用/good|nice/。测试如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /good|nice/g;</span><br><span class="line">var string = &quot;good idea, nice try.&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;good&quot;, &quot;nice&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>但有个事实我们应该注意，比如我用/good|goodbye/，去匹配”goodbye”字符串时，结果是”good”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/good|goodbye/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["good"]</span></span><br></pre></td></tr></table></figure>
-
-<p>而把正则改成/goodbye|good/，结果是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/goodbye|good/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["goodbye"]</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说，分支结构也是惰性的，即当前面的匹配上了，后面的就不再尝试了。</p>
-<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>匹配字符，无非就是字符组、量词和分支结构的组合使用罢了。</p>
-<h3 id="5-1-匹配16进制颜色值"><a href="#5-1-匹配16进制颜色值" class="headerlink" title="5.1 匹配16进制颜色值"></a>5.1 匹配16进制颜色值</h3><p>要求匹配：</p>
-<blockquote>
-<p>#ffbbad</p>
-<p>#Fc01DF</p>
-<p>#FFF</p>
-<p>#ffE</p>
-</blockquote>
-<p>分析：</p>
-<p>表示一个16进制字符，可以用字符组<code>[0-9a-fA-F]</code>, 其中字符可以出现3或6次，需要是用量词和分支结构。使用分支结构时，需要注意顺序。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/#([0-9a-fA-F]&#123;6&#125;|[0-9a-fA-F]&#123;3&#125;)/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"#ffbbad #Fc01DF #FFF #ffE"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["#ffbbad", "#Fc01DF", "#FFF", "#ffE"]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-2-匹配时间"><a href="#5-2-匹配时间" class="headerlink" title="5.2 匹配时间"></a>5.2 匹配时间</h3><p>以24小时制为例, 要求匹配：</p>
-<blockquote>
-<p>23:59</p>
-<p>02:07</p>
-</blockquote>
-<p>分析：</p>
-<p>共4位数字，第一位数字可以为<code>[0-2]</code>。当第1位为2时，第2位可以为<code>[0-3]</code>，其他情况时，第2位为<code>[0-9]</code>。第3位数字为<code>[0-5]</code>，第4位为<code>[0-9]</code>。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^([01][0-9]|[2][0-3]):[0-5][0-9]$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>如果也要求匹配7:9，也就是说时分前面的0可以省略。此时正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^(0?[0-9]|1[0-9]|[2][0-3]):(0?[0-9]|[1-5][0-9])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"7:9"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-3-匹配日期"><a href="#5-3-匹配日期" class="headerlink" title="5.3 匹配日期"></a>5.3 匹配日期</h3><p>比如yyyy-mm-dd格式为例。要求匹配：</p>
-<blockquote>
-<p>2017-06-10</p>
-</blockquote>
-<p>分析：</p>
-<p>年，四位数字即可，可用<code>[0-9]{4}</code>。<br>月，共12个月，分两种情况01、02、……、09和10、11、12，可用<code>(0[1-9]|1[0-2])</code>。<br>日，最大31天，可用<code>(0[1-9]|[12][0-9]|3[01])</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[0-9]&#123;4&#125;-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"2017-06-10"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-4-window操作系统文件路径"><a href="#5-4-window操作系统文件路径" class="headerlink" title="5.4 window操作系统文件路径"></a>5.4 window操作系统文件路径</h3><p>要求匹配：</p>
-<blockquote>
-<p>F:\study\javascript\regex\regular expression.pdf <br><br>F:\study\javascript\regex\ <br><br>F:\study\javascript <br><br>F:\</p>
-</blockquote>
-<p>分析：</p>
-<p>整体模式是: 盘符:\文件夹\文件夹\文件夹\</p>
-<p>其中匹配F:\，需要使用<code>[a-zA-Z]:\\</code>，其中盘符不区分大小写，注意<code>\</code>字符需要转义。</p>
-<p>文件名或者文件夹名，不能包含一些特殊字符，此时我们需要排除字符组<code>[^\\:*&lt;&gt;|&quot;?\r\n/]</code>来表示合法字符。另外不能为空名，至少有一个字符，也就是要使用量词<code>+</code>。因此匹配“文件夹\”，可用<code>[^\\:*&lt;&gt;|&quot;?\r\n/]+\\</code>。</p>
-<p>另外“文件夹\”，可以出现任意次。也就是<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+\\)*</code>。其中括号提供子表达式。</p>
-<p>路径的最后一部分可以是“文件夹”，没有<code>\</code>，因此需要添加<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+)?</code>。</p>
-<p>最后拼接成了一个看起来比较复杂的正则：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[a-zA-Z]:\\([^\\:*&lt;&gt;|"?\r\n/]+\\)*([^\\:*&lt;&gt;|"?\r\n/]+)?$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\regular expression.pdf"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，JS中字符串表示<code>\</code>时，也要转义。</p>
-<h3 id="5-5-匹配id"><a href="#5-5-匹配id" class="headerlink" title="5.5 匹配id"></a>5.5 匹配id</h3><p>要求从</p>
-<blockquote>
-<p>&lt;div id=”container” class=”main”&gt;&lt;/div&gt;</p>
-</blockquote>
-<p>提取出id=”container”。</p>
-<p>可能最开始想到的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container" class="main"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为<code>.</code>是通配符，本身就匹配双引号的，而量词<code>*</code>又是贪婪的，当遇到container后面双引号时，不会停下来，会继续匹配，直到遇到最后一个双引号为止。</p>
-<p>解决之道，可以使用惰性匹配：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*?"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<p>当然，这样也会有个问题。效率比较低，因为其匹配原理会涉及到“回溯”这个概念（这里也只是顺便提一下，第四章会详细说明）。可以优化如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id="[^"]*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="位置匹配攻略"><a href="#位置匹配攻略" class="headerlink" title="位置匹配攻略"></a>位置匹配攻略</h1><h2 id="1-如何匹配位置"><a href="#1-如何匹配位置" class="headerlink" title="1. 如何匹配位置"></a>1. 如何匹配位置</h2><p>在ES5中，共有6个锚字符：</p>
-<blockquote>
-<p>^ $ \b \B (?=p) (?!p)</p>
-</blockquote>
-<h3 id="1-1-和"><a href="#1-1-和" class="headerlink" title="1.1 ^和$"></a>1.1 ^和$</h3><p><code>^</code>（脱字符）匹配开头，在多行匹配中匹配行开头。</p>
-<p><code>$</code>（美元符号）匹配结尾，在多行匹配中匹配行结尾。</p>
-<p>比如我们把字符串的开头和结尾用”#”替换（位置可以替换成字符的！）：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/^|$/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#hello#"</span></span><br></pre></td></tr></table></figure>
-
-<p>多行匹配模式时，二者是行的概念，这个需要我们的注意：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"I\nlove\njavascript"</span>.replace(<span class="regexp">/^|$/gm</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#I#</span></span><br><span class="line"><span class="comment">#love#</span></span><br><span class="line"><span class="comment">#javascript#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-2-b和-B"><a href="#1-2-b和-B" class="headerlink" title="1.2 \b和\B"></a>1.2 \b和\B</h3><p><code>\b</code>是单词边界，具体就是<code>\w</code>和<code>\W</code>之间的位置，也包括<code>\w</code>和<code>^</code>之间的位置，也包括<code>\w</code>和<code>$</code>之间的位置。</p>
-<p>比如一个文件名是”[JS] Lesson_01.mp4”中的<code>\b</code>，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\b/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "[#JS#] #Lesson_01#.#mp4#"</span></span><br></pre></td></tr></table></figure>
-
-<p>为什么是这样呢？这需要仔细看看</p>
-<p>首先，我们知道，<code>\w</code>是字符组<code>[0-9a-zA-Z_]</code>的简写形式，即<code>\w</code>是字母数字或者下划线的中任何一个字符。而<code>\W</code>是排除字符组<code>[^0-9a-zA-Z_]</code>的简写形式，即<code>\W</code>是<code>\w</code>以外的任何一个字符。</p>
-<p>此时我们可以看看”[#JS#] #Lesson_01#.#mp4#”中的每一个”#”，是怎么来的。</p>
-<ul>
-<li>第一个”#”，两边是”[“与”J”，是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第二个”#”，两边是”S”与”]”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第三个”#”，两边是空格与”L”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第四个”#”，两边是”1”与”.”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第五个”#”，两边是”.”与”m”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第六个”#”，其对应的位置是结尾，但其前面的字符”4”是<code>\w</code>，即<code>\w</code>和<code>$</code>之间的位置。</li>
-</ul>
-<p>知道了<code>\b</code>的概念后，那么<code>\B</code>也就相对好理解了。</p>
-<p><code>\B</code>就是<code>\b</code>的反面的意思，非单词边界。例如在字符串中所有位置中，扣掉<code>\b</code>，剩下的都是<code>\B</code>的。</p>
-<p>具体说来就是<code>\w</code>与<code>\w</code>、<code>\W</code>与<code>\W</code>、<code>^</code>与<code>\W</code>，<code>\W</code>与<code>$</code>之间的位置。</p>
-<p>比如上面的例子，把所有<code>\B</code>替换成”#”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\B/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#[J#S]# L#e#s#s#o#n#_#0#1.m#p#4"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-3-p-和-p"><a href="#1-3-p-和-p" class="headerlink" title="1.3 (?=p)和(?!p)"></a>1.3 (?=p)和(?!p)</h3><p><code>(?=p)</code>，其中<code>p</code>是一个子模式，即<code>p</code>前面的位置。</p>
-<p>比如<code>(?=l)</code>，表示’l’字符前面的位置，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?=l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "he#l#lo"</span></span><br></pre></td></tr></table></figure>
-
-<p>而<code>(?!p)</code>就是<code>(?=p)</code>的反面意思，比如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?!l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#h#ell#o#"</span></span><br></pre></td></tr></table></figure>
-
-<p>二者的学名分别是positive lookahead和negative lookahead。</p>
-<p>ES6中，还支持positive lookbehind和negative lookbehind。</p>
-<p>但一般书上，没有很好强调这四者是个位置。</p>
-<p>比如(?=p)，一般都理解成：要求接下来的字符与p匹配，但不能包括p的那些字符。</p>
-<p>而在本人看来(?=p)就与^一样好理解，就是p前面的那个位置。</p>
-<h2 id="2-位置的特性"><a href="#2-位置的特性" class="headerlink" title="2. 位置的特性"></a>2. 位置的特性</h2><p>对于位置的理解，我们可以理解成空字符””。</p>
-<p>比如”hello”字符串等价于如下的形式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">"h"</span> + <span class="string">""</span> + <span class="string">"e"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">"o"</span> + <span class="string">""</span>;</span><br></pre></td></tr></table></figure>
-
-<p>也等价于：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">""</span> + <span class="string">"hello"</span></span><br></pre></td></tr></table></figure>
-
-<p>因此，把<code>/^hello$/</code>写成<code>/^^hello$$$/</code>，是没有任何问题的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/^^hello$$$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>甚至可以写成更复杂的:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/(?=he)^^he(?=\w)llo$\b\b$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说字符之间的位置，可以写成多个。</p>
-<p>把位置理解空字符，是对位置非常有效的理解方式。</p>
-<h2 id="3-相关案例"><a href="#3-相关案例" class="headerlink" title="3. 相关案例"></a>3. 相关案例</h2><h3 id="3-1-不匹配任何东西的正则"><a href="#3-1-不匹配任何东西的正则" class="headerlink" title="3.1 不匹配任何东西的正则"></a>3.1 不匹配任何东西的正则</h3><p>让你写个正则不匹配任何东西</p>
-<p>easy，<code>/.^/</code></p>
-<p>因为此正则要求只有一个字符，但该字符后面是开头。</p>
-<h3 id="3-2-数字的千位分隔符表示法"><a href="#3-2-数字的千位分隔符表示法" class="headerlink" title="3.2 数字的千位分隔符表示法"></a>3.2 数字的千位分隔符表示法</h3><p>比如把”12345678”，变成”12,345,678”。</p>
-<p>可见是需要把相应的位置替换成”,”。</p>
-<p>思路是什么呢？</p>
-<h4 id="3-2-1-弄出最后一个逗号"><a href="#3-2-1-弄出最后一个逗号" class="headerlink" title="3.2.1 弄出最后一个逗号"></a>3.2.1 弄出最后一个逗号</h4><p>使用<code>(?=\d{3}$)</code>就可以做到：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=\d&#123;3&#125;$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-2-弄出所有的逗号"><a href="#3-2-2-弄出所有的逗号" class="headerlink" title="3.2.2 弄出所有的逗号"></a>3.2.2 弄出所有的逗号</h4><p>因为逗号出现的位置，要求后面3个数字一组，也就是\d{3}至少出现一次。</p>
-<p>此时可以使用量词+：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-3-匹配其余案例"><a href="#3-2-3-匹配其余案例" class="headerlink" title="3.2.3 匹配其余案例"></a>3.2.3 匹配其余案例</h4><p>写完正则后，要多验证几个案例，此时我们会发现问题：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"123456789"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; ",123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为上面的正则，仅仅表示把从结尾向前数，一但是3的倍数，就把其前面的位置替换成逗号。因此才会出现这个问题。</p>
-<p>怎么解决呢？我们要求匹配的到这个位置不能是开头。</p>
-<p>我们知道匹配开头可以使用<code>^</code>，但要求这个位置不是开头怎么办？</p>
-<p>easy，<code>(?!^)</code>，你想到了吗？测试如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string1 = <span class="string">"12345678"</span>,</span><br><span class="line">string2 = <span class="string">"123456789"</span>;</span><br><span class="line">reg = <span class="regexp">/(?!^)(?=(\d&#123;3&#125;)+$)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string1.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br><span class="line"></span><br><span class="line">result = string2.replace(reg, <span class="string">','</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-4-支持其他形式"><a href="#3-2-4-支持其他形式" class="headerlink" title="3.2.4 支持其他形式"></a>3.2.4 支持其他形式</h4><p>如果要把”12345678 123456789”替换成”12,345,678 123,456,789”。</p>
-<p>此时我们需要修改正则，把里面的开头<code>^</code>和结尾<code>$</code>，替换成<code>\b</code>：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string = <span class="string">"12345678 123456789"</span>,</span><br><span class="line">reg = <span class="regexp">/(?!\b)(?=(\d&#123;3&#125;)+\b)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678 123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>其中<code>(?!\b)</code>怎么理解呢？</p>
-<p>要求当前是一个位置，但不是<code>\b</code>前面的位置，其实<code>(?!\b)</code>说的就是<code>\B</code>。</p>
-<p>因此最终正则变成了：<code>/\B(?=(\d{3})+\b)/g</code>。</p>
-<h3 id="3-3-验证密码问题"><a href="#3-3-验证密码问题" class="headerlink" title="3.3 验证密码问题"></a>3.3 验证密码问题</h3><p>密码长度6-12位，由数字、小写字符和大写字母组成，但必须至少包括2种字符。</p>
-<p>此题，如果写成多个正则来判断，比较容易。但要写成一个正则就比较困难。</p>
-<p>那么，我们就来挑战一下。看看我们对位置的理解是否深刻。</p>
-<h4 id="3-3-1-简化"><a href="#3-3-1-简化" class="headerlink" title="3.3.1 简化"></a>3.3.1 简化</h4><p>不考虑“但必须至少包括2种字符”这一条件。我们可以容易写出：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-2-判断是否包含有某一种字符"><a href="#3-3-2-判断是否包含有某一种字符" class="headerlink" title="3.3.2 判断是否包含有某一种字符"></a>3.3.2 判断是否包含有某一种字符</h4><p>假设，要求的必须包含数字，怎么办？此时我们可以使用(?=.*[0-9])来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-3-同时包含具体两种字符"><a href="#3-3-3-同时包含具体两种字符" class="headerlink" title="3.3.3 同时包含具体两种字符"></a>3.3.3 同时包含具体两种字符</h4><p>比如同时包含数字和小写字母，可以用<code>(?=.*[0-9])(?=.*[a-z])</code>来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])(?=.*[a-z])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-4-解答"><a href="#3-3-4-解答" class="headerlink" title="3.3.4 解答"></a>3.3.4 解答</h4><p>我们可以把原题变成下列几种情况之一：</p>
-<ul>
-<li>同时包含数字和小写字母</li>
-<li>同时包含数字和大写字母</li>
-<li>同时包含小写字母和大写字母</li>
-<li>同时包含数字、小写字母和大写字母</li>
-</ul>
-<p>以上的4种情况是或的关系（实际上，可以不用第4条）。</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/((?=.*[0-9])(?=.*[a-z])|(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[A-Z]))^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-5-解惑"><a href="#3-3-5-解惑" class="headerlink" title="3.3.5 解惑"></a>3.3.5 解惑</h4><p>上面的正则看起来比较复杂，只要理解了第二步，其余就全部理解了。</p>
-<p><code>/(?=.*[0-9])^[0-9A-Za-z]{6,12}$/</code></p>
-<p>对于这个正则，我们只需要弄明白<code>(?=.*[0-9])^</code>即可。</p>
-<p>分开来看就是<code>(?=.*[0-9])</code>和<code>^</code>。</p>
-<p>表示开头前面还有个位置（当然也是开头，即同一个位置，想想之前的空字符类比）。</p>
-<p><code>(?=.*[0-9])</code>表示该位置后面的字符匹配<code>.*[0-9]</code>，即，有任何多个任意字符，后面再跟个数字。</p>
-<p>翻译成大白话，就是接下来的字符，必须包含个数字。</p>
-<h4 id="3-3-6-另外一种解法"><a href="#3-3-6-另外一种解法" class="headerlink" title="3.3.6 另外一种解法"></a>3.3.6 另外一种解法</h4><p>“至少包含两种字符”的意思就是说，不能全部都是数字，也不能全部都是小写字母，也不能全部都是大写字母。</p>
-<p>那么要求“不能全部都是数字”，怎么做呢？<code>(?!p)</code>出马！</p>
-<p>对应的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<p>三种“都不能”呢？</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)(?!^[a-z]&#123;6,12&#125;$)(?!^[A-Z]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Scala//" class="article-tag-list-link color1">Scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/bigdata//" class="article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-CM安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/CM%E5%AE%89%E8%A3%85.html">CM安装</a>
-    </h1>
-  
-
-        
-        <a href="/CM%E5%AE%89%E8%A3%85.html" class="archive-article-date">
-  	<time datetime="2019-09-28T07:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>OS: Ubuntu 14.04 LTS</li>
-<li>CM: 15.14.1</li>
-<li>CDH: 15.14.1</li>
-</ul>
-<h2 id="角色分配"><a href="#角色分配" class="headerlink" title="角色分配"></a>角色分配</h2><table>
-<thead>
-<tr>
-<th>IP</th>
-<th>主机名</th>
-<th>角色</th>
-<th>Mysql</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>192.168.202.207</td>
-<td>kt1</td>
-<td>master</td>
-<td>[√]</td>
-</tr>
-<tr>
-<td>192.168.202.208</td>
-<td>kt2</td>
-<td>slave1</td>
-<td></td>
-</tr>
-<tr>
-<td>192.168.202.209</td>
-<td>kt3</td>
-<td>slave2</td>
-<td></td>
-</tr>
-</tbody></table>
-<h2 id="统一主机名"><a href="#统一主机名" class="headerlink" title="统一主机名"></a>统一主机名</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo hostname kt1 <span class="comment"># 临时性修改</span></span><br><span class="line">sudo vim /etc/hostname <span class="comment"># 永久性修改，需要重启机器</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.202.207 kt1</span><br><span class="line">192.168.202.208 kt2</span><br><span class="line">192.168.202.209 kt2</span><br></pre></td></tr></table></figure>
-
-<h2 id="SSH-免密"><a href="#SSH-免密" class="headerlink" title="SSH 免密"></a>SSH 免密</h2><ul>
-<li>每个节点生成公钥私钥</li>
-<li>每个节点免密登陆自身</li>
-<li>Master 到 Agent 的免密登陆</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo ssh-keygen -t rsa <span class="comment"># 生成公钥私钥</span></span><br><span class="line">sudo cat /root/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys <span class="comment"># 免密登陆自身</span></span><br><span class="line">sudo chmod 600 /root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;2..3&#125;; <span class="keyword">do</span> scp /root/.ssh/authorized_keys root@kt<span class="variable">$i</span>:/root/.ssh/authorized_keys; <span class="keyword">done</span> <span class="comment"># Master 上执行，实现 Master 到 Agent 的免密登陆</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ufw <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="NTP-时间同步"><a href="#NTP-时间同步" class="headerlink" title="NTP 时间同步"></a>NTP 时间同步</h2><p>Agent 与 Master 时间同步</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ntp</span><br><span class="line">sudo ntpdate -d kt1</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h2><ul>
-<li>不支持 OpenJDK，只支持 Ocacle JDK</li>
-<li>JDK 版本所有节点必须保持一致</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz</span><br><span class="line">mkdir -pv /opt/jdk8</span><br><span class="line">tar xf jdk-8u171-linux-x64.tar.gz -C /opt/jdk8</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile.d/java.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/jdk8</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-MySQL"><a href="#安装-MySQL" class="headerlink" title="安装 MySQL"></a>安装 MySQL</h2><ul>
-<li>使用 UTF8 编码</li>
-<li>对于 MySQL 5.6 和 5.7，需安装 mysql-shared-compat 包</li>
-<li>确保 GTID-based replication 是关闭的</li>
-<li>安装 JBDC driver</li>
-<li>其他请详细参考 <a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_mysql.html" target="_blank" rel="noopener">如何使用MySQL作为外部数据库</a></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-server-5.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">'%character%'</span>;  <span class="comment"># 查看字符集</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">default-character-set=utf8</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line">default-character-set=utf8</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">注释 <span class="built_in">bind</span>-address，不然默认端口监听本地</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-MySQL-JDBC-Driver"><a href="#安装-MySQL-JDBC-Driver" class="headerlink" title="安装 MySQL JDBC Driver"></a>安装 MySQL JDBC Driver</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">tar xf mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">cp mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-CM-Master、Agent"><a href="#安装-CM-Master、Agent" class="headerlink" title="安装 CM Master、Agent"></a>安装 CM Master、Agent</h2><ul>
-<li>Master 和 Agent 都需要安装 cloudera-manager-daemons</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>依赖包升级（不是必须）</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -f</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安装配置 Master</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>初始化 CM 在 MySQL 中需要用到的表</li>
-</ul>
-<p><a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_installing_configuring_dbs.html#concept_mff_xjm_hn" target="_blank" rel="noopener">关于 scm_prepare_database.sh 脚本的使用说明</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/cmf/schema/scm_prepare_database.sh mysql -h kt1 -P3306 -uroot -pdev --scm-host kt1 scm scm scm</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安装配置 Agent</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/cloudera-scm-agent/config.ini</span><br><span class="line"></span><br><span class="line">server_host=kt1</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置给-CM-使用的-JDK（灰常重要）"><a href="#配置给-CM-使用的-JDK（灰常重要）" class="headerlink" title="配置给 CM 使用的 JDK（灰常重要）"></a>配置给 CM 使用的 JDK（灰常重要）</h2><ul>
-<li>Master 节点</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/default/cloudera-scm-server</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=<span class="string">"/opt/jdk8"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Parcel-本地源安装"><a href="#Parcel-本地源安装" class="headerlink" title="Parcel 本地源安装"></a>Parcel 本地源安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel</span><br><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1</span><br><span class="line">wget http://archive.cloudera.com/cdh5/parcels/5.14.2/manifest.json</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Master</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line">cp CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步要重命名 sha1 改为 sha</span></span><br><span class="line">mv CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1 ./CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha</span><br><span class="line"></span><br><span class="line">cp manifest.json ./</span><br><span class="line"></span><br><span class="line">chown -R cloudera-scm:cloudera-scm /opt/cloudera</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Agent</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcels</span><br><span class="line">chown cloudera-scm:cloudera-scm -R /opt/cloudera</span><br></pre></td></tr></table></figure>
-
-<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
-<li>解决 CM 报告您的主机由于交换而运行不良</li>
-<li>参数控制系统是否积极使用 swap，数值越大越积极，cloudera 推荐swappiness 最大为10。 如果系统未配置 swap 分区可忽略</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 10 &gt; /proc/sys/vm/swappiness</span><br></pre></td></tr></table></figure>
-
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service cloudera-scm-server start</span><br><span class="line">service cloudera-scm-agent start</span><br></pre></td></tr></table></figure>
-
-<h2 id="访问-CM-UI"><a href="#访问-CM-UI" class="headerlink" title="访问 CM UI"></a>访问 CM UI</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://kt1:7180</span><br><span class="line">admin/admin</span><br></pre></td></tr></table></figure>
-
-<h2 id="主机指定-JDK-路径（通过CM-UI设定，灰常重要）"><a href="#主机指定-JDK-路径（通过CM-UI设定，灰常重要）" class="headerlink" title="主机指定 JDK 路径（通过CM UI设定，灰常重要）"></a>主机指定 JDK 路径（通过CM UI设定，灰常重要）</h2><ul>
-<li>根据向导选完主机后，直接返回主页，然后给主机指定JDK：Hosts –&gt; All Hosts–&gt; Configuration –&gt; Java Home Directory</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">cm</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/CM%E5%AE%89%E8%A3%85.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -1891,8 +460,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
