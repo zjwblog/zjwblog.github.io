@@ -6,16 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.zjwblog.cn">
-  <title>Tag: Kerberos | 筑梦空间</title>
+  <title>自定义Filter实现日志过滤功能 | 筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="张建委的博客空间">
-<meta name="keywords" content="blog zjwblog chdaring">
-<meta property="og:type" content="website">
-<meta property="og:title" content="筑梦空间">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;tags&#x2F;Kerberos&#x2F;index.html">
+  <meta name="description" content="由于项目需要，当前项目产生的日志太多，防止日志收集工具Logstash处理不过来，于是需要将特定类答应的日志忽略，保证整体日志文件打印的日志量在可控范围内，于是需要自定义一个Log4j的Filter，用于忽略某一个类中打印的日志信息。 定义 Filter 类定义LoggerNameFilter，需要继承AbstractFilter，代码如下： 123456789101112131415161718">
+<meta name="keywords" content="Java,Log4j,Filter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义Filter实现日志过滤功能">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;Log4jFilter.html">
 <meta property="og:site_name" content="筑梦空间">
-<meta property="og:description" content="张建委的博客空间">
+<meta property="og:description" content="由于项目需要，当前项目产生的日志太多，防止日志收集工具Logstash处理不过来，于是需要将特定类答应的日志忽略，保证整体日志文件打印的日志量在可控范围内，于是需要自定义一个Log4j的Filter，用于忽略某一个类中打印的日志信息。 定义 Filter 类定义LoggerNameFilter，需要继承AbstractFilter，代码如下： 123456789101112131415161718">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-02T11:39:51.000Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="筑梦空间" type="application/atom+xml">
@@ -154,64 +155,209 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Log4jFilter" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
+    <h1 class="article-title" itemprop="name">
+      自定义Filter实现日志过滤功能
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/Log4jFilter.html" class="archive-article-date">
+  	<time datetime="2020-01-01T20:12:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于项目需要，当前项目产生的日志太多，防止日志收集工具Logstash处理不过来，于是需要将特定类答应的日志忽略，保证整体日志文件打印的日志量在可控范围内，于是需要自定义一个Log4j的Filter，用于忽略某一个类中打印的日志信息。</p>
+<h3 id="定义-Filter-类"><a href="#定义-Filter-类" class="headerlink" title="定义 Filter 类"></a>定义 Filter 类</h3><p>定义<code>LoggerNameFilter</code>，需要继承<code>AbstractFilter</code>，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zjw.aop.logger.filter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.Filter;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.LogEvent;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.config.Node;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.config.plugins.Plugin;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.config.plugins.PluginAttribute;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.config.plugins.PluginFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.core.filter.AbstractFilter;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Plugin</span>(name = <span class="string">"LoggerNameFilter"</span>, category = Node.CATEGORY, elementType = Filter.ELEMENT_TYPE, printObject = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggerNameFilter</span> <span class="keyword">extends</span> <span class="title">AbstractFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String loggerName;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">LoggerNameFilter</span><span class="params">(String loggerName, Result onMatch, Result onMismatch)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(onMatch, onMismatch);</span><br><span class="line">    <span class="keyword">this</span>.loggerName = loggerName;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Result <span class="title">filter</span><span class="params">(LogEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// System.out.println("4: " + event.getLoggerName().indexOf(className));</span></span><br><span class="line">    <span class="keyword">return</span> event.getLoggerName().indexOf(loggerName) &gt; <span class="number">0</span> ? onMatch : onMismatch;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.loggerName;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@PluginFactory</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LoggerNameFilter <span class="title">createFilter</span><span class="params">(@PluginAttribute(<span class="string">"loggerName"</span>)</span> String loggerName,</span></span><br><span class="line"><span class="function">    @<span class="title">PluginAttribute</span><span class="params">(<span class="string">"onMatch"</span>)</span> <span class="keyword">final</span> Result match,</span></span><br><span class="line"><span class="function">    @<span class="title">PluginAttribute</span><span class="params">(<span class="string">"onMismatch"</span>)</span> <span class="keyword">final</span> Result mismatch) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> LoggerNameFilter(loggerName, match, mismatch);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><p>在Appender中使用如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Configuration</span> <span class="attr">status</span>=<span class="string">"debug"</span> <span class="attr">dev</span>=<span class="string">"err"</span> <span class="attr">packages</span>=<span class="string">"org.apache.logging.log4j.core"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Appenders</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 打印到控制台 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Console</span> <span class="attr">name</span>=<span class="string">"Console"</span> <span class="attr">target</span>=<span class="string">"SYSTEM_OUT"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">MyFilter</span> <span class="attr">loggerName</span>=<span class="string">"UserController"</span> <span class="attr">onMatch</span>=<span class="string">"DENY"</span> <span class="attr">onMismatch</span>=<span class="string">"NEUTRAL"</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PatternLayout</span> <span class="attr">pattern</span>=<span class="string">"%d&#123;DEFAULT&#125; %tid [%tn] %p %c&#123;1&#125;: %m%n"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Console</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Appenders</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Loggers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Root</span> <span class="attr">level</span>=<span class="string">"info"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"Console"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Root</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">Loggers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在<code>Console</code>中<code>Appender</code>中，对<code>UserController</code>类中打印的日志进行忽略，当然也可以只打印<code>UserController</code>的日志，将<code>noMatch</code>和<code>onMissmatch</code>反向配置即可</p>
+</blockquote>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你的赞赏<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/alipy.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Log4j</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Filter</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java/Log4j//" class="article-tag-list-link color1">Log4j</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.zjwblog.cn/Log4jFilter.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/AkkaCluster.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Akka Cluster 使用教程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -234,9 +380,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
