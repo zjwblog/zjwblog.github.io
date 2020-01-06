@@ -6,13 +6,13 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.zjwblog.cn">
-  <title>Tag: bigdata | 筑梦空间</title>
+  <title>筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="张建委的博客空间">
 <meta name="keywords" content="blog zjwblog chdaring">
 <meta property="og:type" content="website">
 <meta property="og:title" content="筑梦空间">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;tags&#x2F;bigdata&#x2F;index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;page&#x2F;2&#x2F;index.html">
 <meta property="og:site_name" content="筑梦空间">
 <meta property="og:description" content="张建委的博客空间">
 <meta property="og:locale" content="zh-CN">
@@ -156,62 +156,235 @@
           <div id="js-content" class="content-ll">
             
   
-  
+    <article id="post-CM安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
+      <a class="article-title" href="/CM%E5%AE%89%E8%A3%85.html">CM安装</a>
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/CM%E5%AE%89%E8%A3%85.html" class="archive-article-date">
+  	<time datetime="2019-09-28T07:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>OS: Ubuntu 14.04 LTS</li>
+<li>CM: 15.14.1</li>
+<li>CDH: 15.14.1</li>
+</ul>
+<h2 id="角色分配"><a href="#角色分配" class="headerlink" title="角色分配"></a>角色分配</h2><table>
+<thead>
+<tr>
+<th>IP</th>
+<th>主机名</th>
+<th>角色</th>
+<th>Mysql</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>192.168.202.207</td>
+<td>kt1</td>
+<td>master</td>
+<td>[√]</td>
+</tr>
+<tr>
+<td>192.168.202.208</td>
+<td>kt2</td>
+<td>slave1</td>
+<td></td>
+</tr>
+<tr>
+<td>192.168.202.209</td>
+<td>kt3</td>
+<td>slave2</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="统一主机名"><a href="#统一主机名" class="headerlink" title="统一主机名"></a>统一主机名</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo hostname kt1 <span class="comment"># 临时性修改</span></span><br><span class="line">sudo vim /etc/hostname <span class="comment"># 永久性修改，需要重启机器</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.202.207 kt1</span><br><span class="line">192.168.202.208 kt2</span><br><span class="line">192.168.202.209 kt2</span><br></pre></td></tr></table></figure>
+
+<h2 id="SSH-免密"><a href="#SSH-免密" class="headerlink" title="SSH 免密"></a>SSH 免密</h2><ul>
+<li>每个节点生成公钥私钥</li>
+<li>每个节点免密登陆自身</li>
+<li>Master 到 Agent 的免密登陆</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo ssh-keygen -t rsa <span class="comment"># 生成公钥私钥</span></span><br><span class="line">sudo cat /root/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys <span class="comment"># 免密登陆自身</span></span><br><span class="line">sudo chmod 600 /root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;2..3&#125;; <span class="keyword">do</span> scp /root/.ssh/authorized_keys root@kt<span class="variable">$i</span>:/root/.ssh/authorized_keys; <span class="keyword">done</span> <span class="comment"># Master 上执行，实现 Master 到 Agent 的免密登陆</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ufw <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="NTP-时间同步"><a href="#NTP-时间同步" class="headerlink" title="NTP 时间同步"></a>NTP 时间同步</h2><p>Agent 与 Master 时间同步</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ntp</span><br><span class="line">sudo ntpdate -d kt1</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h2><ul>
+<li>不支持 OpenJDK，只支持 Ocacle JDK</li>
+<li>JDK 版本所有节点必须保持一致</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz</span><br><span class="line">mkdir -pv /opt/jdk8</span><br><span class="line">tar xf jdk-8u171-linux-x64.tar.gz -C /opt/jdk8</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile.d/java.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/jdk8</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-MySQL"><a href="#安装-MySQL" class="headerlink" title="安装 MySQL"></a>安装 MySQL</h2><ul>
+<li>使用 UTF8 编码</li>
+<li>对于 MySQL 5.6 和 5.7，需安装 mysql-shared-compat 包</li>
+<li>确保 GTID-based replication 是关闭的</li>
+<li>安装 JBDC driver</li>
+<li>其他请详细参考 <a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_mysql.html" target="_blank" rel="noopener">如何使用MySQL作为外部数据库</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-server-5.5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">'%character%'</span>;  <span class="comment"># 查看字符集</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">default-character-set=utf8</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line">default-character-set=utf8</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">注释 <span class="built_in">bind</span>-address，不然默认端口监听本地</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-MySQL-JDBC-Driver"><a href="#安装-MySQL-JDBC-Driver" class="headerlink" title="安装 MySQL JDBC Driver"></a>安装 MySQL JDBC Driver</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">tar xf mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">cp mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-CM-Master、Agent"><a href="#安装-CM-Master、Agent" class="headerlink" title="安装 CM Master、Agent"></a>安装 CM Master、Agent</h2><ul>
+<li>Master 和 Agent 都需要安装 cloudera-manager-daemons</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>依赖包升级（不是必须）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -f</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装配置 Master</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>初始化 CM 在 MySQL 中需要用到的表</li>
+</ul>
+<p><a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_installing_configuring_dbs.html#concept_mff_xjm_hn" target="_blank" rel="noopener">关于 scm_prepare_database.sh 脚本的使用说明</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/cmf/schema/scm_prepare_database.sh mysql -h kt1 -P3306 -uroot -pdev --scm-host kt1 scm scm scm</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装配置 Agent</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/cloudera-scm-agent/config.ini</span><br><span class="line"></span><br><span class="line">server_host=kt1</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置给-CM-使用的-JDK（灰常重要）"><a href="#配置给-CM-使用的-JDK（灰常重要）" class="headerlink" title="配置给 CM 使用的 JDK（灰常重要）"></a>配置给 CM 使用的 JDK（灰常重要）</h2><ul>
+<li>Master 节点</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/default/cloudera-scm-server</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=<span class="string">"/opt/jdk8"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Parcel-本地源安装"><a href="#Parcel-本地源安装" class="headerlink" title="Parcel 本地源安装"></a>Parcel 本地源安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel</span><br><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1</span><br><span class="line">wget http://archive.cloudera.com/cdh5/parcels/5.14.2/manifest.json</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Master</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line">cp CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步要重命名 sha1 改为 sha</span></span><br><span class="line">mv CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1 ./CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha</span><br><span class="line"></span><br><span class="line">cp manifest.json ./</span><br><span class="line"></span><br><span class="line">chown -R cloudera-scm:cloudera-scm /opt/cloudera</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Agent</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcels</span><br><span class="line">chown cloudera-scm:cloudera-scm -R /opt/cloudera</span><br></pre></td></tr></table></figure>
+
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
+<li>解决 CM 报告您的主机由于交换而运行不良</li>
+<li>参数控制系统是否积极使用 swap，数值越大越积极，cloudera 推荐swappiness 最大为10。 如果系统未配置 swap 分区可忽略</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 10 &gt; /proc/sys/vm/swappiness</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service cloudera-scm-server start</span><br><span class="line">service cloudera-scm-agent start</span><br></pre></td></tr></table></figure>
+
+<h2 id="访问-CM-UI"><a href="#访问-CM-UI" class="headerlink" title="访问 CM UI"></a>访问 CM UI</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://kt1:7180</span><br><span class="line">admin/admin</span><br></pre></td></tr></table></figure>
+
+<h2 id="主机指定-JDK-路径（通过CM-UI设定，灰常重要）"><a href="#主机指定-JDK-路径（通过CM-UI设定，灰常重要）" class="headerlink" title="主机指定 JDK 路径（通过CM UI设定，灰常重要）"></a>主机指定 JDK 路径（通过CM UI设定，灰常重要）</h2><ul>
+<li>根据向导选完主机后，直接返回主页，然后给主机指定JDK：Hosts –&gt; All Hosts–&gt; Configuration –&gt; Java Home Directory</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">scala</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">cm</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
+        		</li>
+      		
+		</ul>
+	</div>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/CM%E5%AE%89%E8%A3%85.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
-  
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
+  
 
 
           </div>
@@ -233,10 +406,10 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

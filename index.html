@@ -262,6 +262,213 @@
 
 
   
+    <article id="post-SpringBootPointcut" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/SpringBootPointcut.html">SpringBoot切点函数表达式</a>
+    </h1>
+  
+
+        
+        <a href="/SpringBootPointcut.html" class="archive-article-date">
+  	<time datetime="2020-01-01T20:12:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-execution-表达式"><a href="#1-execution-表达式" class="headerlink" title="1. execution 表达式"></a>1. execution 表达式</h3><p>表示满足某一匹配模式的所有目标类方法连接点。如<code>execution(* getUser(..))</code>表示所有目标类中的<code>getUser()</code>方法。<br><code>execution(&lt;修饰符模式&gt;? &lt;返回类型模式&gt; &lt;方法名模式&gt;(&lt;参数模式&gt;) &lt;异常模式&gt;?)</code>, 除了返回类型模式、方法名模式和参数模式外，其它项都是可选的。</p>
+<h4 id="1-1-通过方法签名定义切点"><a href="#1-1-通过方法签名定义切点" class="headerlink" title="1.1 通过方法签名定义切点"></a>1.1 通过方法签名定义切点</h4><ul>
+<li><p><code>execution(* *(..))</code>: 表示匹配所有方法, 第一个<code>*</code>代表返回类型, 第二个<code>*</code>表示所有方法;</p>
+</li>
+<li><p><code>execution(* *Service(..))</code>: 匹配目标类所有以<code>Service</code>为后缀的方法, 第一个<code>*</code>代表返回类型, 而<code>*Service</code>代表任意以<code>Service</code>为后缀的方法;</p>
+</li>
+</ul>
+<h4 id="1-2-通过类定义切点"><a href="#1-2-通过类定义切点" class="headerlink" title="1.2 通过类定义切点"></a>1.2 通过类定义切点</h4><ul>
+<li><p><code>execution(public * com.zjw.service.UserService.*(..))</code>: 表示匹配<code>com.zjw.service.UserService</code>接口或者类中所有的公有方法;</p>
+</li>
+<li><p><code>execution(* com.zjw.service.UserService+.*(..))</code>: 匹配<code>com.zjw.service.UserService</code>接口及其所有实现类的方法;</p>
+</li>
+</ul>
+<h4 id="1-3-通过类包定义切点"><a href="#1-3-通过类包定义切点" class="headerlink" title="1.3 通过类包定义切点"></a>1.3 通过类包定义切点</h4><p>在类名模式串中，<code>.*</code>表示包下的所有类，而<code>..*</code>表示包、子孙包下的所有类。</p>
+<ul>
+<li><p><code>execution(* com.zjw.service.*(..))</code>: 匹配<code>com.zjw.service</code>包下所有类的所有方法;</p>
+</li>
+<li><p><code>execution(* com.zjw.service..*.*(..))</code>: 表示匹配<code>com.zjw.service</code>包、子孙包下所有类的所有方法;</p>
+</li>
+<li><p><code>execution(* com.zjw.service..*(..))</code>: 匹配<code>com.zjw.service</code>包、子孙包下所有类的所有方法;</p>
+</li>
+<li><p><code>execution(* com..*.*Service.find*(..))</code>: 匹配包名前缀为<code>com</code>的任何包下类名后缀为<code>Service</code>的方法，方法名必须以<code>find</code>为前缀;</p>
+</li>
+</ul>
+<h4 id="1-4-通过方法入参定义切点"><a href="#1-4-通过方法入参定义切点" class="headerlink" title="1.4 通过方法入参定义切点"></a>1.4 通过方法入参定义切点</h4><p>切点表达式中方法入参部分比较复杂，可以使用<code>*</code>和<code>..</code>通配符，其中<code>*</code>表示任意类型的参数，而<code>..</code>表示任意类型参数且参数个数不限。</p>
+<ul>
+<li><p><code>execution(* test(String,int)))</code>: 匹配<code>test(String,int)</code>方法，且<code>test()</code>方法的第一个入参是<code>String</code>，第二个入参是<code>int</code>，如果方法中的入参类型是java.lang包下的类，可以直接使用类名，否则必须使用全限定类名，如joke(java.util.List,int);</p>
+</li>
+<li><p><code>execution(* test(String,*)))</code>: 匹配目标类中的<code>test()</code>方法，该方法第一个入参为<code>String</code>，第二个入参可以是任意类型;</p>
+</li>
+<li><p><code>execution(* test(String,..)))</code>: 匹配目标类中的<code>test()</code>方法，该方法第一个入参为<code>String</code>，后面可以有任意个入参且入参类型不限;</p>
+</li>
+<li><p><code>execution(* test(Object+)))</code>: 匹配目标类中的<code>test()</code>方法，方法拥有一个入参，且入参是<code>Object</code>类型或该类的子类;</p>
+</li>
+</ul>
+<h3 id="2-annotation-表达式"><a href="#2-annotation-表达式" class="headerlink" title="2. @annotation 表达式"></a>2. @annotation 表达式</h3><p>方法注解类名 | 表示标注了特定注解的目标方法连接点。如<code>@annotation(com.zjw.aop.annotation.LogTest)</code>表示任何标注了<code>@LogTest</code>注解的目标类方法。</p>
+<h3 id="3-args-表达式"><a href="#3-args-表达式" class="headerlink" title="3. args 表达式"></a>3. args 表达式</h3><p>通过判别目标类方法运行时入参对象的类型定义指定连接点。如<code>args(com.zjw.aop.entity.User)</code>表示所有有且仅有一个按类型匹配于<code>User</code>的入参的方法。</p>
+<h3 id="4-args-表达式"><a href="#4-args-表达式" class="headerlink" title="4. @args 表达式"></a>4. @args 表达式</h3><p>类型注解类名 | 通过判别目标方法的运行时入参对象的类是否标注特定注解来指定连接点。如<code>@args(com.zjw.aop.Monitorable)</code>表示任何这样的一个目标方法：它有一个入参且入参对象的类标注<code>@Monitorable</code>注解。</p>
+<h3 id="5-within-表达式"><a href="#5-within-表达式" class="headerlink" title="5. within 表达式"></a>5. within 表达式</h3><p>表示特定域下的所有连接点。如<code>within(com.zjw.aop.service.*)</code>表示<code>com.zjw.aop.service</code>包中的所有连接点，也即包中所有类的所有方法，而<code>within(com.zjw.aop.service.*Service)</code>表示在<code>com.zjw.aop.service</code>包中，所有以<code>Service</code>结尾的类的所有连接点。</p>
+<h3 id="6-within-表达式"><a href="#6-within-表达式" class="headerlink" title="6. @within 表达式"></a>6. @within 表达式</h3><p>假如目标类按类型匹配于某个类A，且类A标注了特定注解，则目标类的所有连接点匹配这个切点。如<code>@within(com.zjw.aop.Monitorable)</code>定义的切点，假如<code>UserService</code>类标注了<code>@Monitorable</code>注解，则<code>UserService</code>以及<code>UserService</code>实现类<code>UserServiceImpl</code>类的所有连接点都匹配。</p>
+<h3 id="7-target-表达式"><a href="#7-target-表达式" class="headerlink" title="7. target 表达式"></a>7. target 表达式</h3><p>假如目标类按类型匹配于指定类，则目标类的所有连接点匹配这个切点。如通过<code>target(com.zjw.Service.UserService)</code>定义的切点，<code>UserService</code>、以及<code>UserService</code>实现类<code>UserServiceImpl</code>中所有连接点都匹配该切点。</p>
+<h3 id="8-target-表达式"><a href="#8-target-表达式" class="headerlink" title="8. @target 表达式"></a>8. @target 表达式</h3><p>类型注解类名 | 目标类标注了特定注解，则目标类所有连接点匹配该切点。如<code>@target(com.zjw.aop.Monitorable)</code>，假如<code>UserServiceImpl</code>标注了<code>@Monitorable</code>，则<code>UserServiceImpl</code>所有连接点匹配切点。</p>
+<h3 id="9-this-表达式"><a href="#9-this-表达式" class="headerlink" title="9. this 表达式"></a>9. this 表达式</h3><p>代理类按类型匹配于指定类，则被代理的目标类所有连接点匹配切点。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>函数</th>
+<th>入参</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>方法切点函数</td>
+<td><code>execution()</code></td>
+<td>方法匹配模式串</td>
+<td>表示满足某一匹配模式的所有目标类方法连接点。如<code>execution(* getUser(..))</code>表示所有目标类中的<code>getUser()</code>方法。</td>
+</tr>
+<tr>
+<td>注解切点函数</td>
+<td><code>@annotation()</code></td>
+<td>方法注解类名</td>
+<td>表示标注了特定注解的目标方法连接点。如<code>@annotation(com.zjw.aop.annotation.LogTest)</code>表示任何标注了<code>@LogTest</code>注解的目标类方法。</td>
+</tr>
+<tr>
+<td>方法入参切点函数</td>
+<td><code>args()</code></td>
+<td>类名</td>
+<td>通过判别目标类方法运行时入参对象的类型定义指定连接点。如<code>args(com.zjw.aop.entity.User)</code>表示所有有且仅有一个按类型匹配于<code>User</code>的入参的方法。</td>
+</tr>
+<tr>
+<td>入参对象类标记切点函数</td>
+<td><code>@args()</code></td>
+<td>类型注解类名</td>
+<td>通过判别目标方法的运行时入参对象的类是否标注特定注解来指定连接点。如<code>@args(com.zjw.aop.Monitorable)</code>表示任何这样的一个目标方法：它有一个入参且入参对象的类标注<code>@Monitorable</code>注解。</td>
+</tr>
+<tr>
+<td>目标类切点函数</td>
+<td><code>within()</code></td>
+<td>类名匹配串</td>
+<td>表示特定域下的所有连接点。如<code>within(com.zjw.aop.service.*)</code>表示<code>com.zjw.aop.service</code>包中的所有连接点，也即包中所有类的所有方法，而<code>within(com.zjw.aop.service.*Service)</code>表示在<code>com.zjw.aop.service</code>包中，所有以<code>Service</code>结尾的类的所有连接点。</td>
+</tr>
+<tr>
+<td>类及子类切点函数</td>
+<td><code>target()</code></td>
+<td>类名</td>
+<td>假如目标类按类型匹配于指定类，则目标类的所有连接点匹配这个切点。如通过<code>target(com.zjw.Service.UserService)</code>定义的切点，<code>UserService</code>、以及<code>UserService</code>实现类<code>UserServiceImpl</code>中所有连接点都匹配该切点。</td>
+</tr>
+<tr>
+<td>父类标准子类切点函数</td>
+<td><code>@within()</code></td>
+<td>类型注解类名</td>
+<td>假如目标类按类型匹配于某个类A，且类A标注了特定注解，则目标类的所有连接点匹配这个切点。如<code>@within(com.zjw.aop.Monitorable)</code>定义的切点，假如<code>UserService</code>类标注了<code>@Monitorable</code>注解，则<code>UserService</code>以及<code>UserService</code>实现类<code>UserServiceImpl</code>类的所有连接点都匹配。</td>
+</tr>
+<tr>
+<td>类注解切点函数</td>
+<td><code>@target()</code></td>
+<td>类型注解类名</td>
+<td>目标类标注了特定注解，则目标类所有连接点匹配该切点。如<code>@target(com.zjw.aop.Monitorable)</code>，假如<code>UserServiceImpl</code>标注了<code>@Monitorable</code>，则<code>UserServiceImpl</code>所有连接点匹配切点。</td>
+</tr>
+<tr>
+<td>代理类切点函数</td>
+<td><code>this()</code></td>
+<td>类名</td>
+<td>代理类按类型匹配于指定类，则被代理的目标类所有连接点匹配切点。</td>
+</tr>
+</tbody></table>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SpringBoot</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">AOP</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pointcut</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java//" class="article-tag-list-link color5">Java</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Java/SpringBoot//" class="article-tag-list-link color1">SpringBoot</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/SpringBootPointcut.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-AkkaCluster" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -996,174 +1203,6 @@
 
 
   
-    <article id="post-基于Kerberos认证的Hadoop Token过期问题Debug分享" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
-    </h1>
-  
-
-        
-        <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-Kerberos"><a href="#1-Kerberos" class="headerlink" title="1 Kerberos"></a>1 Kerberos</h2><p><code>Kerberos</code>是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解<code>Kerberos</code>认证的流程将有助于解决<code>Hadoop</code>集群中的安全配置过程中的问题。</p>
-<h3 id="1-1-Kerberos可以用来做什么"><a href="#1-1-Kerberos可以用来做什么" class="headerlink" title="1.1 Kerberos可以用来做什么"></a>1.1 Kerberos可以用来做什么</h3><p>简单地说，<code>Kerberos</code>提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器。这些服务器都有认证的需求。很自然的，不可能让每个服务器自己实现一套认证系统，而是提供一个中心认证服务器（AS-Authentication Server）供这些服务器使用。这样任何客户端就只需维护一个密码就能登录所有服务器。</p>
-<p>因此，在<code>Kerberos</code>系统中至少有三个角色：认证服务器（AS），客户端（Client）和普通服务器（Server）。客户端和服务器将在AS的帮助下完成相互认证。在<code>Kerberos</code>系统中，客户端和服务器都有一个唯一的名字，叫做<code>Principal</code>。同时，客户端和服务器都有自己的密码，并且它们的密码只有自己和认证服务器AS知道。</p>
-<h3 id="1-2-Kerberos术语"><a href="#1-2-Kerberos术语" class="headerlink" title="1.2 Kerberos术语"></a>1.2 Kerberos术语</h3><ul>
-<li>KDC(key distribution center): 密钥发放中心</li>
-<li>AS(authentication service): 认证服务，索取credential，发放 TGT</li>
-<li>TGS(ticket granting service): 票据授权服务，索取TGT，发放ST</li>
-<li><strong>TGT(ticket granting ticket)</strong>: 票据授权票据，由KDC的AS发放；获得这样一张票据后，以后申请其他应用的服务票据（ST）时，就不需要向KDC提交身份认证信息（credential），TGT具有一定的有效期，就像是kerberos进行kinit以后只是具有固定时间的有效期，需要不断的去renew来续约。</li>
-<li>ST(service ticket): 服务票据，由KDC的TGS发放，任何一个应用（application）都需要一张有效的服务票据才能访问；如果能正确接受ST，说明client和server之间的信任关系已经被建立，通常为一张数字加密的证书。</li>
-<li>Principal: 一个用户会以一个独一无二的身份来被KDC认证，该身份被称为principal。一个Principal由三个部分组成：primary, instance以及realm，其组成形式为primary/instance@realm。<ul>
-<li>primary: 可以是OS中的username，也可以是service name；</li>
-<li>instance: 用于区分属于同一个user或者service的多个principals，该项为optional；</li>
-<li>realm: 类似于DNS中的domain，定义了一组principals.</li>
-</ul>
-</li>
-</ul>
-<p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
-<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="/images/cas.png" alt="Kerberos" title="Kerberos原理"></p>
-<ol>
-<li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
-<p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
-</li>
-<li><p>User向KDC中的TGS请求访问某个Service的ST，发送[ TGT, Authenticator ]；</p>
-<p> 其中，Authenticator用于验证发送该请求的user就是TGT中所声明的user，内容为：{ user, addresss, start_time, lifetime}；Authenticator使用的TGS和user之间的session key加密的，防止TGT被盗。TGS先使用自己的密码解开TGT获得它与user之间的session key，然后使用session key解密Authenticator，验证用户和有效期。</p>
-</li>
-<li><p>TGS判断无误后，为user和Service之间生成一个新的session key：SK_Service；然后发送给user一个包：[ {SK_Service} SK_TGS, ST ]；</p>
-<p> 其中，ST是使用Service的密码加密的，SK_Service使用TGS和user之间的session key加密的；ST的内容为：{ user, address, start_time, lifetime, SK_Service } K_Service</p>
-</li>
-<li><p>User使用与TGS之间的会话秘钥解开包得到与Service之间的会话秘钥SK_Service，然后使用SK_Service生成一个Authenticator，向Service发送[ ST, Authenticator ]；</p>
-<p> 其中，此处的Authenticator是使用user和service之间的会话秘钥加密的，Service收到包后先使用自己的密码解密ST，或者会话秘钥SK_Service，然后使用SK_Service解密Authenticator来验证发送请求的用户就是票中所声明的用户。</p>
-</li>
-<li><p>Service向用户发送一个包以证明自己的身份，这个包使用SK_Service加密。</p>
-<p> 此后user与Service之间使用SK_Service进行通信，且在TGT有效期内，user直接跳过第一步直接从第二步使用TGT向TGS证明自己的身份。注意：user client会等待service server发送确认信息，如果不是正确的service server，就无法解开ST，也就无法获得会话秘钥，从而避免用户使用错误的服务器。</p>
-</li>
-</ol>
-<h3 id="1-4-类比学习"><a href="#1-4-类比学习" class="headerlink" title="1.4 类比学习"></a>1.4 类比学习</h3><ol>
-<li><p>用户要去游乐场，首先要在门口检查用户的身份(即 CHECK 用户的 ID 和 PASS), 如果用户通过验证，游乐场的门卫 (AS) 即提供给用户一张门卡 (TGT)。</p>
-</li>
-<li><p>这张卡片的用处就是告诉游乐场的各个场所，用户是通过正门进来，而不是后门偷爬进来的，并且也是获取进入场所一把钥匙。</p>
-</li>
-<li><p>现在用户有张卡，但是这对用户来不重要，因为用户来游乐场不是为了拿这张卡的而是为了游览游乐项目，这时用户摩天楼，并想游玩。</p>
-</li>
-<li><p>这时摩天轮的服务员 (client) 拦下用户，向用户要求摩天轮的 (ST) 票据，用户说用户只有一个门卡 (TGT), 那用户只要把 TGT 放在一旁的票据授权机 (TGS) 上刷一下。</p>
-</li>
-<li><p>票据授权机 (TGS) 就根据用户现在所在的摩天轮，给用户一张摩天轮的票据 (ST), 这样用户有了摩天轮的票据，现在用户可以畅通无阻的进入摩天轮里游玩了。</p>
-</li>
-<li><p>当然如果用户玩完摩天轮后，想去游乐园的咖啡厅休息下，那用户一样只要带着那张门卡 (TGT). 到相应的咖啡厅的票据授权机 (TGS) 刷一下，得到咖啡厅的票据 (ST) 就可以进入咖啡厅</p>
-</li>
-<li><p>当用户离开游乐场后，想用这张 TGT 去刷打的回家的费用，对不起，用户的 TGT 已经过期了，在用户离开游乐场那刻开始，用户的 TGT 就已经销毁了。</p>
-</li>
-</ol>
-<h2 id="2-HDFS-认证"><a href="#2-HDFS-认证" class="headerlink" title="2 HDFS 认证"></a>2 HDFS 认证</h2><h3 id="2-1-什么是-Delegation-Token"><a href="#2-1-什么是-Delegation-Token" class="headerlink" title="2.1 什么是 Delegation Token"></a>2.1 什么是 Delegation Token</h3><p>delegation token其实就是hadoop里一种轻量级认证方法，作为kerberos认证的一种补充。理论上只使用kerberos来认证是足够了，为什么hadoop还要自己开发一套使用delegation token的认证方式呢？这是因为如果在一个很大的分布式系统当中，如果每个节点访问某个服务的时候都使用kerberos来作为认证方式，那么势必对KDC造成很大的压力，KDC就会成为一个系统的瓶颈。</p>
-<h3 id="2-2-Delegation-Token-期限"><a href="#2-2-Delegation-Token-期限" class="headerlink" title="2.2 Delegation Token 期限"></a>2.2 Delegation Token 期限</h3><p>delegation token有过期时间，需要定期刷新才能保证token有效。但是刷新次数不是无限的，也就是说每个token都有个最大生存时间，超过该时间，该token就失效。比如token每个24小时需要刷新一次，否则就失效。同时每个token最大生命值为7天，那么七天后该token就不能在被使用。</p>
-<h3 id="2-3-Delegation-Token-过期的原因和解决思路"><a href="#2-3-Delegation-Token-过期的原因和解决思路" class="headerlink" title="2.3 Delegation Token 过期的原因和解决思路"></a>2.3 Delegation Token 过期的原因和解决思路</h3><p>delegation token会失效，集群默认配置是renew的间隔为一天，token最大生存时间为7天。对于像mapreduce这种批处理任务可能不会面临token失效的问题，但对于spark streaming, storm等这种长时运行应用来说，不得不面临一个问题：token存在最大生命周期。当token达到其最大生命周期的时候，比如七天，所有的工作节点（比如spark streaming的executor）中使用的token都会失效，此时在使用该token去访问hdfs就会被namenode拒绝，导致应用异常退出。</p>
-<p>一种解决思路是将keytab文件分发给Am及每个container，让am和container去访问kdc来认证，但这种方式会造成文章开头所说的问题：对KDC造成很大的访问压力，导致KDC会误认为自己遭受了DDos攻击，从而影响程序性能。</p>
-<p>另一种解决思路是先由client把keytab文件放到hdfs上。然后在Am中使用keytab登录，并申请delegation token。AM在启动worker的时候把该token分发给相应的容器。当token快要过期的时候，AM重新登录一次，并重新获取delegation token，并告知所有的worker使用更新后的token访问服务。</p>
-<h3 id="2-4-Spark中怎么解决-Delegation-Token-过期问题"><a href="#2-4-Spark中怎么解决-Delegation-Token-过期问题" class="headerlink" title="2.4 Spark中怎么解决 Delegation Token 过期问题"></a>2.4 Spark中怎么解决 Delegation Token 过期问题</h3><p>spark 为了解决DT失效问题，加了两个参数”–keytab”和”–principal”，分别指定用于kerberos登录的keytab文件和principal。</p>
-<p><code>--keytab</code>参数指定一个keytab文件，Spark会根据<code>--keytab</code>指定的Kerberos认证文件生成 HDFS Token，然后再将生成的Token信息放到HDFS的某一个目录中供Executor和Driver使用。</p>
-<p>流程如下：</p>
-<ol>
-<li>Spark ApplicationMaster在Delegation Token将要失效的时候（75% of the renewal interval) 会通过Keytab文件重新认证并获取一个新的Delegation Token，然后将新的Delegation Token写入到指定的HDFS文件中；</li>
-<li>Spark Executor在Delegation Token将要失效的时候（80% of the validity)读取HDFS上的最新的Delegation Token文件，然后更新自己的Delegation Token；</li>
-</ol>
-<p>理论上这样就能解决掉Token过期的问题，然而在配置了HA的Hadoop集群上2.9.0之前的版本依然存在问题，问题在于配置了HA的Hadoop集群中，Executor读取新的Token信息之后只更新的HDFS的逻辑地址，而未同步更新真正的<code>HDFS Namenode URI</code>对应的Token，从而导致Namenode URI下面的Token会慢慢过期失效。</p>
-<h3 id="2-5-问题复现与原因分析"><a href="#2-5-问题复现与原因分析" class="headerlink" title="2.5 问题复现与原因分析"></a>2.5 问题复现与原因分析</h3><ol>
-<li>修改Hadoop的默认Token过期时间和刷新时间，Hadoop Token的默认过期时间为7天，刷新时间为24小时，将其修改为过期时间10分钟，刷新时间5分钟</li>
-<li>编写一个Spark-Streaming的WordCount程序，每一分钟访问一次HDFS将WordCount的结果写入到HDFS的一个目录中</li>
-<li>在HDFS的Token最大期限（10分钟）之后就复现了线上的HDFS Token过期问题，最终导致WordCount异常退出</li>
-</ol>
-<p>原因分析：如果Namenode URI下面的Token一直不变，那这个Token短时间内是不应该失效的，因为前面说过Yarn Server一直在为这个Token进行定期更新操作（假设Token配置的可更新时间足够长，并且没有出现Token更新操作的异常），问题就在于其实Namenode URI对应的Token也会更新，只不过永远比“逻辑地址”对应的Token的更新慢一步，导致Namenode URI下面的Token比较旧所以会失效。</p>
-<p>Namenode URI对应的Token是这样被更新的：</p>
-<ul>
-<li>在Spark Executor读取新的Token文件的时候，需要获取一个FileSystem；默认FileSystem是缓存的，每次通过FileSystem.get(hadoopConf)获取的应该都是同一个FileSystem；但是Spark在此处是强制初始化了一个新的FileSystem（通过配置Hadoop Conf的fs.hdfs.impl.disable.cache为true实现的）；</li>
-<li>FileSystem的运行类型为DistributedFileSystem，在初始化的时候会生成新的DFSClient, DFSClient在初始化的时候会生成新的Failover Proxy：ZkConfiguredFailoverProxyProvider；</li>
-<li>ZkConfiguredFailoverProxyProvider在初始化的时候会将“逻辑地址”下面的Token拷贝到Namenode URI下面；</li>
-</ul>
-<p>例如：</p>
-<ol>
-<li>逻辑地址       -&gt; Token 1001</li>
-<li>NameNode1     -&gt; Token 1000</li>
-<li>NameNode2     -&gt; Token 1000</li>
-</ol>
-<p>经过一次Token更新之后</p>
-<ol>
-<li>逻辑地址       -&gt; Token 1002</li>
-<li>NameNode1     -&gt; Token 1001</li>
-<li>NameNode2     -&gt; Token 1001</li>
-</ol>
-<p>其中1001是在逻辑地址的Token还有20%的有效期时被更新的，而1001在经过一次Token更新之后依然被NameNode1和NameNode2所使用，所以在过去一小段时间之后应用程序再通过1001访问HDFS将出现Token过期的异常</p>
-<h3 id="2-6-解决办法"><a href="#2-6-解决办法" class="headerlink" title="2.6 解决办法"></a>2.6 解决办法</h3><p>1、UserGroupInformation.getCurrentUser.addCredentials(newCredentials)的时候，把Namenode URI下面的Token一并更新了。社区HDFSissue为：<a href="https://issues.apache.org/jira/browse/HDFS-9276" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HDFS-9276</a></p>
-<p>2、可以设法将Token更新的时间设置为小于50%，这样可以是更新到NameNode1和NameNode2下的Token依然有至少50%的有效期时长，保证在下一次更新Token时依然有效</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-精尽 Netty 源码分析 —— Netty 简介（二）之核心组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1751,158 +1790,117 @@
 
 
   
-    <article id="post-CM安装" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-基于Kerberos认证的Hadoop Token过期问题Debug分享" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/CM%E5%AE%89%E8%A3%85.html">CM安装</a>
+      <a class="article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
     </h1>
   
 
         
-        <a href="/CM%E5%AE%89%E8%A3%85.html" class="archive-article-date">
-  	<time datetime="2019-09-28T07:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
+        <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
+  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>OS: Ubuntu 14.04 LTS</li>
-<li>CM: 15.14.1</li>
-<li>CDH: 15.14.1</li>
+        <h2 id="1-Kerberos"><a href="#1-Kerberos" class="headerlink" title="1 Kerberos"></a>1 Kerberos</h2><p><code>Kerberos</code>是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解<code>Kerberos</code>认证的流程将有助于解决<code>Hadoop</code>集群中的安全配置过程中的问题。</p>
+<h3 id="1-1-Kerberos可以用来做什么"><a href="#1-1-Kerberos可以用来做什么" class="headerlink" title="1.1 Kerberos可以用来做什么"></a>1.1 Kerberos可以用来做什么</h3><p>简单地说，<code>Kerberos</code>提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器。这些服务器都有认证的需求。很自然的，不可能让每个服务器自己实现一套认证系统，而是提供一个中心认证服务器（AS-Authentication Server）供这些服务器使用。这样任何客户端就只需维护一个密码就能登录所有服务器。</p>
+<p>因此，在<code>Kerberos</code>系统中至少有三个角色：认证服务器（AS），客户端（Client）和普通服务器（Server）。客户端和服务器将在AS的帮助下完成相互认证。在<code>Kerberos</code>系统中，客户端和服务器都有一个唯一的名字，叫做<code>Principal</code>。同时，客户端和服务器都有自己的密码，并且它们的密码只有自己和认证服务器AS知道。</p>
+<h3 id="1-2-Kerberos术语"><a href="#1-2-Kerberos术语" class="headerlink" title="1.2 Kerberos术语"></a>1.2 Kerberos术语</h3><ul>
+<li>KDC(key distribution center): 密钥发放中心</li>
+<li>AS(authentication service): 认证服务，索取credential，发放 TGT</li>
+<li>TGS(ticket granting service): 票据授权服务，索取TGT，发放ST</li>
+<li><strong>TGT(ticket granting ticket)</strong>: 票据授权票据，由KDC的AS发放；获得这样一张票据后，以后申请其他应用的服务票据（ST）时，就不需要向KDC提交身份认证信息（credential），TGT具有一定的有效期，就像是kerberos进行kinit以后只是具有固定时间的有效期，需要不断的去renew来续约。</li>
+<li>ST(service ticket): 服务票据，由KDC的TGS发放，任何一个应用（application）都需要一张有效的服务票据才能访问；如果能正确接受ST，说明client和server之间的信任关系已经被建立，通常为一张数字加密的证书。</li>
+<li>Principal: 一个用户会以一个独一无二的身份来被KDC认证，该身份被称为principal。一个Principal由三个部分组成：primary, instance以及realm，其组成形式为primary/instance@realm。<ul>
+<li>primary: 可以是OS中的username，也可以是service name；</li>
+<li>instance: 用于区分属于同一个user或者service的多个principals，该项为optional；</li>
+<li>realm: 类似于DNS中的domain，定义了一组principals.</li>
 </ul>
-<h2 id="角色分配"><a href="#角色分配" class="headerlink" title="角色分配"></a>角色分配</h2><table>
-<thead>
-<tr>
-<th>IP</th>
-<th>主机名</th>
-<th>角色</th>
-<th>Mysql</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>192.168.202.207</td>
-<td>kt1</td>
-<td>master</td>
-<td>[√]</td>
-</tr>
-<tr>
-<td>192.168.202.208</td>
-<td>kt2</td>
-<td>slave1</td>
-<td></td>
-</tr>
-<tr>
-<td>192.168.202.209</td>
-<td>kt3</td>
-<td>slave2</td>
-<td></td>
-</tr>
-</tbody></table>
-<h2 id="统一主机名"><a href="#统一主机名" class="headerlink" title="统一主机名"></a>统一主机名</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo hostname kt1 <span class="comment"># 临时性修改</span></span><br><span class="line">sudo vim /etc/hostname <span class="comment"># 永久性修改，需要重启机器</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br><span class="line"></span><br><span class="line">192.168.202.207 kt1</span><br><span class="line">192.168.202.208 kt2</span><br><span class="line">192.168.202.209 kt2</span><br></pre></td></tr></table></figure>
-
-<h2 id="SSH-免密"><a href="#SSH-免密" class="headerlink" title="SSH 免密"></a>SSH 免密</h2><ul>
-<li>每个节点生成公钥私钥</li>
-<li>每个节点免密登陆自身</li>
-<li>Master 到 Agent 的免密登陆</li>
+</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo ssh-keygen -t rsa <span class="comment"># 生成公钥私钥</span></span><br><span class="line">sudo cat /root/.ssh/id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys <span class="comment"># 免密登陆自身</span></span><br><span class="line">sudo chmod 600 /root/.ssh/authorized_keys</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;2..3&#125;; <span class="keyword">do</span> scp /root/.ssh/authorized_keys root@kt<span class="variable">$i</span>:/root/.ssh/authorized_keys; <span class="keyword">done</span> <span class="comment"># Master 上执行，实现 Master 到 Agent 的免密登陆</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ufw <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="NTP-时间同步"><a href="#NTP-时间同步" class="headerlink" title="NTP 时间同步"></a>NTP 时间同步</h2><p>Agent 与 Master 时间同步</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ntp</span><br><span class="line">sudo ntpdate -d kt1</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h2><ul>
-<li>不支持 OpenJDK，只支持 Ocacle JDK</li>
-<li>JDK 版本所有节点必须保持一致</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz</span><br><span class="line">mkdir -pv /opt/jdk8</span><br><span class="line">tar xf jdk-8u171-linux-x64.tar.gz -C /opt/jdk8</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile.d/java.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/jdk8</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-MySQL"><a href="#安装-MySQL" class="headerlink" title="安装 MySQL"></a>安装 MySQL</h2><ul>
-<li>使用 UTF8 编码</li>
-<li>对于 MySQL 5.6 和 5.7，需安装 mysql-shared-compat 包</li>
-<li>确保 GTID-based replication 是关闭的</li>
-<li>安装 JBDC driver</li>
-<li>其他请详细参考 <a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_mysql.html" target="_blank" rel="noopener">如何使用MySQL作为外部数据库</a></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-server-5.5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">'%character%'</span>;  <span class="comment"># 查看字符集</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">[client]</span><br><span class="line">default-character-set=utf8</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line">default-character-set=utf8</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/mysql/my.cnf</span><br><span class="line"></span><br><span class="line">注释 <span class="built_in">bind</span>-address，不然默认端口监听本地</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-MySQL-JDBC-Driver"><a href="#安装-MySQL-JDBC-Driver" class="headerlink" title="安装 MySQL JDBC Driver"></a>安装 MySQL JDBC Driver</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">tar xf mysql-connector-java-5.1.46.tar.gz</span><br><span class="line"></span><br><span class="line">cp mysql-connector-java-5.1.46/mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-CM-Master、Agent"><a href="#安装-CM-Master、Agent" class="headerlink" title="安装 CM Master、Agent"></a>安装 CM Master、Agent</h2><ul>
-<li>Master 和 Agent 都需要安装 cloudera-manager-daemons</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br><span class="line"></span><br><span class="line">wget https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/pool/contrib/e/enterprise/cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
-
+<p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
+<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="/images/cas.png" alt="Kerberos" title="Kerberos原理"></p>
+<ol>
+<li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
+<p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
+</li>
+<li><p>User向KDC中的TGS请求访问某个Service的ST，发送[ TGT, Authenticator ]；</p>
+<p> 其中，Authenticator用于验证发送该请求的user就是TGT中所声明的user，内容为：{ user, addresss, start_time, lifetime}；Authenticator使用的TGS和user之间的session key加密的，防止TGT被盗。TGS先使用自己的密码解开TGT获得它与user之间的session key，然后使用session key解密Authenticator，验证用户和有效期。</p>
+</li>
+<li><p>TGS判断无误后，为user和Service之间生成一个新的session key：SK_Service；然后发送给user一个包：[ {SK_Service} SK_TGS, ST ]；</p>
+<p> 其中，ST是使用Service的密码加密的，SK_Service使用TGS和user之间的session key加密的；ST的内容为：{ user, address, start_time, lifetime, SK_Service } K_Service</p>
+</li>
+<li><p>User使用与TGS之间的会话秘钥解开包得到与Service之间的会话秘钥SK_Service，然后使用SK_Service生成一个Authenticator，向Service发送[ ST, Authenticator ]；</p>
+<p> 其中，此处的Authenticator是使用user和service之间的会话秘钥加密的，Service收到包后先使用自己的密码解密ST，或者会话秘钥SK_Service，然后使用SK_Service解密Authenticator来验证发送请求的用户就是票中所声明的用户。</p>
+</li>
+<li><p>Service向用户发送一个包以证明自己的身份，这个包使用SK_Service加密。</p>
+<p> 此后user与Service之间使用SK_Service进行通信，且在TGT有效期内，user直接跳过第一步直接从第二步使用TGT向TGS证明自己的身份。注意：user client会等待service server发送确认信息，如果不是正确的service server，就无法解开ST，也就无法获得会话秘钥，从而避免用户使用错误的服务器。</p>
+</li>
+</ol>
+<h3 id="1-4-类比学习"><a href="#1-4-类比学习" class="headerlink" title="1.4 类比学习"></a>1.4 类比学习</h3><ol>
+<li><p>用户要去游乐场，首先要在门口检查用户的身份(即 CHECK 用户的 ID 和 PASS), 如果用户通过验证，游乐场的门卫 (AS) 即提供给用户一张门卡 (TGT)。</p>
+</li>
+<li><p>这张卡片的用处就是告诉游乐场的各个场所，用户是通过正门进来，而不是后门偷爬进来的，并且也是获取进入场所一把钥匙。</p>
+</li>
+<li><p>现在用户有张卡，但是这对用户来不重要，因为用户来游乐场不是为了拿这张卡的而是为了游览游乐项目，这时用户摩天楼，并想游玩。</p>
+</li>
+<li><p>这时摩天轮的服务员 (client) 拦下用户，向用户要求摩天轮的 (ST) 票据，用户说用户只有一个门卡 (TGT), 那用户只要把 TGT 放在一旁的票据授权机 (TGS) 上刷一下。</p>
+</li>
+<li><p>票据授权机 (TGS) 就根据用户现在所在的摩天轮，给用户一张摩天轮的票据 (ST), 这样用户有了摩天轮的票据，现在用户可以畅通无阻的进入摩天轮里游玩了。</p>
+</li>
+<li><p>当然如果用户玩完摩天轮后，想去游乐园的咖啡厅休息下，那用户一样只要带着那张门卡 (TGT). 到相应的咖啡厅的票据授权机 (TGS) 刷一下，得到咖啡厅的票据 (ST) 就可以进入咖啡厅</p>
+</li>
+<li><p>当用户离开游乐场后，想用这张 TGT 去刷打的回家的费用，对不起，用户的 TGT 已经过期了，在用户离开游乐场那刻开始，用户的 TGT 就已经销毁了。</p>
+</li>
+</ol>
+<h2 id="2-HDFS-认证"><a href="#2-HDFS-认证" class="headerlink" title="2 HDFS 认证"></a>2 HDFS 认证</h2><h3 id="2-1-什么是-Delegation-Token"><a href="#2-1-什么是-Delegation-Token" class="headerlink" title="2.1 什么是 Delegation Token"></a>2.1 什么是 Delegation Token</h3><p>delegation token其实就是hadoop里一种轻量级认证方法，作为kerberos认证的一种补充。理论上只使用kerberos来认证是足够了，为什么hadoop还要自己开发一套使用delegation token的认证方式呢？这是因为如果在一个很大的分布式系统当中，如果每个节点访问某个服务的时候都使用kerberos来作为认证方式，那么势必对KDC造成很大的压力，KDC就会成为一个系统的瓶颈。</p>
+<h3 id="2-2-Delegation-Token-期限"><a href="#2-2-Delegation-Token-期限" class="headerlink" title="2.2 Delegation Token 期限"></a>2.2 Delegation Token 期限</h3><p>delegation token有过期时间，需要定期刷新才能保证token有效。但是刷新次数不是无限的，也就是说每个token都有个最大生存时间，超过该时间，该token就失效。比如token每个24小时需要刷新一次，否则就失效。同时每个token最大生命值为7天，那么七天后该token就不能在被使用。</p>
+<h3 id="2-3-Delegation-Token-过期的原因和解决思路"><a href="#2-3-Delegation-Token-过期的原因和解决思路" class="headerlink" title="2.3 Delegation Token 过期的原因和解决思路"></a>2.3 Delegation Token 过期的原因和解决思路</h3><p>delegation token会失效，集群默认配置是renew的间隔为一天，token最大生存时间为7天。对于像mapreduce这种批处理任务可能不会面临token失效的问题，但对于spark streaming, storm等这种长时运行应用来说，不得不面临一个问题：token存在最大生命周期。当token达到其最大生命周期的时候，比如七天，所有的工作节点（比如spark streaming的executor）中使用的token都会失效，此时在使用该token去访问hdfs就会被namenode拒绝，导致应用异常退出。</p>
+<p>一种解决思路是将keytab文件分发给Am及每个container，让am和container去访问kdc来认证，但这种方式会造成文章开头所说的问题：对KDC造成很大的访问压力，导致KDC会误认为自己遭受了DDos攻击，从而影响程序性能。</p>
+<p>另一种解决思路是先由client把keytab文件放到hdfs上。然后在Am中使用keytab登录，并申请delegation token。AM在启动worker的时候把该token分发给相应的容器。当token快要过期的时候，AM重新登录一次，并重新获取delegation token，并告知所有的worker使用更新后的token访问服务。</p>
+<h3 id="2-4-Spark中怎么解决-Delegation-Token-过期问题"><a href="#2-4-Spark中怎么解决-Delegation-Token-过期问题" class="headerlink" title="2.4 Spark中怎么解决 Delegation Token 过期问题"></a>2.4 Spark中怎么解决 Delegation Token 过期问题</h3><p>spark 为了解决DT失效问题，加了两个参数”–keytab”和”–principal”，分别指定用于kerberos登录的keytab文件和principal。</p>
+<p><code>--keytab</code>参数指定一个keytab文件，Spark会根据<code>--keytab</code>指定的Kerberos认证文件生成 HDFS Token，然后再将生成的Token信息放到HDFS的某一个目录中供Executor和Driver使用。</p>
+<p>流程如下：</p>
+<ol>
+<li>Spark ApplicationMaster在Delegation Token将要失效的时候（75% of the renewal interval) 会通过Keytab文件重新认证并获取一个新的Delegation Token，然后将新的Delegation Token写入到指定的HDFS文件中；</li>
+<li>Spark Executor在Delegation Token将要失效的时候（80% of the validity)读取HDFS上的最新的Delegation Token文件，然后更新自己的Delegation Token；</li>
+</ol>
+<p>理论上这样就能解决掉Token过期的问题，然而在配置了HA的Hadoop集群上2.9.0之前的版本依然存在问题，问题在于配置了HA的Hadoop集群中，Executor读取新的Token信息之后只更新的HDFS的逻辑地址，而未同步更新真正的<code>HDFS Namenode URI</code>对应的Token，从而导致Namenode URI下面的Token会慢慢过期失效。</p>
+<h3 id="2-5-问题复现与原因分析"><a href="#2-5-问题复现与原因分析" class="headerlink" title="2.5 问题复现与原因分析"></a>2.5 问题复现与原因分析</h3><ol>
+<li>修改Hadoop的默认Token过期时间和刷新时间，Hadoop Token的默认过期时间为7天，刷新时间为24小时，将其修改为过期时间10分钟，刷新时间5分钟</li>
+<li>编写一个Spark-Streaming的WordCount程序，每一分钟访问一次HDFS将WordCount的结果写入到HDFS的一个目录中</li>
+<li>在HDFS的Token最大期限（10分钟）之后就复现了线上的HDFS Token过期问题，最终导致WordCount异常退出</li>
+</ol>
+<p>原因分析：如果Namenode URI下面的Token一直不变，那这个Token短时间内是不应该失效的，因为前面说过Yarn Server一直在为这个Token进行定期更新操作（假设Token配置的可更新时间足够长，并且没有出现Token更新操作的异常），问题就在于其实Namenode URI对应的Token也会更新，只不过永远比“逻辑地址”对应的Token的更新慢一步，导致Namenode URI下面的Token比较旧所以会失效。</p>
+<p>Namenode URI对应的Token是这样被更新的：</p>
 <ul>
-<li>依赖包升级（不是必须）</li>
+<li>在Spark Executor读取新的Token文件的时候，需要获取一个FileSystem；默认FileSystem是缓存的，每次通过FileSystem.get(hadoopConf)获取的应该都是同一个FileSystem；但是Spark在此处是强制初始化了一个新的FileSystem（通过配置Hadoop Conf的fs.hdfs.impl.disable.cache为true实现的）；</li>
+<li>FileSystem的运行类型为DistributedFileSystem，在初始化的时候会生成新的DFSClient, DFSClient在初始化的时候会生成新的Failover Proxy：ZkConfiguredFailoverProxyProvider；</li>
+<li>ZkConfiguredFailoverProxyProvider在初始化的时候会将“逻辑地址”下面的Token拷贝到Namenode URI下面；</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -f</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安装配置 Master</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-server_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>初始化 CM 在 MySQL 中需要用到的表</li>
-</ul>
-<p><a href="https://www.cloudera.com/documentation/enterprise/5-14-x/topics/cm_ig_installing_configuring_dbs.html#concept_mff_xjm_hn" target="_blank" rel="noopener">关于 scm_prepare_database.sh 脚本的使用说明</a></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/cmf/schema/scm_prepare_database.sh mysql -h kt1 -P3306 -uroot -pdev --scm-host kt1 scm scm scm</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安装配置 Agent</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i cloudera-manager-daemons_5.14.2-1.cm5142.p0.8~trusty-cm5_all.deb</span><br><span class="line">dpkg -i cloudera-manager-agent_5.14.2-1.cm5142.p0.8~trusty-cm5_amd64.deb</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/cloudera-scm-agent/config.ini</span><br><span class="line"></span><br><span class="line">server_host=kt1</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置给-CM-使用的-JDK（灰常重要）"><a href="#配置给-CM-使用的-JDK（灰常重要）" class="headerlink" title="配置给 CM 使用的 JDK（灰常重要）"></a>配置给 CM 使用的 JDK（灰常重要）</h2><ul>
-<li>Master 节点</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/default/cloudera-scm-server</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=<span class="string">"/opt/jdk8"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Parcel-本地源安装"><a href="#Parcel-本地源安装" class="headerlink" title="Parcel 本地源安装"></a>Parcel 本地源安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel</span><br><span class="line">wget https://archive.cloudera.com/cdh5/parcels/5.14.2/CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1</span><br><span class="line">wget http://archive.cloudera.com/cdh5/parcels/5.14.2/manifest.json</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Master</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /opt/cloudera/parcel-repo</span><br><span class="line"></span><br><span class="line">cp CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步要重命名 sha1 改为 sha</span></span><br><span class="line">mv CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha1 ./CDH-5.14.2-1.cdh5.14.2.p0.3-trusty.parcel.sha</span><br><span class="line"></span><br><span class="line">cp manifest.json ./</span><br><span class="line"></span><br><span class="line">chown -R cloudera-scm:cloudera-scm /opt/cloudera</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Agent</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -pv /opt/cloudera/parcels</span><br><span class="line">chown cloudera-scm:cloudera-scm -R /opt/cloudera</span><br></pre></td></tr></table></figure>
-
-<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
-<li>解决 CM 报告您的主机由于交换而运行不良</li>
-<li>参数控制系统是否积极使用 swap，数值越大越积极，cloudera 推荐swappiness 最大为10。 如果系统未配置 swap 分区可忽略</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 10 &gt; /proc/sys/vm/swappiness</span><br></pre></td></tr></table></figure>
-
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service cloudera-scm-server start</span><br><span class="line">service cloudera-scm-agent start</span><br></pre></td></tr></table></figure>
-
-<h2 id="访问-CM-UI"><a href="#访问-CM-UI" class="headerlink" title="访问 CM UI"></a>访问 CM UI</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://kt1:7180</span><br><span class="line">admin/admin</span><br></pre></td></tr></table></figure>
-
-<h2 id="主机指定-JDK-路径（通过CM-UI设定，灰常重要）"><a href="#主机指定-JDK-路径（通过CM-UI设定，灰常重要）" class="headerlink" title="主机指定 JDK 路径（通过CM UI设定，灰常重要）"></a>主机指定 JDK 路径（通过CM UI设定，灰常重要）</h2><ul>
-<li>根据向导选完主机后，直接返回主页，然后给主机指定JDK：Hosts –&gt; All Hosts–&gt; Configuration –&gt; Java Home Directory</li>
-</ul>
+<p>例如：</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1001</li>
+<li>NameNode1     -&gt; Token 1000</li>
+<li>NameNode2     -&gt; Token 1000</li>
+</ol>
+<p>经过一次Token更新之后</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1002</li>
+<li>NameNode1     -&gt; Token 1001</li>
+<li>NameNode2     -&gt; Token 1001</li>
+</ol>
+<p>其中1001是在逻辑地址的Token还有20%的有效期时被更新的，而1001在经过一次Token更新之后依然被NameNode1和NameNode2所使用，所以在过去一小段时间之后应用程序再通过1001访问HDFS将出现Token过期的异常</p>
+<h3 id="2-6-解决办法"><a href="#2-6-解决办法" class="headerlink" title="2.6 解决办法"></a>2.6 解决办法</h3><p>1、UserGroupInformation.getCurrentUser.addCredentials(newCredentials)的时候，把Namenode URI下面的Token一并更新了。社区HDFSissue为：<a href="https://issues.apache.org/jira/browse/HDFS-9276" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HDFS-9276</a></p>
+<p>2、可以设法将Token更新的时间设置为小于50%，这样可以是更新到NameNode1和NameNode2下的Token依然有至少50%的有效期时长，保证在下一次更新Token时依然有效</p>
 
       
 
@@ -1916,36 +1914,21 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">cm</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
         		</li>
       		
 		</ul>
 	</div>
 
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/CM%E5%AE%89%E8%A3%85.html">展开全文 >></a>
+          <a class="article-more-a" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">展开全文 >></a>
         </p>
       
 
@@ -1975,6 +1958,10 @@
 
 
   
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    </nav>
   
 
 
@@ -2076,18 +2063,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">logging</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
               </li>
              
@@ -2113,6 +2088,30 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">cm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">logging</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">scrapy</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">AOP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">pointcut</a>
               </li>
              
               <li class="article-tag-list-item">
