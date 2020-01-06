@@ -6,17 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.zjwblog.cn">
-  <title>Category: java | 筑梦空间</title>
+  <title>Java Annotation学习笔记 | 筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="张建委的博客空间">
-<meta name="keywords" content="blog zjwblog chdaring">
-<meta property="og:type" content="website">
-<meta property="og:title" content="筑梦空间">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;categories&#x2F;java&#x2F;index.html">
+  <meta name="description" content="Java Annotation是JDK5.0引入的一种注释机制。 1. Annotation继承结构理解 Annotation 的关键，是理解Annotation的语法和用法，对这些内容，我都进行了详细说明；理解Annotation的语法和用法之后，再看Annotation的框架图，可能有更深刻体会。  从图中可以看出如下信息：  1个Annotation和1个RetentionPolicy关联，">
+<meta name="keywords" content="Java,Annotation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Annotation学习笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;JavaAnnotation%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html">
 <meta property="og:site_name" content="筑梦空间">
-<meta property="og:description" content="张建委的博客空间">
+<meta property="og:description" content="Java Annotation是JDK5.0引入的一种注释机制。 1. Annotation继承结构理解 Annotation 的关键，是理解Annotation的语法和用法，对这些内容，我都进行了详细说明；理解Annotation的语法和用法之后，再看Annotation的框架图，可能有更深刻体会。  从图中可以看出如下信息：  1个Annotation和1个RetentionPolicy关联，">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;i.postimg.cc&#x2F;ZKx1fC6k&#x2F;1.png">
+<meta property="og:updated_time" content="2020-01-03T11:22:38.000Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;i.postimg.cc&#x2F;ZKx1fC6k&#x2F;1.png">
   
     <link rel="alternative" href="/atom.xml" title="筑梦空间" type="application/atom+xml">
   
@@ -154,36 +157,157 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-JavaAnnotation学习笔记" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/JavaAnnotation%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" class="archive-article-date">
-  	<time datetime="2020-01-03T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-03</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/JavaAnnotation%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html">Java Annotation学习笔记</a>
+    <h1 class="article-title" itemprop="name">
+      Java Annotation学习笔记
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/JavaAnnotation%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" class="archive-article-date">
+  	<time datetime="2020-01-03T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>Java Annotation</code>是<code>JDK5.0</code>引入的一种注释机制。</p>
+<h3 id="1-Annotation继承结构"><a href="#1-Annotation继承结构" class="headerlink" title="1. Annotation继承结构"></a>1. Annotation继承结构</h3><p>理解 Annotation 的关键，是理解Annotation的语法和用法，对这些内容，我都进行了详细说明；理解Annotation的语法和用法之后，再看Annotation的框架图，可能有更深刻体会。</p>
+<p><a href="https://postimg.cc/Vd5Gvs74" target="_blank" rel="noopener"><img src="https://i.postimg.cc/ZKx1fC6k/1.png" alt="1.png"></a></p>
+<p>从图中可以看出如下信息：</p>
+<ul>
+<li><p>1个Annotation和1个RetentionPolicy关联，可以理解为每1个Annotation对象，都会有唯一的RetentionPolicy属性。</p>
+</li>
+<li><p>1个Annotation和n个ElementType关联，可以理解为对于每1个Annotation对象，可以有若干个ElementType属性。</p>
+</li>
+<li><p>Annotation 有许多实现类，包括：Deprecated, Documented, Inherited, Override等等，Annotation 的每一个实现类，都“和1个RetentionPolicy关联”并且“和1~n个ElementType关联”。</p>
+</li>
+</ul>
+<h3 id="2-Annotation组成部分"><a href="#2-Annotation组成部分" class="headerlink" title="2. Annotation组成部分"></a>2. Annotation组成部分</h3><p>java annotation 的组成中，有3个非常重要的主干类。</p>
+<h4 id="2-1-Annotation"><a href="#2-1-Annotation" class="headerlink" title="2.1 Annotation"></a>2.1 Annotation</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.annotation;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Annotation</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function">String <span class="title">toString</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  Class&lt;? extends Annotation&gt; annotationType();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-ElementType"><a href="#2-2-ElementType" class="headerlink" title="2.2 ElementType"></a>2.2 ElementType</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.annotation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> ElementType &#123;</span><br><span class="line">  TYPE,               <span class="comment">/* 类、接口（包括注释类型）或枚举声明  */</span></span><br><span class="line"></span><br><span class="line">  FIELD,              <span class="comment">/* 字段声明（包括枚举常量）  */</span></span><br><span class="line"></span><br><span class="line">  METHOD,             <span class="comment">/* 方法声明  */</span></span><br><span class="line"></span><br><span class="line">  PARAMETER,          <span class="comment">/* 参数声明  */</span></span><br><span class="line"></span><br><span class="line">  CONSTRUCTOR,        <span class="comment">/* 构造方法声明  */</span></span><br><span class="line"></span><br><span class="line">  LOCAL_VARIABLE,     <span class="comment">/* 局部变量声明  */</span></span><br><span class="line"></span><br><span class="line">  ANNOTATION_TYPE,    <span class="comment">/* 注释类型声明  */</span></span><br><span class="line"></span><br><span class="line">  PACKAGE             <span class="comment">/* 包声明  */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-RetentionPolicy"><a href="#2-3-RetentionPolicy" class="headerlink" title="2.3 RetentionPolicy"></a>2.3 RetentionPolicy</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.annotation;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> RetentionPolicy &#123;</span><br><span class="line">    SOURCE,    <span class="comment">/* Annotation信息仅存在于编译器处理期间，编译器处理完之后就没有该Annotation信息了  */</span></span><br><span class="line"></span><br><span class="line">    CLASS,     <span class="comment">/* 编译器将Annotation存储于类对应的.class文件中。默认行为  */</span></span><br><span class="line"></span><br><span class="line">    RUNTIME    <span class="comment">/* 编译器将Annotation存储于class文件中，并且可由JVM读入 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Annotation 就是个接口，“1个Annotation” 都与 “1个RetentionPolicy”关联，并且与 “1～n个ElementType”关联。可以通俗的理解为：每1个Annotation对象，都会有唯一的RetentionPolicy属性；至于ElementType属性，则有1~n个。</p>
+</li>
+<li><p>ElementType 是Enum枚举类型，它用来指定Annotation的类型。每1个Annotation” 都与 “1～n个ElementType”关联。当Annotation与某个ElementType关联时，就意味着：Annotation有了某种用途。</p>
+</li>
+<li><p>RetentionPolicy 是Enum枚举类型，它用来指定Annotation的策略。通俗点说，就是不同RetentionPolicy类型的Annotation的作用域不同。“每1个Annotation” 都与 “1个RetentionPolicy”关联。</p>
+<ul>
+<li><p>若Annotation的类型为 SOURCE，则意味着：Annotation仅存在于编译器处理期间，编译器处理完之后，该Annotation就没用了。</p>
+</li>
+<li><p>若Annotation的类型为 CLASS，则意味着：编译器将Annotation存储于类对应的.class文件中，它是Annotation的默认行为。</p>
+</li>
+<li><p>若Annotation的类型为 RUNTIME，则意味着：编译器将Annotation存储于class文件中，并且可由JVM读入。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-Java自带的Annotation"><a href="#3-Java自带的Annotation" class="headerlink" title="3. Java自带的Annotation"></a>3. Java自带的Annotation</h3><h4 id="3-1-Annotation通用定义"><a href="#3-1-Annotation通用定义" class="headerlink" title="3.1 Annotation通用定义"></a>3.1 Annotation通用定义</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyAnnotation &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的作用是定义一个<code>Annotation</code>，它的名字是<code>MyAnnotation</code>。定义了<code>MyAnnotation</code>之后，我们可以在代码中通过<code>@MyAnnotation</code>来使用它。</p>
+<ul>
+<li><p><code>@interface</code>: 使用<code>@interface</code>定义注解时，意味着它实现了<code>java.lang.annotation.Annotation</code>接口，即该注解就是一个<code>Annotation</code>。定义<code>Annotation</code>时，<code>@interface</code>是必须的。它和我们通常的<code>implemented</code>实现接口的方法不同。<code>Annotation</code>接口的实现细节都由编译器完成。通过<code>@interface</code>定义注解后，该注解不能继承其他的注解或接口。</p>
+</li>
+<li><p><code>@Documented</code>: 类和方法的<code>Annotation</code>在缺省情况下是不出现在<code>javadoc</code>中的。如果使用<code>@Documented</code>修饰该<code>Annotation</code>，则表示它可以出现在<code>javadoc</code>中。定义<code>Annotation</code>时，<code>@Documented</code>可有可无；若没有定义，则<code>Annotation</code>不会出现在<code>javadoc</code>中。</p>
+</li>
+<li><p><code>@Target(ElementType.TYPE)</code>: <code>ElementType</code>是<code>Annotation</code>的类型属性。而<code>@Target</code>的作用，就是来指定<code>Annotation</code>的类型属性。<code>@Target(ElementType.TYPE)</code>的意思就是指定该<code>Annotation</code>的类型是<code>ElementType.TYPE</code>。这就意味着，<code>MyAnnotation</code>是来修饰“类、接口（包括注释类型）或枚举声明”的注解。</p>
+</li>
+<li><p><code>@Retention(RetentionPolicy.RUNTIME)</code>: <code>RetentionPolicy</code>是<code>Annotation</code>的策略属性，而<code>@Retention</code>的作用，就是指定<code>Annotation</code>的策略属性。<code>@Retention(RetentionPolicy.RUNTIME)</code>的意思就是指定该<code>Annotation</code>的策略是<code>RetentionPolicy.RUNTIME</code>。这就意味着，编译器会将该<code>Annotation</code>信息保留在<code>.class</code>文件中，并且能被虚拟机读取。定义<code>Annotation</code>时，<code>@Retention</code>可有可无。若没有<code>@Retention</code>，则默认是<code>RetentionPolicy.CLASS</code>。</p>
+</li>
+</ul>
+<h4 id="3-2-Java自带的Annotation"><a href="#3-2-Java自带的Annotation" class="headerlink" title="3.2 Java自带的Annotation"></a>3.2 Java自带的Annotation</h4><table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Deprecated</td>
+<td>所标注内容，不再被建议使用。</td>
+</tr>
+<tr>
+<td>@Override</td>
+<td>@Override 只能标注方法，表示该方法覆盖父类中的方法。</td>
+</tr>
+<tr>
+<td>@Documented</td>
+<td>@Documented 所标注内容，可以出现在javadoc中。</td>
+</tr>
+<tr>
+<td>@Inherited</td>
+<td>@Inherited只能被用来标注“Annotation类型”，它所标注的Annotation具有继承性。</td>
+</tr>
+<tr>
+<td>@Retention</td>
+<td>@Retention只能被用来标注“Annotation类型”，而且它被用来指定Annotation的RetentionPolicy属性。</td>
+</tr>
+<tr>
+<td>@Target</td>
+<td>@Target只能被用来标注“Annotation类型”，而且它被用来指定Annotation的ElementType属性。</td>
+</tr>
+<tr>
+<td>@SuppressWarnings</td>
+<td>@SuppressWarnings 所标注内容产生的警告，编译器会对这些警告保持静默。</td>
+</tr>
+</tbody></table>
+<h3 id="4-Annotation的作用"><a href="#4-Annotation的作用" class="headerlink" title="4. Annotation的作用"></a>4. Annotation的作用</h3><p>Annotation 是一个辅助类，它在Junit、Struts、Spring等工具框架中被广泛使用。</p>
+<h4 id="4-1-编译检查"><a href="#4-1-编译检查" class="headerlink" title="4.1 编译检查"></a>4.1 编译检查</h4><p>Annotation具有“让编译器进行编译检查的作用”。例如，@SuppressWarnings, @Deprecated和@Override都具有编译检查作用。</p>
+<p>若某个方法被 @Override的 标注，则意味着该方法会覆盖父类中的同名方法。如果有方法被@Override标示，但父类中却没有“被@Override标注”的同名方法，则编译器会报错。</p>
+<h4 id="4-2-在反射中使用Annotation"><a href="#4-2-在反射中使用Annotation" class="headerlink" title="4.2 在反射中使用Annotation"></a>4.2 在反射中使用Annotation</h4><p>在反射的Class, Method, Field等函数中，有许多于Annotation相关的接口。</p>
+<p>这也意味着，我们可以在反射中解析并使用Annotation。</p>
+<h4 id="4-3-根据Annotation生成帮助文档"><a href="#4-3-根据Annotation生成帮助文档" class="headerlink" title="4.3 根据Annotation生成帮助文档"></a>4.3 根据Annotation生成帮助文档</h4><p>通过给Annotation注解加上@Documented标签，能使该Annotation标签出现在javadoc中。</p>
+<h4 id="4-4-能够帮忙查看代码"><a href="#4-4-能够帮忙查看代码" class="headerlink" title="4.4 能够帮忙查看代码"></a>4.4 能够帮忙查看代码</h4><p>通过@Override, @Deprecated等，我们能很方便的了解程序的大致结构。</p>
+<p>另外，我们也可以通过自定义Annotation来实现一些功能，如接口权限拦截等。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你的赞赏<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/alipy.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -199,7 +323,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -212,145 +336,104 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.zjwblog.cn/JavaAnnotation%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
+<nav id="article-nav">
+  
+  
+    <a href="/Log4jFilter.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">自定义Filter实现日志过滤功能</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html">Apollo Client 使用说明</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/bigdata//" class="article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/CM%E5%AE%89%E8%A3%85.html" class="archive-article-date">
-  	<time datetime="2019-09-28T07:22:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-28</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/CM%E5%AE%89%E8%A3%85.html">CM安装</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">cm</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/java//" class="article-tag-list-link color5">java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -373,10 +456,10 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
 		root: "/",
