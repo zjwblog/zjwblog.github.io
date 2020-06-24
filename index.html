@@ -156,6 +156,242 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-HBaseOptimize" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/HBaseOptimize.html">HBase优化</a>
+    </h1>
+  
+
+        
+        <a href="/HBaseOptimize.html" class="archive-article-date">
+  	<time datetime="2020-06-24T06:23:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-表的设计"><a href="#1-表的设计" class="headerlink" title="1. 表的设计"></a>1. 表的设计</h2><h3 id="1-1-在创建表的时候指定分区（Pre-Creating-Regions）"><a href="#1-1-在创建表的时候指定分区（Pre-Creating-Regions）" class="headerlink" title="1.1 在创建表的时候指定分区（Pre-Creating Regions）"></a>1.1 在创建表的时候指定分区（Pre-Creating Regions）</h3><p>默认情况下，在创建HBase表的时候会自动创建一个region分区，当导入数据的时候，所有的HBase客户端都向这一个region写数据，直到这个region足够大了才进行切分。一种可以加快批量写入速度的方法是通过预先创建一些空的regions，这样当数据写入HBase时，会按照region分区情况，在集群内做数据的负载均衡。    </p>
+<ul>
+<li>实现方式是使用admin对象的切分策略</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] startKey = ...;      <span class="comment">// your lowest key</span></span><br><span class="line"><span class="keyword">byte</span>[] endKey = ...;        <span class="comment">// your highest key</span></span><br><span class="line"><span class="keyword">int</span> numberOfRegions = ...;  <span class="comment">// number of regions to create</span></span><br><span class="line">admin.createTable(table, startKey, endKey, numberOfRegions);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>用户自定义切片</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[][] splits = ...;   <span class="comment">// create your own splits</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">byte[][] splits = new byte[][] &#123; Bytes.toBytes("100"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("200"), Bytes.toBytes("400"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("500") &#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">admin.createTable(table, splits);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-Rowkey设计"><a href="#1-2-Rowkey设计" class="headerlink" title="1.2 Rowkey设计"></a>1.2 Rowkey设计</h3><p>HBase中rowkey用来检索表中的记录，支持以下三种方式：</p>
+<ol>
+<li><p>通过单个rowkey访问：即按照某个rowkey键值进行get操作；</p>
+</li>
+<li><p>通过rowkey的range进行scan：即通过设置startRowKey和endRowKey，在这个范围内进行扫描；</p>
+</li>
+<li><p>全表扫描：即直接扫描整张表中所有行记录</p>
+</li>
+</ol>
+<p>在<code>HBase</code>中，<code>rowkey</code>可以是任意字符串，最大长度<code>64KB</code>，实际应用中一般为<code>10~100</code>字节，存为<code>byte[]</code>字节数组，一般设计成定长的。</p>
+<p><code>rowkey</code>是按照字典序存储，因此，设计<code>rowkey</code>时，要充分利用这个排序特点，将经常一起读取的数据存储到一块，将最近可能会被访问的数据放在一块。</p>
+<p>Rowkey设计原则: </p>
+<ol>
+<li>越短越好，提高效率</li>
+</ol>
+<ul>
+<li><p>数据的持久化文件<code>HFile</code>中是按照<code>KeyValue</code>存储的，如果<code>rowkey</code>过长，比如超过<code>100</code>字节，<code>1000</code>万行数据，单单是存储<code>rowkey</code>的数据就要占用<code>10</code>亿个字节，将近<code>1G</code>数据，这样会影响<code>HFile</code>的存储效率。</p>
+</li>
+<li><p><code>HBase</code>中包含缓存机制，每次会将查询的结果暂时缓存到<code>HBase</code>的内存中，如果<code>rowkey</code>字段过长，内存的利用率就会降低，系统不能缓存更多的数据，这样会降低检索效率。</p>
+</li>
+</ul>
+<ol start="2">
+<li>散列原则——实现负载均衡</li>
+</ol>
+<p>如果<code>rowkey</code>是按时间戳的方式递增，不要将时间放在二进制码的前面，建议将<code>rowkey</code>的高位作为散列字段，由程序循环生成，低位放时间字段，这样将提高数据均衡分布在每个<code>regionserver</code>实现负载均衡的几率。如果没有散列字段，首字段直接是时间信息将产生所有新数据都在一个 <code>regionServer</code>上堆积的热点现象，这样在做数据检索的时候负载将会集中在个别<code>regionServer</code>，降低查询效率。</p>
+<ul>
+<li><p>加盐：添加随机值</p>
+</li>
+<li><p>hash：采用md5散列算法取前4位做前缀</p>
+</li>
+<li><p>反转：将手机号反转（尽量将具有随机性的字符串放在前面，这样便于<code>Hash</code>）</p>
+</li>
+</ul>
+<ol start="3">
+<li>唯一原则–字典序排序存储</li>
+</ol>
+<p>必须在设计上保证其唯一性，<code>rowkey</code>是按照字典顺序排序存储的，因此，设计<code>rowkey</code>的时候，要充分利用这个排序的特点，将经常读取的数据存储到一块，将最近可能会被访问的数据放到一块。        </p>
+<h3 id="1-3-列族的设计"><a href="#1-3-列族的设计" class="headerlink" title="1.3 列族的设计"></a>1.3 列族的设计</h3><p>不要在一张表里定义太多的<code>column family</code>。目前<code>Hbase</code>并不能很好的处理超过<code>2~3</code>个<code>column family</code>的表。因为某个<code>column family</code>在<code>flush</code>的时候，它邻近的<code>column family</code>也会因关联效应被触发<code>flush</code>，最终导致系统产生更多的<code>I/O</code>。    </p>
+<p>原因：</p>
+<ol>
+<li><p>当开始向<code>hbase</code>中插入数据的时候，数据会首先写入到<code>memstore</code>，而<code>memstore</code>是一个内存结构，每个列族对应一个<code>memstore</code>，当包含更多的列族的时候，会导致存在多个<code>memstore</code>，每一个<code>memstore</code>在<code>flush</code>的时候会对应一个<code>hfile</code>的文件，因此会产生很多的<code>hfile</code>文件，更加严重的是，<code>flush</code>操作时<code>region</code>级别，当<code>region</code>中的某个<code>memstore</code>被<code>flush</code>的时候，同一个<code>region</code>的其他<code>memstore</code>也会进行<code>flush</code>操作，当某一张表拥有很多列族的时候，且列族之间的数据分布不均匀的时候，会产生更多的磁盘文件;</p>
+</li>
+<li><p>当<code>hbase</code>表的某个<code>region</code>过大，会被拆分成两个，如果我们有多个列族，且这些列族之间的数据量相差悬殊的时候，<code>region</code>的<code>split</code>操作会导致原本数据量小的文件被进一步的拆分，而产生更多的小文件;</p>
+</li>
+<li><p>与<code>Flush</code>操作一样，目前<code>HBase</code>的<code>Compaction</code>操作也是<code>Region</code>级别的，过多的列族也会产生不必要的<code>I/O</code>;                </p>
+</li>
+<li><p><code>HDFS</code>其实对一个目录下的文件数有限制的（<code>dfs.namenode.fs-limits.max-directory-items</code>）。如果我们有<code>N</code>个列族，<code>M</code>个<code>Region</code>，那么我们持久化到<code>HDFS</code>至少会产生<code>N*M</code>个文件，而每个列族对应底层的<code>HFile</code>文件往往不止一个，我们假设为<code>K</code>个，那么最终表在<code>HDFS</code>目录下的文件数将是<code>N*M*K</code>，这可能会操作<code>HDFS</code>的限制。</p>
+</li>
+</ol>
+<h3 id="1-4-in-memory"><a href="#1-4-in-memory" class="headerlink" title="1.4 in memory"></a>1.4 in memory</h3><p><code>hbase</code>在<code>LRU</code>缓存基础之上采用了分层设计，整个<code>blockcache</code>分成了三个部分，分别是<code>single</code>、<code>multi</code>和<code>inMemory</code>。</p>
+<p>三者区别如下：</p>
+<ul>
+<li><p><code>single</code>：如果一个<code>block</code>第一次被访问，放在该优先队列中；</p>
+</li>
+<li><p><code>multi</code>：如果一个<code>block</code>被多次访问，则从<code>single</code>队列转移到<code>multi</code>队列</p>
+</li>
+<li><p><code>inMemory</code>：优先级最高，常驻<code>cache</code>，因此一般只有<code>hbase</code>系统的元数据，如<code>meta</code>表之类的才会放到<code>inMemory</code>队列中。</p>
+</li>
+</ul>
+<h3 id="1-5-Max-Version"><a href="#1-5-Max-Version" class="headerlink" title="1.5 Max Version"></a>1.5 Max Version</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setMaxVersions(int maxVersions)</code>设置表中数据的最大版本，如果只需要保存最新版本的数据，那么可以设置<code>setMaxVersions(1)</code>，保留更多的版本信息会占用更多的存储空间。</p>
+<h3 id="1-6-Time-to-Live"><a href="#1-6-Time-to-Live" class="headerlink" title="1.6 Time to Live"></a>1.6 Time to Live</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setTimeToLive(int timeToLive)</code>设置表中数据的存储生命期，过期数据将自动被删除，例如如果只需要存储最近两天的数据，那么可以设置<code>setTimeToLive(2 * 24 * 60 * 60)</code>。</p>
+<h3 id="1-7-Compaction"><a href="#1-7-Compaction" class="headerlink" title="1.7 Compaction"></a>1.7 Compaction</h3><p>在<code>HBase</code>中，数据在更新时首先写入<code>WAL</code> 日志(<code>HLog</code>)和内存(<code>MemStore</code>)中，<code>MemStore</code>中的数据是排序的，当<code>MemStore</code>累计到一定阈值(<code>64MB</code>)时，就会创建一个新的<code>MemStore</code>，并且将老的<code>MemStore</code>添加到<code>flush</code>队列，由<strong>单独的线程</strong><code>flush</code>到磁盘上，成为一个<code>StoreFile</code>。于此同时， 系统会在<code>zookeeper</code>中记录一个<code>redo point</code>，表示这个时刻之前的变更已经持久化了<strong>(minor compact)</strong>。</p>
+<p><code>StoreFile</code>是只读的，一旦创建后就不可以再修改。因此<code>Hbase</code>的更新其实是不断追加的操作。当一个<code>Store</code>中的<code>StoreFile</code>达到一定的阈值后，就会进行一次合并<strong>(major compact)</strong>，将对同一个<code>key</code>的修改合并到一起，形成一个大的<code>StoreFile</code>，当<code>StoreFile</code>的大小达到一定阈值后，又会对<code>StoreFile</code>进行分割<strong>(split)</strong>，等分为两个<code>StoreFile</code>。</p>
+<p>由于对表的更新是不断追加的，处理读请求时，需要访问<code>Store</code>中全部的<code>StoreFile</code>和<code>MemStore</code>，将它们按照<code>row key</code>进行合并，由于<code>StoreFile</code>和<code>MemStore</code>都是经过排序的，并且<code>StoreFile</code>带有内存中索引，通常合并过程还是比较快的。</p>
+<p>实际应用中，可以考虑必要时手动进行<code>major compact</code>，将同一个<code>row key</code>的修改进行合并形成一个大的<code>StoreFile</code>。同时，可以将<code>StoreFile</code>设置大些，减少<code>split</code>的发生。</p>
+<p><code>hbase</code>为了防止小文件（被刷到磁盘的<code>menstore</code>）过多，以保证保证查询效率，<code>hbase</code>需要在必要的时候将这些小的<code>store file</code>合并成相对较大的<code>store file</code>，这个过程就称之为<code>compaction</code>。在<code>hbase</code>中，主要存在两种类型的<code>compaction</code>：<code>minor compaction</code>和<code>major compaction</code>。</p>
+<ol>
+<li><code>minor compaction</code>: 的是较小、很少文件的合并。<code>minor compaction</code>的运行机制要复杂一些，它由一下几个参数共同决定：</li>
+</ol>
+<ul>
+<li><p><code>hbase.hstore.compaction.min</code>: 默认值为<code>3</code>，表示至少需要三个满足条件的<code>store file</code>时，<code>minor compaction</code>才会启动</p>
+</li>
+<li><p><code>hbase.hstore.compaction.max</code>: 默认值为<code>10</code>，表示一次<code>minor compaction</code>中最多选取<code>10</code>个<code>store file</code></p>
+</li>
+<li><p><code>hbase.hstore.compaction.min.size</code>: 表示文件大小小于该值的<code>store file</code>一定会加入到<code>minor compaction</code>的<code>store file</code>中</p>
+</li>
+<li><p><code>hbase.hstore.compaction.max.size</code>: 表示文件大小大于该值的<code>store file</code>一定不会被添加到<code>minor compaction</code></p>
+</li>
+<li><p><code>hbase.hstore.compaction.ratio</code>: 将<code>StoreFile</code>按照文件年龄排序，<code>minor compaction</code>总是从<code>older store file</code>开始选择，如果该文件的<code>size</code>小于后面<code>hbase.hstore.compaction.max</code>个<code>store file size</code>之和乘以<code>ratio</code>的值，那么该<code>store file</code>将加入到<code>minor compaction</code>中。如果满足<code>minor compaction</code>条件的文件数量大于<code>hbase.hstore.compaction.min</code>，才会启动。</p>
+</li>
+</ul>
+<ol start="2">
+<li><code>major compaction</code>的功能是将所有的<code>store file</code>合并成一个，触发<code>major compaction</code>的可能条件有：</li>
+</ol>
+<ul>
+<li><p><code>major_compact</code>命令</p>
+</li>
+<li><p><code>majorCompact()``API</code>、</p>
+</li>
+<li><p><code>region server</code>自动运行</p>
+</li>
+</ul>
+<blockquote>
+<p><code>hbase.hregion.majorcompaction</code>默认为<code>24</code>小时</p>
+<p><code>hbase.hregion.majorcompaction.jetter</code>默认值为<code>0.2</code>为防止<code>region server</code>在同一时间进行<code>major compaction</code>。</p>
+<p><code>hbase.hregion.majorcompaction.jetter</code>参数的作用是：对参数<code>hbase.hregion.majorcompaction</code>规定的值起到浮动的作用，假如两个参数都为默认值<code>24</code>和<code>0.2</code>，那么<code>major compact</code>最终使用的数值为<code>19.2~28.8</code>这个范围。</p>
+</blockquote>
+<h2 id="2-hbase写数据优化点"><a href="#2-hbase写数据优化点" class="headerlink" title="2. hbase写数据优化点"></a>2. hbase写数据优化点</h2><h3 id="2-1-是否需要写WAL，WAL是否需要同步写入"><a href="#2-1-是否需要写WAL，WAL是否需要同步写入" class="headerlink" title="2.1 是否需要写WAL，WAL是否需要同步写入"></a>2.1 是否需要写WAL，WAL是否需要同步写入</h3><p>优化原理：数据写入流程可以理解为一次顺序写<code>WAL</code>(<code>HLog</code>)加上一次写缓存（<code>MemStore</code>），通常情况下写缓存延迟很低，因此提升写性能就只能从<code>WAL</code>入手。<code>WAL</code>机制一方面是为了确保数据即使写入缓存丢失也可以恢复，另一方面是为了集群之间异步复制。默认<code>WAL</code>机制开启且使用同步机制写入<code>WAL</code>。首先考虑业务是否需要写<code>WAL</code>，通常情况下大多数业务都会开启<code>WAL</code>机制（默认），但是对于部分业务可能并不特别关心异常情况下部分数据的丢失，而更关心数据写入吞吐量，比如某些推荐业务，这类业务即使丢失一部分用户行为数据可能对推荐结果并不构成很大影响，但是对于写入吞吐量要求很高，不能造成数据队列阻塞。这种场景下可以考虑关闭<code>WAL</code>写入，写入吞吐量可以提升<code>2x~3x</code>。退而求其次，有些业务不能接受不写<code>WAL</code>，但可以接受<code>WAL</code>异步写入，也是可以考虑优化的，通常也会带来<code>1x～2x</code>的性能提升。 </p>
+<p>优化推荐：根据业务关注点在<code>WAL</code>机制与写入吞吐量之间做出选择  </p>
+<h3 id="2-2-批量Put提交"><a href="#2-2-批量Put提交" class="headerlink" title="2.2 批量Put提交"></a>2.2 批量Put提交</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>put</code>以及批量<code>put</code>的<code>API</code>接口，使用批量<code>put</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高写入性能。另外需要注意的是，批量<code>put</code>请求要么全部成功返回，要么抛出异常。</p>
+<p>优化建议：使用批量<code>put</code>进行写入请求</p>
+<h3 id="2-3-异步批量Put提交"><a href="#2-3-异步批量Put提交" class="headerlink" title="2.3 异步批量Put提交"></a>2.3 异步批量Put提交</h3><p>优化原理：业务如果可以接受异常情况下少量数据丢失的话，还可以使用异步批量提交的方式提交请求。提交分为两阶段执行，用户提交写请求之后，数据会写入客户端缓存，并返回用户写入成功；当客户端缓存达到阈值（默认<code>2M</code>）之后批量提交给<code>RegionServer</code>。需要注意的是，在某些情况下客户端异常的情况下缓存数据有可能丢失。</p>
+<p>优化建议：在业务可以接受的情况下开启异步批量提交</p>
+<p>使用方式：<code>setAutoFlush(false)</code></p>
+<h3 id="2-4-Region个数调整"><a href="#2-4-Region个数调整" class="headerlink" title="2.4 Region个数调整"></a>2.4 Region个数调整</h3><p>优化原理：当前集群中表的<code>Region</code>个数如果小于<code>RegionServer</code>个数，即<code>Num(Region of Table) &lt; Num(RegionServer)</code>，可以考虑切分<code>Region</code>并尽可能分布到不同<code>RegionServer</code>来提高系统请求并发度，如果<code>Num(Region of Table) &gt; Num(RegionServer)</code>，再增<code>加Region</code>个数效果并不明显。</p>
+<p>优化建议：在<code>Num(Region of Table) &lt; Num(RegionServer)</code>的场景下切分部分请求负载高的<code>Region</code>并迁移到其他<code>RegionServer</code>；</p>
+<h3 id="2-5-写请求均衡"><a href="#2-5-写请求均衡" class="headerlink" title="2.5 写请求均衡"></a>2.5 写请求均衡</h3><p>优化原理：另一个需要考虑的问题是写入请求是否均衡，如果不均衡，一方面会导致系统并发度较低，另一方面也有可能造成部分节点负载很高，进而影响其他业务。分布式系统中特别害怕一个节点负载很高的情况，一个节点负载很高可能会拖慢整个集群，这是因为很多业务会使用Mutli批量提交读写请求，一旦其中一部分请求落到该节点无法得到及时响应，就会导致整个批量请求超时。因此不怕节点宕掉，就怕节点奄奄一息！</p>
+<p>优化建议：检查<code>rowkey</code>设计以及预分区策略，保证写入请求均衡。</p>
+<h3 id="2-6-写入KeyValue数据是否太大"><a href="#2-6-写入KeyValue数据是否太大" class="headerlink" title="2.6 写入KeyValue数据是否太大"></a>2.6 写入KeyValue数据是否太大</h3><p><code>KeyValue</code>大小对写入性能的影响巨大，一旦遇到写入性能比较差的情况，需要考虑是否由于写入<code>KeyValue</code>数据太大导致。随着单行数据大小不断变大，写入吞吐量急剧下降，写入延迟在<code>100K</code>之后会急剧增大。</p>
+<h3 id="2-7-Utilize-Flash-storage-for-WAL-HBASE-12848"><a href="#2-7-Utilize-Flash-storage-for-WAL-HBASE-12848" class="headerlink" title="2.7 Utilize Flash storage for WAL(HBASE-12848)"></a>2.7 Utilize Flash storage for WAL(HBASE-12848)</h3><p>这个特性意味着可以将<code>WAL</code>单独置于<code>SSD</code>上，这样即使在默认情况下（<code>WALSync</code>），写性能也会有很大的提升。需要注意的是，该特性建立在<code>HDFS 2.6.0+</code>的基础上，<code>HDFS</code>以前版本不支持该特性。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-12848" target="_blank" rel="noopener">HBASE-12848</a>。</p>
+<h3 id="2-8-Multiple-WALs-HBASE-14457"><a href="#2-8-Multiple-WALs-HBASE-14457" class="headerlink" title="2.8 Multiple WALs(HBASE-14457)"></a>2.8 Multiple WALs(HBASE-14457)</h3><p>该特性也是对<code>WAL</code>进行改造，当前<code>WAL</code>设计为一个<code>RegionServer</code>上所有<code>Region</code>共享一个<code>WAL</code>，可以想象在写入吞吐量较高的时候必然存在资源竞争，降低整体性能。针对这个问题，社区小伙伴提出<code>Multiple WALs</code>机制，管理员可以为每个<code>Namespace</code>下的所有表设置一个共享<code>WAL</code>，通过这种方式，写性能大约可以提升<code>20%～40%</code>左右。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-14457" target="_blank" rel="noopener">HBASE-14457</a>。</p>
+<h2 id="3-hbase读数据优化点"><a href="#3-hbase读数据优化点" class="headerlink" title="3. hbase读数据优化点"></a>3. hbase读数据优化点</h2><h3 id="2-1-调整scan缓存"><a href="#2-1-调整scan缓存" class="headerlink" title="2.1. 调整scan缓存"></a>2.1. 调整scan缓存</h3><p>优化原理：在解释这个问题之前，首先需要解释什么是<code>scan</code>缓存，通常来讲一次<code>scan</code>会返回大量数据，因此客户端发起一次<code>scan</code>请求，实际并不会一次就将所有数据加载到本地，而是分成多次<code>RPC</code>请求进行加载，这样设计一方面是因为大量数据请求可能会导致网络带宽严重消耗进而影响其他业务，另一方面也有可能因为数据量太大导致本地客户端发生<code>OOM</code>。在这样的设计体系下用户会首先加载一部分数据到本地，然后遍历处理，再加载下一部分数据到本地处理，如此往复，直至所有数据都加载完成。数据加载到本地就存放在<code>scan</code>缓存中，默认<code>100</code>条数据大小。通常情况下，默认的<code>scan</code>缓存设置就可以正常工作的。但是在一些大<code>scan</code>（一次<code>scan</code>可能需要查询几万甚至几十万行数据）来说，每次请求<code>100</code>条数据意味着一次<code>scan</code>需要几百甚至几千次<code>RPC</code>请求，这种交互的代价无疑是很大的。因此可以考虑将<code>scan</code>缓存设置增大，比如设为<code>500</code>或者<code>1000</code>就可能更加合适。在一次<code>scan</code>扫描<code>10w+</code>条数据量的条件下，将<code>scan</code>缓存从<code>100</code>增加到<code>1000</code>，可以有效降低<code>scan</code>请求的总体延迟，延迟基本降低了<code>25%</code>左右。</p>
+<p>优化建议：大<code>scan</code>场景下将<code>scan</code>缓存从<code>100</code>增大到<code>500</code>或者<code>1000</code>，用以减少<code>RPC</code>次数.</p>
+<h3 id="2-2-批量get"><a href="#2-2-批量get" class="headerlink" title="2.2 批量get"></a>2.2 批量get</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>get</code>以及批量<code>get</code>的<code>API</code>接口，使用批量<code>get</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高读取性能。另外需要注意的是，批量<code>get</code>请求要么成功返回所有请求数据，要么抛出异常。</p>
+<p>优化建议：使用批量<code>get</code>进行读取请求</p>
+<h3 id="2-3-显示指定列族或者列"><a href="#2-3-显示指定列族或者列" class="headerlink" title="2.3 显示指定列族或者列"></a>2.3 显示指定列族或者列</h3><p>优化原理：<code>HBase</code>是典型的列族数据库，意味着同一列族的数据存储在一起，不同列族的数据分开存储在不同的目录下。如果一个表有多个列族，只是根据<code>rowkey</code>而不指定列族进行检索的话不同列族的数据需要独立进行检索，性能必然会比指定列族的查询差很多，很多情况下甚至会有<code>2倍～3倍</code>的性能损失。</p>
+<p>优化建议：可以指定列族或者列进行精确查找的尽量指定查找</p>
+<h3 id="2-4-离线批量读取时设置禁止缓存"><a href="#2-4-离线批量读取时设置禁止缓存" class="headerlink" title="2.4 离线批量读取时设置禁止缓存"></a>2.4 离线批量读取时设置禁止缓存</h3><p>优化原理：通常离线批量读取数据会进行一次性全表扫描，一方面数据量很大，另一方面请求只会执行一次。这种场景下如果使用<code>scan</code>默认设置，就会将数据从<code>HDFS</code>加载出来之后放到缓存。可想而知，大量数据进入缓存必将其他实时业务热点数据挤出，其他业务不得不从<code>HDFS</code>加载，进而会造成明显的读延迟</p>
+<p>优化建议：离线批量读取请求设置禁用缓存，<code>scan.setBlockCache(false)</code></p>
+<h3 id="2-5-读请求负载均衡"><a href="#2-5-读请求负载均衡" class="headerlink" title="2.5 读请求负载均衡"></a>2.5 读请求负载均衡</h3><p>优化原理：极端情况下假如所有的读请求都落在一台<code>RegionServer</code>的某几个<code>Region</code>上，这一方面不能发挥整个集群的并发处理能力，另一方面势必造成此台<code>RegionServer</code>资源严重消耗（比如<code>I/O</code>耗尽、<code>handler</code>耗尽等），落在该台<code>RegionServer</code>上的其他业务会因此受到很大的波及。可见，读请求不均衡不仅会造成本身业务性能很差，还会严重影响其他业务。当然，写请求不均衡也会造成类似的问题，可见负载不均衡是HBase的大忌。</p>
+<p>优化建议：<code>rowkey</code>必须进行散列化处理（比如<code>MD5</code>散列），同时建表必须进行预分区处理</p>
+<h3 id="2-6-BlockCache调节"><a href="#2-6-BlockCache调节" class="headerlink" title="2.6 BlockCache调节"></a>2.6 BlockCache调节</h3><p>优化原理：<code>BlockCache</code>作为读缓存，对于读性能来说至关重要。默认情况下<code>BlockCache</code>和<code>Memstore</code>的配置相对比较均衡（各占<code>40%</code>），可以根据集群业务进行修正，比如读多写少业务可以将<code>BlockCache</code>占比调大。另一方面，<code>BlockCache</code>的策略选择也很重要，不同策略对读性能来说影响并不是很大，但是对<code>GC</code>的影响却相当显著，尤其<code>BucketCache</code>的<code>offheap</code>模式下<code>GC</code>表现很优越。另外，<code>HBase 2.0</code>对<code>offheap</code>的改造（<code>HBASE-11425</code>）将会使<code>HBase</code>的读性能得到<code>2～4</code>倍的提升，同时<code>GC</code>表现会更好。观察所有RegionServer的缓存未命中率、配置文件相关配置项一级GC日志，确认BlockCache是否可以优化</p>
+<p>优化建议：<code>JVM Memory &lt; 20GB</code>，<code>BlockCache</code>策略选择<code>LRU</code>；否则选择<code>BucketCache</code>策略的<code>offheap</code>模式；</p>
+<h3 id="2-7-HFile文件数量"><a href="#2-7-HFile文件数量" class="headerlink" title="2.7 HFile文件数量"></a>2.7 HFile文件数量</h3><p>优化原理：<code>HBase</code>读取数据通常首先会到<code>Memstore</code>和<code>BlockCache</code>中检索（读取最近写入数据和热点数据），如果查找不到就会到文件中检索。HBase的类<code>LSM</code>结构会导致每个<code>store</code>包含多数<code>HFile</code>文件，文件越多，检索所需的<code>I/O</code>次数必然越多，读取延迟也就越高。文件数量通常取决于<code>Compaction</code>的执行策略，一般和两个配置参数有关：<code>hbase.hstore.compaction.min</code>和<code>hbase.hstore.compaction.max.size</code>，前者表示一个<code>store</code>中的文件数超过多少就应该进行合并，后者表示参数合并的文件大小最大是多少，超过此大小的文件不能参与合并。这两个参数不能设置太’松’（前者不能设置太大，后者不能设置太小），导致<code>Compaction</code>合并文件的实际效果不明显，进而很多文件得不到合并。这样就会导致<code>HFile</code>文件数变多。观察<code>RegionServer</code>级别以及<code>Region</code>级别的<code>storefile</code>数，确认<code>HFile</code>文件是否过多。</p>
+<p>优化建议：<code>hbase.hstore.compaction.min</code>设置不能太大，默认是3个；设置需要根据<code>Region</code>大小确定，通常可以简单的认为<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>。</p>
+<h3 id="8-控制Compaction消耗系统资源情况"><a href="#8-控制Compaction消耗系统资源情况" class="headerlink" title="8. 控制Compaction消耗系统资源情况"></a>8. 控制Compaction消耗系统资源情况</h3><p>优化原理：<code>Compaction</code>是将小文件合并为大文件，提高后续业务随机读性能，但是也会带来<code>I/O</code>放大以及带宽消耗问题（数据远程读取以及三副本写入都会消耗系统带宽）。正常配置情况下<code>Minor Compaction</code>并不会带来很大的系统资源消耗，除非因为配置不合理导致<code>Minor Compaction</code>太过频繁，或者<code>Region</code>设置太大情况下发生<code>Major Compaction</code>。观察系统<code>I/O</code>资源以及带宽资源使用情况，再观察<code>Compaction</code>队列长度，确认是否由于<code>Compaction</code>导致系统资源消耗过多。</p>
+<p>优化建议：<code>Minor Compaction</code>设置：<code>hbase.hstore.compaction.min</code>设置不能太小，又不能设置太大，因此建议设置为<code>5～6</code>；<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>; <code>Major Compaction</code>设置：大<code>Region</code>读延迟敏感业务（ 100G以上）通常不建议开启自动<code>Major Compaction</code>，手动低峰期触发。小<code>Region</code>或者延迟不敏感业务可以开启<code>Major Compaction</code>，但建议限制流量。</p>
+<h4 id="9、调整数据本地率"><a href="#9、调整数据本地率" class="headerlink" title="9、调整数据本地率"></a>9、调整数据本地率</h4><p>数据本地率：<code>HDFS</code>数据通常存储三份，假如当前<code>RegionA</code>处于<code>Node1</code>上，数据<code>a</code>写入的时候三副本为(<code>Node1</code>,<code>Node2</code>,<code>Node3</code>)，数据<code>b</code>写入三副本是(<code>Node1</code>,<code>Node4</code>,<code>Node5</code>)，数据<code>c</code>写入三副本(<code>Node1</code>,<code>Node3</code>,<code>Node5</code>)，可以看出来所有数据写入本地<code>Node1</code>肯定会写一份，数据都在本地可以读到，因此数据本地率是<code>100%</code>。现在假设<code>RegionA</code>被迁移到了<code>Node2</code>上，只有数据<code>a</code>在该节点上，其他数据（<code>b</code>和<code>c</code>）读取只能远程跨节点读，本地率就为<code>33%</code>（假设<code>a</code>，<code>b</code>和<code>c</code>的数据大小相同）。</p>
+<p>优化原理：数据本地率太低很显然会产生大量的跨网络<code>I/O</code>请求，必然会导致读请求延迟较高，因此提高数据本地率可以有效优化随机读性能。数据本地率低的原因一般是因为<code>Region</code>迁移（自动<code>balance</code>开启、<code>RegionServer</code>宕机迁移、手动迁移等）,因此一方面可以通过避免<code>Region</code>无故迁移来保持数据本地率，另一方面如果数据本地率很低，也可以通过执行<code>major_compact</code>提升数据本地率到100%。</p>
+<p>优化建议：避免<code>Region</code>无故迁移，比如关闭自动<code>balance</code>、<code>RegionServer</code>宕机及时拉起并迁回飘走的<code>Region</code>等；在业务低峰期执行<code>major_compact</code>提升数据本地率。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/大数据//" class="article-tag-list-link color4">大数据</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/HBase//" class="article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/HBaseOptimize.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-JavaAnnotation学习笔记" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1320,7 +1556,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -1328,7 +1564,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
         		</li>
       		
 		</ul>
@@ -1354,242 +1590,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-HBaseOptimize" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/HBaseOptimize.html">HBase优化</a>
-    </h1>
-  
-
-        
-        <a href="/HBaseOptimize.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-表的设计"><a href="#1-表的设计" class="headerlink" title="1. 表的设计"></a>1. 表的设计</h2><h3 id="1-1-在创建表的时候指定分区（Pre-Creating-Regions）"><a href="#1-1-在创建表的时候指定分区（Pre-Creating-Regions）" class="headerlink" title="1.1 在创建表的时候指定分区（Pre-Creating Regions）"></a>1.1 在创建表的时候指定分区（Pre-Creating Regions）</h3><p>默认情况下，在创建HBase表的时候会自动创建一个region分区，当导入数据的时候，所有的HBase客户端都向这一个region写数据，直到这个region足够大了才进行切分。一种可以加快批量写入速度的方法是通过预先创建一些空的regions，这样当数据写入HBase时，会按照region分区情况，在集群内做数据的负载均衡。    </p>
-<ul>
-<li>实现方式是使用admin对象的切分策略</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] startKey = ...;      <span class="comment">// your lowest key</span></span><br><span class="line"><span class="keyword">byte</span>[] endKey = ...;        <span class="comment">// your highest key</span></span><br><span class="line"><span class="keyword">int</span> numberOfRegions = ...;  <span class="comment">// number of regions to create</span></span><br><span class="line">admin.createTable(table, startKey, endKey, numberOfRegions);</span><br></pre></td></tr></table></figure>
-<ul>
-<li>用户自定义切片</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[][] splits = ...;   <span class="comment">// create your own splits</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">byte[][] splits = new byte[][] &#123; Bytes.toBytes("100"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("200"), Bytes.toBytes("400"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("500") &#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">admin.createTable(table, splits);</span><br></pre></td></tr></table></figure>
-
-<h3 id="1-2-Rowkey设计"><a href="#1-2-Rowkey设计" class="headerlink" title="1.2 Rowkey设计"></a>1.2 Rowkey设计</h3><p>HBase中rowkey用来检索表中的记录，支持以下三种方式：</p>
-<ol>
-<li><p>通过单个rowkey访问：即按照某个rowkey键值进行get操作；</p>
-</li>
-<li><p>通过rowkey的range进行scan：即通过设置startRowKey和endRowKey，在这个范围内进行扫描；</p>
-</li>
-<li><p>全表扫描：即直接扫描整张表中所有行记录</p>
-</li>
-</ol>
-<p>在<code>HBase</code>中，<code>rowkey</code>可以是任意字符串，最大长度<code>64KB</code>，实际应用中一般为<code>10~100</code>字节，存为<code>byte[]</code>字节数组，一般设计成定长的。</p>
-<p><code>rowkey</code>是按照字典序存储，因此，设计<code>rowkey</code>时，要充分利用这个排序特点，将经常一起读取的数据存储到一块，将最近可能会被访问的数据放在一块。</p>
-<p>Rowkey设计原则: </p>
-<ol>
-<li>越短越好，提高效率</li>
-</ol>
-<ul>
-<li><p>数据的持久化文件<code>HFile</code>中是按照<code>KeyValue</code>存储的，如果<code>rowkey</code>过长，比如超过<code>100</code>字节，<code>1000</code>万行数据，单单是存储<code>rowkey</code>的数据就要占用<code>10</code>亿个字节，将近<code>1G</code>数据，这样会影响<code>HFile</code>的存储效率。</p>
-</li>
-<li><p><code>HBase</code>中包含缓存机制，每次会将查询的结果暂时缓存到<code>HBase</code>的内存中，如果<code>rowkey</code>字段过长，内存的利用率就会降低，系统不能缓存更多的数据，这样会降低检索效率。</p>
-</li>
-</ul>
-<ol start="2">
-<li>散列原则——实现负载均衡</li>
-</ol>
-<p>如果<code>rowkey</code>是按时间戳的方式递增，不要将时间放在二进制码的前面，建议将<code>rowkey</code>的高位作为散列字段，由程序循环生成，低位放时间字段，这样将提高数据均衡分布在每个<code>regionserver</code>实现负载均衡的几率。如果没有散列字段，首字段直接是时间信息将产生所有新数据都在一个 <code>regionServer</code>上堆积的热点现象，这样在做数据检索的时候负载将会集中在个别<code>regionServer</code>，降低查询效率。</p>
-<ul>
-<li><p>加盐：添加随机值</p>
-</li>
-<li><p>hash：采用md5散列算法取前4位做前缀</p>
-</li>
-<li><p>反转：将手机号反转（尽量将具有随机性的字符串放在前面，这样便于<code>Hash</code>）</p>
-</li>
-</ul>
-<ol start="3">
-<li>唯一原则–字典序排序存储</li>
-</ol>
-<p>必须在设计上保证其唯一性，<code>rowkey</code>是按照字典顺序排序存储的，因此，设计<code>rowkey</code>的时候，要充分利用这个排序的特点，将经常读取的数据存储到一块，将最近可能会被访问的数据放到一块。        </p>
-<h3 id="1-3-列族的设计"><a href="#1-3-列族的设计" class="headerlink" title="1.3 列族的设计"></a>1.3 列族的设计</h3><p>不要在一张表里定义太多的<code>column family</code>。目前<code>Hbase</code>并不能很好的处理超过<code>2~3</code>个<code>column family</code>的表。因为某个<code>column family</code>在<code>flush</code>的时候，它邻近的<code>column family</code>也会因关联效应被触发<code>flush</code>，最终导致系统产生更多的<code>I/O</code>。    </p>
-<p>原因：</p>
-<ol>
-<li><p>当开始向<code>hbase</code>中插入数据的时候，数据会首先写入到<code>memstore</code>，而<code>memstore</code>是一个内存结构，每个列族对应一个<code>memstore</code>，当包含更多的列族的时候，会导致存在多个<code>memstore</code>，每一个<code>memstore</code>在<code>flush</code>的时候会对应一个<code>hfile</code>的文件，因此会产生很多的<code>hfile</code>文件，更加严重的是，<code>flush</code>操作时<code>region</code>级别，当<code>region</code>中的某个<code>memstore</code>被<code>flush</code>的时候，同一个<code>region</code>的其他<code>memstore</code>也会进行<code>flush</code>操作，当某一张表拥有很多列族的时候，且列族之间的数据分布不均匀的时候，会产生更多的磁盘文件;</p>
-</li>
-<li><p>当<code>hbase</code>表的某个<code>region</code>过大，会被拆分成两个，如果我们有多个列族，且这些列族之间的数据量相差悬殊的时候，<code>region</code>的<code>split</code>操作会导致原本数据量小的文件被进一步的拆分，而产生更多的小文件;</p>
-</li>
-<li><p>与<code>Flush</code>操作一样，目前<code>HBase</code>的<code>Compaction</code>操作也是<code>Region</code>级别的，过多的列族也会产生不必要的<code>I/O</code>;                </p>
-</li>
-<li><p><code>HDFS</code>其实对一个目录下的文件数有限制的（<code>dfs.namenode.fs-limits.max-directory-items</code>）。如果我们有<code>N</code>个列族，<code>M</code>个<code>Region</code>，那么我们持久化到<code>HDFS</code>至少会产生<code>N*M</code>个文件，而每个列族对应底层的<code>HFile</code>文件往往不止一个，我们假设为<code>K</code>个，那么最终表在<code>HDFS</code>目录下的文件数将是<code>N*M*K</code>，这可能会操作<code>HDFS</code>的限制。</p>
-</li>
-</ol>
-<h3 id="1-4-in-memory"><a href="#1-4-in-memory" class="headerlink" title="1.4 in memory"></a>1.4 in memory</h3><p><code>hbase</code>在<code>LRU</code>缓存基础之上采用了分层设计，整个<code>blockcache</code>分成了三个部分，分别是<code>single</code>、<code>multi</code>和<code>inMemory</code>。</p>
-<p>三者区别如下：</p>
-<ul>
-<li><p><code>single</code>：如果一个<code>block</code>第一次被访问，放在该优先队列中；</p>
-</li>
-<li><p><code>multi</code>：如果一个<code>block</code>被多次访问，则从<code>single</code>队列转移到<code>multi</code>队列</p>
-</li>
-<li><p><code>inMemory</code>：优先级最高，常驻<code>cache</code>，因此一般只有<code>hbase</code>系统的元数据，如<code>meta</code>表之类的才会放到<code>inMemory</code>队列中。</p>
-</li>
-</ul>
-<h3 id="1-5-Max-Version"><a href="#1-5-Max-Version" class="headerlink" title="1.5 Max Version"></a>1.5 Max Version</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setMaxVersions(int maxVersions)</code>设置表中数据的最大版本，如果只需要保存最新版本的数据，那么可以设置<code>setMaxVersions(1)</code>，保留更多的版本信息会占用更多的存储空间。</p>
-<h3 id="1-6-Time-to-Live"><a href="#1-6-Time-to-Live" class="headerlink" title="1.6 Time to Live"></a>1.6 Time to Live</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setTimeToLive(int timeToLive)</code>设置表中数据的存储生命期，过期数据将自动被删除，例如如果只需要存储最近两天的数据，那么可以设置<code>setTimeToLive(2 * 24 * 60 * 60)</code>。</p>
-<h3 id="1-7-Compaction"><a href="#1-7-Compaction" class="headerlink" title="1.7 Compaction"></a>1.7 Compaction</h3><p>在<code>HBase</code>中，数据在更新时首先写入<code>WAL</code> 日志(<code>HLog</code>)和内存(<code>MemStore</code>)中，<code>MemStore</code>中的数据是排序的，当<code>MemStore</code>累计到一定阈值(<code>64MB</code>)时，就会创建一个新的<code>MemStore</code>，并且将老的<code>MemStore</code>添加到<code>flush</code>队列，由<strong>单独的线程</strong><code>flush</code>到磁盘上，成为一个<code>StoreFile</code>。于此同时， 系统会在<code>zookeeper</code>中记录一个<code>redo point</code>，表示这个时刻之前的变更已经持久化了<strong>(minor compact)</strong>。</p>
-<p><code>StoreFile</code>是只读的，一旦创建后就不可以再修改。因此<code>Hbase</code>的更新其实是不断追加的操作。当一个<code>Store</code>中的<code>StoreFile</code>达到一定的阈值后，就会进行一次合并<strong>(major compact)</strong>，将对同一个<code>key</code>的修改合并到一起，形成一个大的<code>StoreFile</code>，当<code>StoreFile</code>的大小达到一定阈值后，又会对<code>StoreFile</code>进行分割<strong>(split)</strong>，等分为两个<code>StoreFile</code>。</p>
-<p>由于对表的更新是不断追加的，处理读请求时，需要访问<code>Store</code>中全部的<code>StoreFile</code>和<code>MemStore</code>，将它们按照<code>row key</code>进行合并，由于<code>StoreFile</code>和<code>MemStore</code>都是经过排序的，并且<code>StoreFile</code>带有内存中索引，通常合并过程还是比较快的。</p>
-<p>实际应用中，可以考虑必要时手动进行<code>major compact</code>，将同一个<code>row key</code>的修改进行合并形成一个大的<code>StoreFile</code>。同时，可以将<code>StoreFile</code>设置大些，减少<code>split</code>的发生。</p>
-<p><code>hbase</code>为了防止小文件（被刷到磁盘的<code>menstore</code>）过多，以保证保证查询效率，<code>hbase</code>需要在必要的时候将这些小的<code>store file</code>合并成相对较大的<code>store file</code>，这个过程就称之为<code>compaction</code>。在<code>hbase</code>中，主要存在两种类型的<code>compaction</code>：<code>minor compaction</code>和<code>major compaction</code>。</p>
-<ol>
-<li><code>minor compaction</code>: 的是较小、很少文件的合并。<code>minor compaction</code>的运行机制要复杂一些，它由一下几个参数共同决定：</li>
-</ol>
-<ul>
-<li><p><code>hbase.hstore.compaction.min</code>: 默认值为<code>3</code>，表示至少需要三个满足条件的<code>store file</code>时，<code>minor compaction</code>才会启动</p>
-</li>
-<li><p><code>hbase.hstore.compaction.max</code>: 默认值为<code>10</code>，表示一次<code>minor compaction</code>中最多选取<code>10</code>个<code>store file</code></p>
-</li>
-<li><p><code>hbase.hstore.compaction.min.size</code>: 表示文件大小小于该值的<code>store file</code>一定会加入到<code>minor compaction</code>的<code>store file</code>中</p>
-</li>
-<li><p><code>hbase.hstore.compaction.max.size</code>: 表示文件大小大于该值的<code>store file</code>一定不会被添加到<code>minor compaction</code></p>
-</li>
-<li><p><code>hbase.hstore.compaction.ratio</code>: 将<code>StoreFile</code>按照文件年龄排序，<code>minor compaction</code>总是从<code>older store file</code>开始选择，如果该文件的<code>size</code>小于后面<code>hbase.hstore.compaction.max</code>个<code>store file size</code>之和乘以<code>ratio</code>的值，那么该<code>store file</code>将加入到<code>minor compaction</code>中。如果满足<code>minor compaction</code>条件的文件数量大于<code>hbase.hstore.compaction.min</code>，才会启动。</p>
-</li>
-</ul>
-<ol start="2">
-<li><code>major compaction</code>的功能是将所有的<code>store file</code>合并成一个，触发<code>major compaction</code>的可能条件有：</li>
-</ol>
-<ul>
-<li><p><code>major_compact</code>命令</p>
-</li>
-<li><p><code>majorCompact()``API</code>、</p>
-</li>
-<li><p><code>region server</code>自动运行</p>
-</li>
-</ul>
-<blockquote>
-<p><code>hbase.hregion.majorcompaction</code>默认为<code>24</code>小时</p>
-<p><code>hbase.hregion.majorcompaction.jetter</code>默认值为<code>0.2</code>为防止<code>region server</code>在同一时间进行<code>major compaction</code>。</p>
-<p><code>hbase.hregion.majorcompaction.jetter</code>参数的作用是：对参数<code>hbase.hregion.majorcompaction</code>规定的值起到浮动的作用，假如两个参数都为默认值<code>24</code>和<code>0.2</code>，那么<code>major compact</code>最终使用的数值为<code>19.2~28.8</code>这个范围。</p>
-</blockquote>
-<h2 id="2-hbase写数据优化点"><a href="#2-hbase写数据优化点" class="headerlink" title="2. hbase写数据优化点"></a>2. hbase写数据优化点</h2><h3 id="2-1-是否需要写WAL，WAL是否需要同步写入"><a href="#2-1-是否需要写WAL，WAL是否需要同步写入" class="headerlink" title="2.1 是否需要写WAL，WAL是否需要同步写入"></a>2.1 是否需要写WAL，WAL是否需要同步写入</h3><p>优化原理：数据写入流程可以理解为一次顺序写<code>WAL</code>(<code>HLog</code>)加上一次写缓存（<code>MemStore</code>），通常情况下写缓存延迟很低，因此提升写性能就只能从<code>WAL</code>入手。<code>WAL</code>机制一方面是为了确保数据即使写入缓存丢失也可以恢复，另一方面是为了集群之间异步复制。默认<code>WAL</code>机制开启且使用同步机制写入<code>WAL</code>。首先考虑业务是否需要写<code>WAL</code>，通常情况下大多数业务都会开启<code>WAL</code>机制（默认），但是对于部分业务可能并不特别关心异常情况下部分数据的丢失，而更关心数据写入吞吐量，比如某些推荐业务，这类业务即使丢失一部分用户行为数据可能对推荐结果并不构成很大影响，但是对于写入吞吐量要求很高，不能造成数据队列阻塞。这种场景下可以考虑关闭<code>WAL</code>写入，写入吞吐量可以提升<code>2x~3x</code>。退而求其次，有些业务不能接受不写<code>WAL</code>，但可以接受<code>WAL</code>异步写入，也是可以考虑优化的，通常也会带来<code>1x～2x</code>的性能提升。 </p>
-<p>优化推荐：根据业务关注点在<code>WAL</code>机制与写入吞吐量之间做出选择  </p>
-<h3 id="2-2-批量Put提交"><a href="#2-2-批量Put提交" class="headerlink" title="2.2 批量Put提交"></a>2.2 批量Put提交</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>put</code>以及批量<code>put</code>的<code>API</code>接口，使用批量<code>put</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高写入性能。另外需要注意的是，批量<code>put</code>请求要么全部成功返回，要么抛出异常。</p>
-<p>优化建议：使用批量<code>put</code>进行写入请求</p>
-<h3 id="2-3-异步批量Put提交"><a href="#2-3-异步批量Put提交" class="headerlink" title="2.3 异步批量Put提交"></a>2.3 异步批量Put提交</h3><p>优化原理：业务如果可以接受异常情况下少量数据丢失的话，还可以使用异步批量提交的方式提交请求。提交分为两阶段执行，用户提交写请求之后，数据会写入客户端缓存，并返回用户写入成功；当客户端缓存达到阈值（默认<code>2M</code>）之后批量提交给<code>RegionServer</code>。需要注意的是，在某些情况下客户端异常的情况下缓存数据有可能丢失。</p>
-<p>优化建议：在业务可以接受的情况下开启异步批量提交</p>
-<p>使用方式：<code>setAutoFlush(false)</code></p>
-<h3 id="2-4-Region个数调整"><a href="#2-4-Region个数调整" class="headerlink" title="2.4 Region个数调整"></a>2.4 Region个数调整</h3><p>优化原理：当前集群中表的<code>Region</code>个数如果小于<code>RegionServer</code>个数，即<code>Num(Region of Table) &lt; Num(RegionServer)</code>，可以考虑切分<code>Region</code>并尽可能分布到不同<code>RegionServer</code>来提高系统请求并发度，如果<code>Num(Region of Table) &gt; Num(RegionServer)</code>，再增<code>加Region</code>个数效果并不明显。</p>
-<p>优化建议：在<code>Num(Region of Table) &lt; Num(RegionServer)</code>的场景下切分部分请求负载高的<code>Region</code>并迁移到其他<code>RegionServer</code>；</p>
-<h3 id="2-5-写请求均衡"><a href="#2-5-写请求均衡" class="headerlink" title="2.5 写请求均衡"></a>2.5 写请求均衡</h3><p>优化原理：另一个需要考虑的问题是写入请求是否均衡，如果不均衡，一方面会导致系统并发度较低，另一方面也有可能造成部分节点负载很高，进而影响其他业务。分布式系统中特别害怕一个节点负载很高的情况，一个节点负载很高可能会拖慢整个集群，这是因为很多业务会使用Mutli批量提交读写请求，一旦其中一部分请求落到该节点无法得到及时响应，就会导致整个批量请求超时。因此不怕节点宕掉，就怕节点奄奄一息！</p>
-<p>优化建议：检查<code>rowkey</code>设计以及预分区策略，保证写入请求均衡。</p>
-<h3 id="2-6-写入KeyValue数据是否太大"><a href="#2-6-写入KeyValue数据是否太大" class="headerlink" title="2.6 写入KeyValue数据是否太大"></a>2.6 写入KeyValue数据是否太大</h3><p><code>KeyValue</code>大小对写入性能的影响巨大，一旦遇到写入性能比较差的情况，需要考虑是否由于写入<code>KeyValue</code>数据太大导致。随着单行数据大小不断变大，写入吞吐量急剧下降，写入延迟在<code>100K</code>之后会急剧增大。</p>
-<h3 id="2-7-Utilize-Flash-storage-for-WAL-HBASE-12848"><a href="#2-7-Utilize-Flash-storage-for-WAL-HBASE-12848" class="headerlink" title="2.7 Utilize Flash storage for WAL(HBASE-12848)"></a>2.7 Utilize Flash storage for WAL(HBASE-12848)</h3><p>这个特性意味着可以将<code>WAL</code>单独置于<code>SSD</code>上，这样即使在默认情况下（<code>WALSync</code>），写性能也会有很大的提升。需要注意的是，该特性建立在<code>HDFS 2.6.0+</code>的基础上，<code>HDFS</code>以前版本不支持该特性。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-12848" target="_blank" rel="noopener">HBASE-12848</a>。</p>
-<h3 id="2-8-Multiple-WALs-HBASE-14457"><a href="#2-8-Multiple-WALs-HBASE-14457" class="headerlink" title="2.8 Multiple WALs(HBASE-14457)"></a>2.8 Multiple WALs(HBASE-14457)</h3><p>该特性也是对<code>WAL</code>进行改造，当前<code>WAL</code>设计为一个<code>RegionServer</code>上所有<code>Region</code>共享一个<code>WAL</code>，可以想象在写入吞吐量较高的时候必然存在资源竞争，降低整体性能。针对这个问题，社区小伙伴提出<code>Multiple WALs</code>机制，管理员可以为每个<code>Namespace</code>下的所有表设置一个共享<code>WAL</code>，通过这种方式，写性能大约可以提升<code>20%～40%</code>左右。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-14457" target="_blank" rel="noopener">HBASE-14457</a>。</p>
-<h2 id="3-hbase读数据优化点"><a href="#3-hbase读数据优化点" class="headerlink" title="3. hbase读数据优化点"></a>3. hbase读数据优化点</h2><h3 id="2-1-调整scan缓存"><a href="#2-1-调整scan缓存" class="headerlink" title="2.1. 调整scan缓存"></a>2.1. 调整scan缓存</h3><p>优化原理：在解释这个问题之前，首先需要解释什么是<code>scan</code>缓存，通常来讲一次<code>scan</code>会返回大量数据，因此客户端发起一次<code>scan</code>请求，实际并不会一次就将所有数据加载到本地，而是分成多次<code>RPC</code>请求进行加载，这样设计一方面是因为大量数据请求可能会导致网络带宽严重消耗进而影响其他业务，另一方面也有可能因为数据量太大导致本地客户端发生<code>OOM</code>。在这样的设计体系下用户会首先加载一部分数据到本地，然后遍历处理，再加载下一部分数据到本地处理，如此往复，直至所有数据都加载完成。数据加载到本地就存放在<code>scan</code>缓存中，默认<code>100</code>条数据大小。通常情况下，默认的<code>scan</code>缓存设置就可以正常工作的。但是在一些大<code>scan</code>（一次<code>scan</code>可能需要查询几万甚至几十万行数据）来说，每次请求<code>100</code>条数据意味着一次<code>scan</code>需要几百甚至几千次<code>RPC</code>请求，这种交互的代价无疑是很大的。因此可以考虑将<code>scan</code>缓存设置增大，比如设为<code>500</code>或者<code>1000</code>就可能更加合适。在一次<code>scan</code>扫描<code>10w+</code>条数据量的条件下，将<code>scan</code>缓存从<code>100</code>增加到<code>1000</code>，可以有效降低<code>scan</code>请求的总体延迟，延迟基本降低了<code>25%</code>左右。</p>
-<p>优化建议：大<code>scan</code>场景下将<code>scan</code>缓存从<code>100</code>增大到<code>500</code>或者<code>1000</code>，用以减少<code>RPC</code>次数.</p>
-<h3 id="2-2-批量get"><a href="#2-2-批量get" class="headerlink" title="2.2 批量get"></a>2.2 批量get</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>get</code>以及批量<code>get</code>的<code>API</code>接口，使用批量<code>get</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高读取性能。另外需要注意的是，批量<code>get</code>请求要么成功返回所有请求数据，要么抛出异常。</p>
-<p>优化建议：使用批量<code>get</code>进行读取请求</p>
-<h3 id="2-3-显示指定列族或者列"><a href="#2-3-显示指定列族或者列" class="headerlink" title="2.3 显示指定列族或者列"></a>2.3 显示指定列族或者列</h3><p>优化原理：<code>HBase</code>是典型的列族数据库，意味着同一列族的数据存储在一起，不同列族的数据分开存储在不同的目录下。如果一个表有多个列族，只是根据<code>rowkey</code>而不指定列族进行检索的话不同列族的数据需要独立进行检索，性能必然会比指定列族的查询差很多，很多情况下甚至会有<code>2倍～3倍</code>的性能损失。</p>
-<p>优化建议：可以指定列族或者列进行精确查找的尽量指定查找</p>
-<h3 id="2-4-离线批量读取时设置禁止缓存"><a href="#2-4-离线批量读取时设置禁止缓存" class="headerlink" title="2.4 离线批量读取时设置禁止缓存"></a>2.4 离线批量读取时设置禁止缓存</h3><p>优化原理：通常离线批量读取数据会进行一次性全表扫描，一方面数据量很大，另一方面请求只会执行一次。这种场景下如果使用<code>scan</code>默认设置，就会将数据从<code>HDFS</code>加载出来之后放到缓存。可想而知，大量数据进入缓存必将其他实时业务热点数据挤出，其他业务不得不从<code>HDFS</code>加载，进而会造成明显的读延迟</p>
-<p>优化建议：离线批量读取请求设置禁用缓存，<code>scan.setBlockCache(false)</code></p>
-<h3 id="2-5-读请求负载均衡"><a href="#2-5-读请求负载均衡" class="headerlink" title="2.5 读请求负载均衡"></a>2.5 读请求负载均衡</h3><p>优化原理：极端情况下假如所有的读请求都落在一台<code>RegionServer</code>的某几个<code>Region</code>上，这一方面不能发挥整个集群的并发处理能力，另一方面势必造成此台<code>RegionServer</code>资源严重消耗（比如<code>I/O</code>耗尽、<code>handler</code>耗尽等），落在该台<code>RegionServer</code>上的其他业务会因此受到很大的波及。可见，读请求不均衡不仅会造成本身业务性能很差，还会严重影响其他业务。当然，写请求不均衡也会造成类似的问题，可见负载不均衡是HBase的大忌。</p>
-<p>优化建议：<code>rowkey</code>必须进行散列化处理（比如<code>MD5</code>散列），同时建表必须进行预分区处理</p>
-<h3 id="2-6-BlockCache调节"><a href="#2-6-BlockCache调节" class="headerlink" title="2.6 BlockCache调节"></a>2.6 BlockCache调节</h3><p>优化原理：<code>BlockCache</code>作为读缓存，对于读性能来说至关重要。默认情况下<code>BlockCache</code>和<code>Memstore</code>的配置相对比较均衡（各占<code>40%</code>），可以根据集群业务进行修正，比如读多写少业务可以将<code>BlockCache</code>占比调大。另一方面，<code>BlockCache</code>的策略选择也很重要，不同策略对读性能来说影响并不是很大，但是对<code>GC</code>的影响却相当显著，尤其<code>BucketCache</code>的<code>offheap</code>模式下<code>GC</code>表现很优越。另外，<code>HBase 2.0</code>对<code>offheap</code>的改造（<code>HBASE-11425</code>）将会使<code>HBase</code>的读性能得到<code>2～4</code>倍的提升，同时<code>GC</code>表现会更好。观察所有RegionServer的缓存未命中率、配置文件相关配置项一级GC日志，确认BlockCache是否可以优化</p>
-<p>优化建议：<code>JVM Memory &lt; 20GB</code>，<code>BlockCache</code>策略选择<code>LRU</code>；否则选择<code>BucketCache</code>策略的<code>offheap</code>模式；</p>
-<h3 id="2-7-HFile文件数量"><a href="#2-7-HFile文件数量" class="headerlink" title="2.7 HFile文件数量"></a>2.7 HFile文件数量</h3><p>优化原理：<code>HBase</code>读取数据通常首先会到<code>Memstore</code>和<code>BlockCache</code>中检索（读取最近写入数据和热点数据），如果查找不到就会到文件中检索。HBase的类<code>LSM</code>结构会导致每个<code>store</code>包含多数<code>HFile</code>文件，文件越多，检索所需的<code>I/O</code>次数必然越多，读取延迟也就越高。文件数量通常取决于<code>Compaction</code>的执行策略，一般和两个配置参数有关：<code>hbase.hstore.compaction.min</code>和<code>hbase.hstore.compaction.max.size</code>，前者表示一个<code>store</code>中的文件数超过多少就应该进行合并，后者表示参数合并的文件大小最大是多少，超过此大小的文件不能参与合并。这两个参数不能设置太’松’（前者不能设置太大，后者不能设置太小），导致<code>Compaction</code>合并文件的实际效果不明显，进而很多文件得不到合并。这样就会导致<code>HFile</code>文件数变多。观察<code>RegionServer</code>级别以及<code>Region</code>级别的<code>storefile</code>数，确认<code>HFile</code>文件是否过多。</p>
-<p>优化建议：<code>hbase.hstore.compaction.min</code>设置不能太大，默认是3个；设置需要根据<code>Region</code>大小确定，通常可以简单的认为<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>。</p>
-<h3 id="8-控制Compaction消耗系统资源情况"><a href="#8-控制Compaction消耗系统资源情况" class="headerlink" title="8. 控制Compaction消耗系统资源情况"></a>8. 控制Compaction消耗系统资源情况</h3><p>优化原理：<code>Compaction</code>是将小文件合并为大文件，提高后续业务随机读性能，但是也会带来<code>I/O</code>放大以及带宽消耗问题（数据远程读取以及三副本写入都会消耗系统带宽）。正常配置情况下<code>Minor Compaction</code>并不会带来很大的系统资源消耗，除非因为配置不合理导致<code>Minor Compaction</code>太过频繁，或者<code>Region</code>设置太大情况下发生<code>Major Compaction</code>。观察系统<code>I/O</code>资源以及带宽资源使用情况，再观察<code>Compaction</code>队列长度，确认是否由于<code>Compaction</code>导致系统资源消耗过多。</p>
-<p>优化建议：<code>Minor Compaction</code>设置：<code>hbase.hstore.compaction.min</code>设置不能太小，又不能设置太大，因此建议设置为<code>5～6</code>；<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>; <code>Major Compaction</code>设置：大<code>Region</code>读延迟敏感业务（ 100G以上）通常不建议开启自动<code>Major Compaction</code>，手动低峰期触发。小<code>Region</code>或者延迟不敏感业务可以开启<code>Major Compaction</code>，但建议限制流量。</p>
-<h4 id="9、调整数据本地率"><a href="#9、调整数据本地率" class="headerlink" title="9、调整数据本地率"></a>9、调整数据本地率</h4><p>数据本地率：<code>HDFS</code>数据通常存储三份，假如当前<code>RegionA</code>处于<code>Node1</code>上，数据<code>a</code>写入的时候三副本为(<code>Node1</code>,<code>Node2</code>,<code>Node3</code>)，数据<code>b</code>写入三副本是(<code>Node1</code>,<code>Node4</code>,<code>Node5</code>)，数据<code>c</code>写入三副本(<code>Node1</code>,<code>Node3</code>,<code>Node5</code>)，可以看出来所有数据写入本地<code>Node1</code>肯定会写一份，数据都在本地可以读到，因此数据本地率是<code>100%</code>。现在假设<code>RegionA</code>被迁移到了<code>Node2</code>上，只有数据<code>a</code>在该节点上，其他数据（<code>b</code>和<code>c</code>）读取只能远程跨节点读，本地率就为<code>33%</code>（假设<code>a</code>，<code>b</code>和<code>c</code>的数据大小相同）。</p>
-<p>优化原理：数据本地率太低很显然会产生大量的跨网络<code>I/O</code>请求，必然会导致读请求延迟较高，因此提高数据本地率可以有效优化随机读性能。数据本地率低的原因一般是因为<code>Region</code>迁移（自动<code>balance</code>开启、<code>RegionServer</code>宕机迁移、手动迁移等）,因此一方面可以通过避免<code>Region</code>无故迁移来保持数据本地率，另一方面如果数据本地率很低，也可以通过执行<code>major_compact</code>提升数据本地率到100%。</p>
-<p>优化建议：避免<code>Region</code>无故迁移，比如关闭自动<code>balance</code>、<code>RegionServer</code>宕机及时拉起并迁回飘走的<code>Region</code>等；在业务低峰期执行<code>major_compact</code>提升数据本地率。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/大数据//" class="article-tag-list-link color4">大数据</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/HBase//" class="article-tag-list-link color1">HBase</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/HBaseOptimize.html">展开全文 >></a>
         </p>
       
 
@@ -1880,39 +1880,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">大数据</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Akka</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">cm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Annotation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1924,11 +1892,43 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">cm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Akka</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Log4j</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Filter</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Annotation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1944,10 +1944,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
               </li>
              
@@ -1957,6 +1953,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">pointcut</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
               </li>
              
               <li class="article-tag-list-item">

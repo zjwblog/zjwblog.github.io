@@ -156,6 +156,148 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-精尽 Netty 源码分析 —— Netty 简介（二）之核心组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">精尽 Netty 源码分析 —— Netty 简介（二）之核心组件</a>
+    </h1>
+  
+
+        
+        <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" class="archive-article-date">
+  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>什么是 Netty ？</p>
+<blockquote>
+<p>Netty 是一款提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序。</p>
+<p>也就是说，Netty 是一个基于 NIO 的客户、服务器端编程框架。使用 Netty 可以确保你快速和简单地开发出一个网络应用，例如实现了某种协议的客户，服务端应用。Netty 相当简化和流线化了网络应用的编程开发过程，例如，TCP 和 UDP 的 socket 服务开发。</p>
+<p>（以上摘自百度百科）。</p>
+</blockquote>
+<p>Netty 具有如下特性( 摘自《Netty in Action》 )</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>Netty的特性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>设计</td>
+<td>1. 统一的 API ，支持多种传输类型( 阻塞和非阻塞的 ) <br>2. 简单而强大的线程模型 <br>3. 真正的无连接数据报套接字( UDP )支持 <br>4. 连接逻辑组件( ChannelHander 中顺序处理消息 )以及组件复用( 一个 ChannelHandel 可以被多个 ChannelPipeLine 复用 )</td>
+</tr>
+<tr>
+<td>易于使用</td>
+<td>1. 详实的 Javadoc 和大量的示例集 <br>2. 不需要超过 JDK 1.6+ 的依赖</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>拥有比 Java 的核心 API 更高的吞吐量以及更低的延迟( 得益于池化和复用 )，更低的资源消耗以及最少的内存复制</td>
+</tr>
+<tr>
+<td>健壮性</td>
+<td>1. 不会因为慢速、快速或者超载的连接而导致 OutOfMemoryError <br>2. 消除在高速网络中 NIO 应用程序常见的不公平读 / 写比率</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>完整的 SSL/TLS 以及 StartTLs 支持，可用于受限环境下，如 Applet 和 OSGI</td>
+</tr>
+<tr>
+<td>社区驱动</td>
+<td>发布快速而且频繁</td>
+</tr>
+</tbody></table>
+<h2 id="2-Netty-核心组件"><a href="#2-Netty-核心组件" class="headerlink" title="2. Netty 核心组件"></a>2. Netty 核心组件</h2><p>为了后期更好地理解和进一步深入 Netty，有必要总体认识一下 Netty 所用到的核心组件以及他们在整个 Netty 架构中是如何协调工作的。</p>
+<p>Netty 有如下几个核心组件：</p>
+<ul>
+<li>Bootstrap &amp; ServerBootstrap</li>
+<li>Channel</li>
+<li>ChannelFuture</li>
+<li>EventLoop &amp; EventLoopGroup</li>
+<li>ChannelHandler</li>
+<li>ChannelPipeline</li>
+</ul>
+<p>核心组件的高层类图如下：</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/scala//" class="article-tag-list-link color1">scala</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-正则表达式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -538,7 +680,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -546,7 +688,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
         		</li>
       		
 		</ul>
@@ -572,148 +714,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-精尽 Netty 源码分析 —— Netty 简介（二）之核心组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">精尽 Netty 源码分析 —— Netty 简介（二）之核心组件</a>
-    </h1>
-  
-
-        
-        <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" class="archive-article-date">
-  	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>什么是 Netty ？</p>
-<blockquote>
-<p>Netty 是一款提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序。</p>
-<p>也就是说，Netty 是一个基于 NIO 的客户、服务器端编程框架。使用 Netty 可以确保你快速和简单地开发出一个网络应用，例如实现了某种协议的客户，服务端应用。Netty 相当简化和流线化了网络应用的编程开发过程，例如，TCP 和 UDP 的 socket 服务开发。</p>
-<p>（以上摘自百度百科）。</p>
-</blockquote>
-<p>Netty 具有如下特性( 摘自《Netty in Action》 )</p>
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>Netty的特性</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>设计</td>
-<td>1. 统一的 API ，支持多种传输类型( 阻塞和非阻塞的 ) <br>2. 简单而强大的线程模型 <br>3. 真正的无连接数据报套接字( UDP )支持 <br>4. 连接逻辑组件( ChannelHander 中顺序处理消息 )以及组件复用( 一个 ChannelHandel 可以被多个 ChannelPipeLine 复用 )</td>
-</tr>
-<tr>
-<td>易于使用</td>
-<td>1. 详实的 Javadoc 和大量的示例集 <br>2. 不需要超过 JDK 1.6+ 的依赖</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>拥有比 Java 的核心 API 更高的吞吐量以及更低的延迟( 得益于池化和复用 )，更低的资源消耗以及最少的内存复制</td>
-</tr>
-<tr>
-<td>健壮性</td>
-<td>1. 不会因为慢速、快速或者超载的连接而导致 OutOfMemoryError <br>2. 消除在高速网络中 NIO 应用程序常见的不公平读 / 写比率</td>
-</tr>
-<tr>
-<td>安全性</td>
-<td>完整的 SSL/TLS 以及 StartTLs 支持，可用于受限环境下，如 Applet 和 OSGI</td>
-</tr>
-<tr>
-<td>社区驱动</td>
-<td>发布快速而且频繁</td>
-</tr>
-</tbody></table>
-<h2 id="2-Netty-核心组件"><a href="#2-Netty-核心组件" class="headerlink" title="2. Netty 核心组件"></a>2. Netty 核心组件</h2><p>为了后期更好地理解和进一步深入 Netty，有必要总体认识一下 Netty 所用到的核心组件以及他们在整个 Netty 架构中是如何协调工作的。</p>
-<p>Netty 有如下几个核心组件：</p>
-<ul>
-<li>Bootstrap &amp; ServerBootstrap</li>
-<li>Channel</li>
-<li>ChannelFuture</li>
-<li>EventLoop &amp; EventLoopGroup</li>
-<li>ChannelHandler</li>
-<li>ChannelPipeline</li>
-</ul>
-<p>核心组件的高层类图如下：</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/scala//" class="article-tag-list-link color1">scala</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html">展开全文 >></a>
         </p>
       
 
@@ -908,15 +908,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">scala</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">cm</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
         		</li>
       		
 		</ul>
@@ -1060,39 +1060,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">大数据</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Akka</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">cm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Annotation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1104,11 +1072,43 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">cm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Akka</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Log4j</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Filter</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Annotation</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1124,10 +1124,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SpringBoot</a>
               </li>
              
@@ -1137,6 +1133,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">pointcut</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
               </li>
              
               <li class="article-tag-list-item">
