@@ -6,15 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.zjwblog.cn">
-  <title>正则表达式 | 筑梦空间</title>
+  <title>HBase优化 | 筑梦空间</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.  两种模糊匹配模糊匹配，有两个方向上的“模糊”：横向模糊和纵向模糊 1.1 横向模糊匹配横向模糊指的是，一个正则可匹配的字符串的长度不是固定的，可以是多种情况的。其实现的方式是使用量词。譬如{m,n}，表示连续出现最少m次，最多n次。比如&#x2F;ab{2,5}c&#x2F;表示匹配这样一个字符串：第一个字符是“a”，接下来是2到5个字符“b”，最后是字符“c”例如： 1234var regex = &#x2F;ab&amp;">
-<meta name="keywords" content="hadoop,架构,大数据">
+  <meta name="description" content="1. 表的设计1.1 在创建表的时候指定分区（Pre-Creating Regions）默认情况下，在创建HBase表的时候会自动创建一个region分区，当导入数据的时候，所有的HBase客户端都向这一个region写数据，直到这个region足够大了才进行切分。一种可以加快批量写入速度的方法是通过预先创建一些空的regions，这样当数据写入HBase时，会按照region分区情况，在集群内做">
+<meta name="keywords" content="大数据,HBase,优化">
 <meta property="og:type" content="article">
-<meta property="og:title" content="正则表达式">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">
+<meta property="og:title" content="HBase优化">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.zjwblog.cn&#x2F;HBaseOptimize.html">
 <meta property="og:site_name" content="筑梦空间">
-<meta property="og:description" content="1.  两种模糊匹配模糊匹配，有两个方向上的“模糊”：横向模糊和纵向模糊 1.1 横向模糊匹配横向模糊指的是，一个正则可匹配的字符串的长度不是固定的，可以是多种情况的。其实现的方式是使用量词。譬如{m,n}，表示连续出现最少m次，最多n次。比如&#x2F;ab{2,5}c&#x2F;表示匹配这样一个字符串：第一个字符是“a”，接下来是2到5个字符“b”，最后是字符“c”例如： 1234var regex = &#x2F;ab&amp;">
+<meta property="og:description" content="1. 表的设计1.1 在创建表的时候指定分区（Pre-Creating Regions）默认情况下，在创建HBase表的时候会自动创建一个region分区，当导入数据的时候，所有的HBase客户端都向这一个region写数据，直到这个region足够大了才进行切分。一种可以加快批量写入速度的方法是通过预先创建一些空的regions，这样当数据写入HBase时，会按照region分区情况，在集群内做">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-10-14T11:22:38.000Z">
 <meta name="twitter:card" content="summary">
@@ -155,19 +155,19 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-正则表达式" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-HBaseOptimize" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      正则表达式
+      HBase优化
     </h1>
   
 
         
-        <a href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" class="archive-article-date">
+        <a href="/HBaseOptimize.html" class="archive-article-date">
   	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
 </a>
         
@@ -175,355 +175,146 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-两种模糊匹配"><a href="#1-两种模糊匹配" class="headerlink" title="1.  两种模糊匹配"></a>1.  两种模糊匹配</h2><p>模糊匹配，有两个方向上的“模糊”：横向模糊和纵向模糊</p>
-<h3 id="1-1-横向模糊匹配"><a href="#1-1-横向模糊匹配" class="headerlink" title="1.1 横向模糊匹配"></a>1.1 横向模糊匹配</h3><p>横向模糊指的是，一个正则可匹配的字符串的长度不是固定的，可以是多种情况的。其实现的方式是使用量词。譬如{m,n}，表示连续出现最少m次，最多n次。比如/ab{2,5}c/表示匹配这样一个字符串：第一个字符是“a”，接下来是2到5个字符“b”，最后是字符“c”<br>例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /ab&#123;2,5&#125;c/g;</span><br><span class="line">var string = &quot;abc abbc abbbc abbbbc abbbbbc abbbbbbc&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;abbc&quot;, &quot;abbbc&quot;, &quot;abbbbc&quot;, &quot;abbbbbc&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>注意：案例中用的正则是/ab{2,5}c/g，后面多了g，它是正则的一个修饰符。表示全局匹配，即在目标字符串中按顺序找到满足匹配模式的所有子串，强调的是“所有”，而不只是“第一个”。g是单词global的首字母。</p>
-<h3 id="1-2-纵向模糊匹配"><a href="#1-2-纵向模糊匹配" class="headerlink" title="1.2 纵向模糊匹配"></a>1.2 纵向模糊匹配</h3><p>纵向模糊指的是，一个正则匹配的字符串，具体到某一位字符时，它可以不是某个确定的字符，可以有多种可能。其实现的方式是使用字符组。譬如[abc]，表示该字符是可以字符“a”、“b”、“c”中的任何一个。比如/a[123]b/可以匹配如下三种字符串：”a1b”、”a2b”、”a3b”。<br>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/a[123]b/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"a0b a1b a2b a3b a4b"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["a1b", "a2b", "a3b"]</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="2-字符组"><a href="#2-字符组" class="headerlink" title="2. 字符组"></a>2. 字符组</h2><p>需要强调的是，虽叫字符组（字符类），但只是其中一个字符。例如[abc]，表示匹配一个字符，它可以是“a”、“b”、“c”之一。</p>
-<h3 id="2-1-范围表示法"><a href="#2-1-范围表示法" class="headerlink" title="2.1 范围表示法"></a>2.1 范围表示法</h3><p>如果字符组里的字符特别多的话，怎么办？可以使用范围表示法。比如[123456abcdefGHIJKLM]，可以写成[1-6a-fG-M]。用连字符-来省略和简写。因为连字符有特殊用途，那么要匹配“a”、“-”、“z”这三者中任意一个字符，该怎么做呢？不能写成[a-z]，因为其表示小写字符中的任何一个字符。可以写成如下的方式：[-az]或[az-]或[a-z]。即要么放在开头，要么放在结尾，要么转义。总之不会让引擎认为是范围表示法就行了。</p>
-<h3 id="2-2-排除字符组"><a href="#2-2-排除字符组" class="headerlink" title="2.2 排除字符组"></a>2.2 排除字符组</h3><p>纵向模糊匹配，还有一种情形就是，某位字符可以是任何东西，但就不能是”a”、”b”、”c”。此时就是排除字符组（反义字符组）的概念。例如[^abc]，表示是一个除”a”、”b”、”c”之外的任意一个字符。字符组的第一位放^（脱字符），表示求反的概念。</p>
-<h3 id="2-3-常见的简写形式"><a href="#2-3-常见的简写形式" class="headerlink" title="2.3 常见的简写形式"></a>2.3 常见的简写形式</h3><p>有了字符组的概念后，一些常见的符号我们也就理解了。因为它们都是系统自带的简写形式。</p>
-<blockquote>
-<p>\d就是[0-9]。表示是一位数字。记忆方式：其英文是digit（数字）。<br>\D就是[^0-9]。表示除数字外的任意字符。<br>\w就是[0-9a-zA-Z_]。表示数字、大小写字母和下划线。记忆方式：w是word的简写，也称单词字符。<br>\W是[^0-9a-zA-Z_]。非单词字符。<br>\s是[ \t\v\n\r\f]。表示空白符，包括空格、水平制表符、垂直制表符、换行符、回车符、换页符。记忆方式：s是space character的首字母。<br>\S是[^ \t\v\n\r\f]。 非空白符。<br>.就是[^\n\r\u2028\u2029]。通配符，表示几乎任意字符。换行符、回车符、行分隔符和段分隔符除外。记忆方式：想想省略号…中的每个点，都可以理解成占位符，表示任何类似的东西。</p>
-</blockquote>
-<p>如果要匹配任意字符怎么办？可以使用[\d\D]、[\w\W]、[\s\S]和[^]中任何的一个。</p>
-<h2 id="3-量词"><a href="#3-量词" class="headerlink" title="3. 量词"></a>3. 量词</h2><p>量词也称重复。掌握{m,n}的准确含义后，只需要记住一些简写形式。</p>
-<h3 id="3-1-简写形式"><a href="#3-1-简写形式" class="headerlink" title="3.1 简写形式"></a>3.1 简写形式</h3><blockquote>
-<p>{m,} 表示至少出现m次。<br>{m} 等价于{m,m}，表示出现m次。<br>? 等价于{0,1}，表示出现或者不出现。记忆方式：问号的意思表示，有吗？</p>
+        <h2 id="1-表的设计"><a href="#1-表的设计" class="headerlink" title="1. 表的设计"></a>1. 表的设计</h2><h3 id="1-1-在创建表的时候指定分区（Pre-Creating-Regions）"><a href="#1-1-在创建表的时候指定分区（Pre-Creating-Regions）" class="headerlink" title="1.1 在创建表的时候指定分区（Pre-Creating Regions）"></a>1.1 在创建表的时候指定分区（Pre-Creating Regions）</h3><p>默认情况下，在创建HBase表的时候会自动创建一个region分区，当导入数据的时候，所有的HBase客户端都向这一个region写数据，直到这个region足够大了才进行切分。一种可以加快批量写入速度的方法是通过预先创建一些空的regions，这样当数据写入HBase时，会按照region分区情况，在集群内做数据的负载均衡。    </p>
 <ul>
-<li>等价于{1,}，表示出现至少一次。记忆方式：加号是追加的意思，得先有一个，然后才考虑追加。</li>
+<li>实现方式是使用admin对象的切分策略</li>
 </ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] startKey = ...;      <span class="comment">// your lowest key</span></span><br><span class="line"><span class="keyword">byte</span>[] endKey = ...;        <span class="comment">// your highest key</span></span><br><span class="line"><span class="keyword">int</span> numberOfRegions = ...;  <span class="comment">// number of regions to create</span></span><br><span class="line">admin.createTable(table, startKey, endKey, numberOfRegions);</span><br></pre></td></tr></table></figure>
 <ul>
-<li>等价于{0,}，表示出现任意次，有可能不出现。记忆方式：看看天上的星星，可能一颗没有，可能零散有几颗，可能数也数不过来。</li>
+<li>用户自定义切片</li>
 </ul>
-</blockquote>
-<h3 id="3-2-贪婪匹配和惰性匹配"><a href="#3-2-贪婪匹配和惰性匹配" class="headerlink" title="3.2 贪婪匹配和惰性匹配"></a>3.2 贪婪匹配和惰性匹配</h3><p>看如下的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;123&quot;, &quot;1234&quot;, &quot;12345&quot;, &quot;12345&quot;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[][] splits = ...;   <span class="comment">// create your own splits</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">byte[][] splits = new byte[][] &#123; Bytes.toBytes("100"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("200"), Bytes.toBytes("400"),</span></span><br><span class="line"><span class="comment">                Bytes.toBytes("500") &#125;;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">admin.createTable(table, splits);</span><br></pre></td></tr></table></figure>
 
-<p>其中正则/\d{2,5}/，表示数字连续出现2到5次。会匹配2位、3位、4位、5位连续数字</p>
-<p>但是其是贪婪的，它会尽可能多的匹配。你能给我6个，我就要6个。你能给我3个，我就3要个。反正只要在能力范围内，越多越好。</p>
-<p>我们知道有时贪婪不是一件好事（请看文章最后一个例子）。而惰性匹配，就是尽可能少的匹配：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;?/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;12&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;56&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>其中/\d{2,5}?/表示，虽然2到5次都行，当2个就够的时候，就不在往下尝试了。</p>
-<p>通过在量词后面加个问号就能实现惰性匹配，因此所有惰性匹配情形如下：</p>
-<blockquote>
-<p>{m,n}?<br>{m,}?<br>??<br>+?<br>*?</p>
-</blockquote>
-<p>对惰性匹配的记忆方式是：量词后面加个问号，问一问你知足了吗，你很贪婪吗？</p>
-<h2 id="4-多选分支"><a href="#4-多选分支" class="headerlink" title="4. 多选分支"></a>4. 多选分支</h2><p>一个模式可以实现横向和纵向模糊匹配。而多选分支可以支持多个子模式任选其一。</p>
-<p>具体形式如下：(p1|p2|p3)，其中p1、p2和p3是子模式，用|（管道符）分隔，表示其中任何之一。</p>
-<p>例如要匹配”good”和”nice”可以使用/good|nice/。测试如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /good|nice/g;</span><br><span class="line">var string = &quot;good idea, nice try.&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;good&quot;, &quot;nice&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>但有个事实我们应该注意，比如我用/good|goodbye/，去匹配”goodbye”字符串时，结果是”good”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/good|goodbye/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["good"]</span></span><br></pre></td></tr></table></figure>
-
-<p>而把正则改成/goodbye|good/，结果是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/goodbye|good/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["goodbye"]</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说，分支结构也是惰性的，即当前面的匹配上了，后面的就不再尝试了。</p>
-<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>匹配字符，无非就是字符组、量词和分支结构的组合使用罢了。</p>
-<h3 id="5-1-匹配16进制颜色值"><a href="#5-1-匹配16进制颜色值" class="headerlink" title="5.1 匹配16进制颜色值"></a>5.1 匹配16进制颜色值</h3><p>要求匹配：</p>
-<blockquote>
-<p>#ffbbad</p>
-<p>#Fc01DF</p>
-<p>#FFF</p>
-<p>#ffE</p>
-</blockquote>
-<p>分析：</p>
-<p>表示一个16进制字符，可以用字符组<code>[0-9a-fA-F]</code>, 其中字符可以出现3或6次，需要是用量词和分支结构。使用分支结构时，需要注意顺序。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/#([0-9a-fA-F]&#123;6&#125;|[0-9a-fA-F]&#123;3&#125;)/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"#ffbbad #Fc01DF #FFF #ffE"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["#ffbbad", "#Fc01DF", "#FFF", "#ffE"]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-2-匹配时间"><a href="#5-2-匹配时间" class="headerlink" title="5.2 匹配时间"></a>5.2 匹配时间</h3><p>以24小时制为例, 要求匹配：</p>
-<blockquote>
-<p>23:59</p>
-<p>02:07</p>
-</blockquote>
-<p>分析：</p>
-<p>共4位数字，第一位数字可以为<code>[0-2]</code>。当第1位为2时，第2位可以为<code>[0-3]</code>，其他情况时，第2位为<code>[0-9]</code>。第3位数字为<code>[0-5]</code>，第4位为<code>[0-9]</code>。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^([01][0-9]|[2][0-3]):[0-5][0-9]$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>如果也要求匹配7:9，也就是说时分前面的0可以省略。此时正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^(0?[0-9]|1[0-9]|[2][0-3]):(0?[0-9]|[1-5][0-9])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"7:9"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-3-匹配日期"><a href="#5-3-匹配日期" class="headerlink" title="5.3 匹配日期"></a>5.3 匹配日期</h3><p>比如yyyy-mm-dd格式为例。要求匹配：</p>
-<blockquote>
-<p>2017-06-10</p>
-</blockquote>
-<p>分析：</p>
-<p>年，四位数字即可，可用<code>[0-9]{4}</code>。<br>月，共12个月，分两种情况01、02、……、09和10、11、12，可用<code>(0[1-9]|1[0-2])</code>。<br>日，最大31天，可用<code>(0[1-9]|[12][0-9]|3[01])</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[0-9]&#123;4&#125;-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"2017-06-10"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-4-window操作系统文件路径"><a href="#5-4-window操作系统文件路径" class="headerlink" title="5.4 window操作系统文件路径"></a>5.4 window操作系统文件路径</h3><p>要求匹配：</p>
-<blockquote>
-<p>F:\study\javascript\regex\regular expression.pdf <br><br>F:\study\javascript\regex\ <br><br>F:\study\javascript <br><br>F:\</p>
-</blockquote>
-<p>分析：</p>
-<p>整体模式是: 盘符:\文件夹\文件夹\文件夹\</p>
-<p>其中匹配F:\，需要使用<code>[a-zA-Z]:\\</code>，其中盘符不区分大小写，注意<code>\</code>字符需要转义。</p>
-<p>文件名或者文件夹名，不能包含一些特殊字符，此时我们需要排除字符组<code>[^\\:*&lt;&gt;|&quot;?\r\n/]</code>来表示合法字符。另外不能为空名，至少有一个字符，也就是要使用量词<code>+</code>。因此匹配“文件夹\”，可用<code>[^\\:*&lt;&gt;|&quot;?\r\n/]+\\</code>。</p>
-<p>另外“文件夹\”，可以出现任意次。也就是<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+\\)*</code>。其中括号提供子表达式。</p>
-<p>路径的最后一部分可以是“文件夹”，没有<code>\</code>，因此需要添加<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+)?</code>。</p>
-<p>最后拼接成了一个看起来比较复杂的正则：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[a-zA-Z]:\\([^\\:*&lt;&gt;|"?\r\n/]+\\)*([^\\:*&lt;&gt;|"?\r\n/]+)?$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\regular expression.pdf"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，JS中字符串表示<code>\</code>时，也要转义。</p>
-<h3 id="5-5-匹配id"><a href="#5-5-匹配id" class="headerlink" title="5.5 匹配id"></a>5.5 匹配id</h3><p>要求从</p>
-<blockquote>
-<p>&lt;div id=”container” class=”main”&gt;&lt;/div&gt;</p>
-</blockquote>
-<p>提取出id=”container”。</p>
-<p>可能最开始想到的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container" class="main"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为<code>.</code>是通配符，本身就匹配双引号的，而量词<code>*</code>又是贪婪的，当遇到container后面双引号时，不会停下来，会继续匹配，直到遇到最后一个双引号为止。</p>
-<p>解决之道，可以使用惰性匹配：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*?"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<p>当然，这样也会有个问题。效率比较低，因为其匹配原理会涉及到“回溯”这个概念（这里也只是顺便提一下，第四章会详细说明）。可以优化如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id="[^"]*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="位置匹配攻略"><a href="#位置匹配攻略" class="headerlink" title="位置匹配攻略"></a>位置匹配攻略</h1><h2 id="1-如何匹配位置"><a href="#1-如何匹配位置" class="headerlink" title="1. 如何匹配位置"></a>1. 如何匹配位置</h2><p>在ES5中，共有6个锚字符：</p>
-<blockquote>
-<p>^ $ \b \B (?=p) (?!p)</p>
-</blockquote>
-<h3 id="1-1-和"><a href="#1-1-和" class="headerlink" title="1.1 ^和$"></a>1.1 ^和$</h3><p><code>^</code>（脱字符）匹配开头，在多行匹配中匹配行开头。</p>
-<p><code>$</code>（美元符号）匹配结尾，在多行匹配中匹配行结尾。</p>
-<p>比如我们把字符串的开头和结尾用”#”替换（位置可以替换成字符的！）：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/^|$/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#hello#"</span></span><br></pre></td></tr></table></figure>
-
-<p>多行匹配模式时，二者是行的概念，这个需要我们的注意：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"I\nlove\njavascript"</span>.replace(<span class="regexp">/^|$/gm</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#I#</span></span><br><span class="line"><span class="comment">#love#</span></span><br><span class="line"><span class="comment">#javascript#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-2-b和-B"><a href="#1-2-b和-B" class="headerlink" title="1.2 \b和\B"></a>1.2 \b和\B</h3><p><code>\b</code>是单词边界，具体就是<code>\w</code>和<code>\W</code>之间的位置，也包括<code>\w</code>和<code>^</code>之间的位置，也包括<code>\w</code>和<code>$</code>之间的位置。</p>
-<p>比如一个文件名是”[JS] Lesson_01.mp4”中的<code>\b</code>，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\b/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "[#JS#] #Lesson_01#.#mp4#"</span></span><br></pre></td></tr></table></figure>
-
-<p>为什么是这样呢？这需要仔细看看</p>
-<p>首先，我们知道，<code>\w</code>是字符组<code>[0-9a-zA-Z_]</code>的简写形式，即<code>\w</code>是字母数字或者下划线的中任何一个字符。而<code>\W</code>是排除字符组<code>[^0-9a-zA-Z_]</code>的简写形式，即<code>\W</code>是<code>\w</code>以外的任何一个字符。</p>
-<p>此时我们可以看看”[#JS#] #Lesson_01#.#mp4#”中的每一个”#”，是怎么来的。</p>
+<h3 id="1-2-Rowkey设计"><a href="#1-2-Rowkey设计" class="headerlink" title="1.2 Rowkey设计"></a>1.2 Rowkey设计</h3><p>HBase中rowkey用来检索表中的记录，支持以下三种方式：</p>
+<ol>
+<li><p>通过单个rowkey访问：即按照某个rowkey键值进行get操作；</p>
+</li>
+<li><p>通过rowkey的range进行scan：即通过设置startRowKey和endRowKey，在这个范围内进行扫描；</p>
+</li>
+<li><p>全表扫描：即直接扫描整张表中所有行记录</p>
+</li>
+</ol>
+<p>在<code>HBase</code>中，<code>rowkey</code>可以是任意字符串，最大长度<code>64KB</code>，实际应用中一般为<code>10~100</code>字节，存为<code>byte[]</code>字节数组，一般设计成定长的。</p>
+<p><code>rowkey</code>是按照字典序存储，因此，设计<code>rowkey</code>时，要充分利用这个排序特点，将经常一起读取的数据存储到一块，将最近可能会被访问的数据放在一块。</p>
+<p>Rowkey设计原则: </p>
+<ol>
+<li>越短越好，提高效率</li>
+</ol>
 <ul>
-<li>第一个”#”，两边是”[“与”J”，是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第二个”#”，两边是”S”与”]”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第三个”#”，两边是空格与”L”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第四个”#”，两边是”1”与”.”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第五个”#”，两边是”.”与”m”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第六个”#”，其对应的位置是结尾，但其前面的字符”4”是<code>\w</code>，即<code>\w</code>和<code>$</code>之间的位置。</li>
+<li><p>数据的持久化文件<code>HFile</code>中是按照<code>KeyValue</code>存储的，如果<code>rowkey</code>过长，比如超过<code>100</code>字节，<code>1000</code>万行数据，单单是存储<code>rowkey</code>的数据就要占用<code>10</code>亿个字节，将近<code>1G</code>数据，这样会影响<code>HFile</code>的存储效率。</p>
+</li>
+<li><p><code>HBase</code>中包含缓存机制，每次会将查询的结果暂时缓存到<code>HBase</code>的内存中，如果<code>rowkey</code>字段过长，内存的利用率就会降低，系统不能缓存更多的数据，这样会降低检索效率。</p>
+</li>
 </ul>
-<p>知道了<code>\b</code>的概念后，那么<code>\B</code>也就相对好理解了。</p>
-<p><code>\B</code>就是<code>\b</code>的反面的意思，非单词边界。例如在字符串中所有位置中，扣掉<code>\b</code>，剩下的都是<code>\B</code>的。</p>
-<p>具体说来就是<code>\w</code>与<code>\w</code>、<code>\W</code>与<code>\W</code>、<code>^</code>与<code>\W</code>，<code>\W</code>与<code>$</code>之间的位置。</p>
-<p>比如上面的例子，把所有<code>\B</code>替换成”#”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\B/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#[J#S]# L#e#s#s#o#n#_#0#1.m#p#4"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-3-p-和-p"><a href="#1-3-p-和-p" class="headerlink" title="1.3 (?=p)和(?!p)"></a>1.3 (?=p)和(?!p)</h3><p><code>(?=p)</code>，其中<code>p</code>是一个子模式，即<code>p</code>前面的位置。</p>
-<p>比如<code>(?=l)</code>，表示’l’字符前面的位置，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?=l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "he#l#lo"</span></span><br></pre></td></tr></table></figure>
-
-<p>而<code>(?!p)</code>就是<code>(?=p)</code>的反面意思，比如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?!l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#h#ell#o#"</span></span><br></pre></td></tr></table></figure>
-
-<p>二者的学名分别是positive lookahead和negative lookahead。</p>
-<p>ES6中，还支持positive lookbehind和negative lookbehind。</p>
-<p>但一般书上，没有很好强调这四者是个位置。</p>
-<p>比如(?=p)，一般都理解成：要求接下来的字符与p匹配，但不能包括p的那些字符。</p>
-<p>而在本人看来(?=p)就与^一样好理解，就是p前面的那个位置。</p>
-<h2 id="2-位置的特性"><a href="#2-位置的特性" class="headerlink" title="2. 位置的特性"></a>2. 位置的特性</h2><p>对于位置的理解，我们可以理解成空字符””。</p>
-<p>比如”hello”字符串等价于如下的形式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">"h"</span> + <span class="string">""</span> + <span class="string">"e"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">"o"</span> + <span class="string">""</span>;</span><br></pre></td></tr></table></figure>
-
-<p>也等价于：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">""</span> + <span class="string">"hello"</span></span><br></pre></td></tr></table></figure>
-
-<p>因此，把<code>/^hello$/</code>写成<code>/^^hello$$$/</code>，是没有任何问题的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/^^hello$$$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>甚至可以写成更复杂的:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/(?=he)^^he(?=\w)llo$\b\b$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说字符之间的位置，可以写成多个。</p>
-<p>把位置理解空字符，是对位置非常有效的理解方式。</p>
-<h2 id="3-相关案例"><a href="#3-相关案例" class="headerlink" title="3. 相关案例"></a>3. 相关案例</h2><h3 id="3-1-不匹配任何东西的正则"><a href="#3-1-不匹配任何东西的正则" class="headerlink" title="3.1 不匹配任何东西的正则"></a>3.1 不匹配任何东西的正则</h3><p>让你写个正则不匹配任何东西</p>
-<p>easy，<code>/.^/</code></p>
-<p>因为此正则要求只有一个字符，但该字符后面是开头。</p>
-<h3 id="3-2-数字的千位分隔符表示法"><a href="#3-2-数字的千位分隔符表示法" class="headerlink" title="3.2 数字的千位分隔符表示法"></a>3.2 数字的千位分隔符表示法</h3><p>比如把”12345678”，变成”12,345,678”。</p>
-<p>可见是需要把相应的位置替换成”,”。</p>
-<p>思路是什么呢？</p>
-<h4 id="3-2-1-弄出最后一个逗号"><a href="#3-2-1-弄出最后一个逗号" class="headerlink" title="3.2.1 弄出最后一个逗号"></a>3.2.1 弄出最后一个逗号</h4><p>使用<code>(?=\d{3}$)</code>就可以做到：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=\d&#123;3&#125;$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-2-弄出所有的逗号"><a href="#3-2-2-弄出所有的逗号" class="headerlink" title="3.2.2 弄出所有的逗号"></a>3.2.2 弄出所有的逗号</h4><p>因为逗号出现的位置，要求后面3个数字一组，也就是\d{3}至少出现一次。</p>
-<p>此时可以使用量词+：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-3-匹配其余案例"><a href="#3-2-3-匹配其余案例" class="headerlink" title="3.2.3 匹配其余案例"></a>3.2.3 匹配其余案例</h4><p>写完正则后，要多验证几个案例，此时我们会发现问题：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"123456789"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; ",123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为上面的正则，仅仅表示把从结尾向前数，一但是3的倍数，就把其前面的位置替换成逗号。因此才会出现这个问题。</p>
-<p>怎么解决呢？我们要求匹配的到这个位置不能是开头。</p>
-<p>我们知道匹配开头可以使用<code>^</code>，但要求这个位置不是开头怎么办？</p>
-<p>easy，<code>(?!^)</code>，你想到了吗？测试如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string1 = <span class="string">"12345678"</span>,</span><br><span class="line">string2 = <span class="string">"123456789"</span>;</span><br><span class="line">reg = <span class="regexp">/(?!^)(?=(\d&#123;3&#125;)+$)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string1.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br><span class="line"></span><br><span class="line">result = string2.replace(reg, <span class="string">','</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-4-支持其他形式"><a href="#3-2-4-支持其他形式" class="headerlink" title="3.2.4 支持其他形式"></a>3.2.4 支持其他形式</h4><p>如果要把”12345678 123456789”替换成”12,345,678 123,456,789”。</p>
-<p>此时我们需要修改正则，把里面的开头<code>^</code>和结尾<code>$</code>，替换成<code>\b</code>：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string = <span class="string">"12345678 123456789"</span>,</span><br><span class="line">reg = <span class="regexp">/(?!\b)(?=(\d&#123;3&#125;)+\b)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678 123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>其中<code>(?!\b)</code>怎么理解呢？</p>
-<p>要求当前是一个位置，但不是<code>\b</code>前面的位置，其实<code>(?!\b)</code>说的就是<code>\B</code>。</p>
-<p>因此最终正则变成了：<code>/\B(?=(\d{3})+\b)/g</code>。</p>
-<h3 id="3-3-验证密码问题"><a href="#3-3-验证密码问题" class="headerlink" title="3.3 验证密码问题"></a>3.3 验证密码问题</h3><p>密码长度6-12位，由数字、小写字符和大写字母组成，但必须至少包括2种字符。</p>
-<p>此题，如果写成多个正则来判断，比较容易。但要写成一个正则就比较困难。</p>
-<p>那么，我们就来挑战一下。看看我们对位置的理解是否深刻。</p>
-<h4 id="3-3-1-简化"><a href="#3-3-1-简化" class="headerlink" title="3.3.1 简化"></a>3.3.1 简化</h4><p>不考虑“但必须至少包括2种字符”这一条件。我们可以容易写出：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-2-判断是否包含有某一种字符"><a href="#3-3-2-判断是否包含有某一种字符" class="headerlink" title="3.3.2 判断是否包含有某一种字符"></a>3.3.2 判断是否包含有某一种字符</h4><p>假设，要求的必须包含数字，怎么办？此时我们可以使用(?=.*[0-9])来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-3-同时包含具体两种字符"><a href="#3-3-3-同时包含具体两种字符" class="headerlink" title="3.3.3 同时包含具体两种字符"></a>3.3.3 同时包含具体两种字符</h4><p>比如同时包含数字和小写字母，可以用<code>(?=.*[0-9])(?=.*[a-z])</code>来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])(?=.*[a-z])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-4-解答"><a href="#3-3-4-解答" class="headerlink" title="3.3.4 解答"></a>3.3.4 解答</h4><p>我们可以把原题变成下列几种情况之一：</p>
+<ol start="2">
+<li>散列原则——实现负载均衡</li>
+</ol>
+<p>如果<code>rowkey</code>是按时间戳的方式递增，不要将时间放在二进制码的前面，建议将<code>rowkey</code>的高位作为散列字段，由程序循环生成，低位放时间字段，这样将提高数据均衡分布在每个<code>regionserver</code>实现负载均衡的几率。如果没有散列字段，首字段直接是时间信息将产生所有新数据都在一个 <code>regionServer</code>上堆积的热点现象，这样在做数据检索的时候负载将会集中在个别<code>regionServer</code>，降低查询效率。</p>
 <ul>
-<li>同时包含数字和小写字母</li>
-<li>同时包含数字和大写字母</li>
-<li>同时包含小写字母和大写字母</li>
-<li>同时包含数字、小写字母和大写字母</li>
+<li><p>加盐：添加随机值</p>
+</li>
+<li><p>hash：采用md5散列算法取前4位做前缀</p>
+</li>
+<li><p>反转：将手机号反转（尽量将具有随机性的字符串放在前面，这样便于<code>Hash</code>）</p>
+</li>
 </ul>
-<p>以上的4种情况是或的关系（实际上，可以不用第4条）。</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/((?=.*[0-9])(?=.*[a-z])|(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[A-Z]))^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-5-解惑"><a href="#3-3-5-解惑" class="headerlink" title="3.3.5 解惑"></a>3.3.5 解惑</h4><p>上面的正则看起来比较复杂，只要理解了第二步，其余就全部理解了。</p>
-<p><code>/(?=.*[0-9])^[0-9A-Za-z]{6,12}$/</code></p>
-<p>对于这个正则，我们只需要弄明白<code>(?=.*[0-9])^</code>即可。</p>
-<p>分开来看就是<code>(?=.*[0-9])</code>和<code>^</code>。</p>
-<p>表示开头前面还有个位置（当然也是开头，即同一个位置，想想之前的空字符类比）。</p>
-<p><code>(?=.*[0-9])</code>表示该位置后面的字符匹配<code>.*[0-9]</code>，即，有任何多个任意字符，后面再跟个数字。</p>
-<p>翻译成大白话，就是接下来的字符，必须包含个数字。</p>
-<h4 id="3-3-6-另外一种解法"><a href="#3-3-6-另外一种解法" class="headerlink" title="3.3.6 另外一种解法"></a>3.3.6 另外一种解法</h4><p>“至少包含两种字符”的意思就是说，不能全部都是数字，也不能全部都是小写字母，也不能全部都是大写字母。</p>
-<p>那么要求“不能全部都是数字”，怎么做呢？<code>(?!p)</code>出马！</p>
-<p>对应的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<p>三种“都不能”呢？</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)(?!^[a-z]&#123;6,12&#125;$)(?!^[A-Z]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<ol start="3">
+<li>唯一原则–字典序排序存储</li>
+</ol>
+<p>必须在设计上保证其唯一性，<code>rowkey</code>是按照字典顺序排序存储的，因此，设计<code>rowkey</code>的时候，要充分利用这个排序的特点，将经常读取的数据存储到一块，将最近可能会被访问的数据放到一块。        </p>
+<h3 id="1-3-列族的设计"><a href="#1-3-列族的设计" class="headerlink" title="1.3 列族的设计"></a>1.3 列族的设计</h3><p>不要在一张表里定义太多的<code>column family</code>。目前<code>Hbase</code>并不能很好的处理超过<code>2~3</code>个<code>column family</code>的表。因为某个<code>column family</code>在<code>flush</code>的时候，它邻近的<code>column family</code>也会因关联效应被触发<code>flush</code>，最终导致系统产生更多的<code>I/O</code>。    </p>
+<p>原因：</p>
+<ol>
+<li><p>当开始向<code>hbase</code>中插入数据的时候，数据会首先写入到<code>memstore</code>，而<code>memstore</code>是一个内存结构，每个列族对应一个<code>memstore</code>，当包含更多的列族的时候，会导致存在多个<code>memstore</code>，每一个<code>memstore</code>在<code>flush</code>的时候会对应一个<code>hfile</code>的文件，因此会产生很多的<code>hfile</code>文件，更加严重的是，<code>flush</code>操作时<code>region</code>级别，当<code>region</code>中的某个<code>memstore</code>被<code>flush</code>的时候，同一个<code>region</code>的其他<code>memstore</code>也会进行<code>flush</code>操作，当某一张表拥有很多列族的时候，且列族之间的数据分布不均匀的时候，会产生更多的磁盘文件;</p>
+</li>
+<li><p>当<code>hbase</code>表的某个<code>region</code>过大，会被拆分成两个，如果我们有多个列族，且这些列族之间的数据量相差悬殊的时候，<code>region</code>的<code>split</code>操作会导致原本数据量小的文件被进一步的拆分，而产生更多的小文件;</p>
+</li>
+<li><p>与<code>Flush</code>操作一样，目前<code>HBase</code>的<code>Compaction</code>操作也是<code>Region</code>级别的，过多的列族也会产生不必要的<code>I/O</code>;                </p>
+</li>
+<li><p><code>HDFS</code>其实对一个目录下的文件数有限制的（<code>dfs.namenode.fs-limits.max-directory-items</code>）。如果我们有<code>N</code>个列族，<code>M</code>个<code>Region</code>，那么我们持久化到<code>HDFS</code>至少会产生<code>N*M</code>个文件，而每个列族对应底层的<code>HFile</code>文件往往不止一个，我们假设为<code>K</code>个，那么最终表在<code>HDFS</code>目录下的文件数将是<code>N*M*K</code>，这可能会操作<code>HDFS</code>的限制。</p>
+</li>
+</ol>
+<h3 id="1-4-in-memory"><a href="#1-4-in-memory" class="headerlink" title="1.4 in memory"></a>1.4 in memory</h3><p><code>hbase</code>在<code>LRU</code>缓存基础之上采用了分层设计，整个<code>blockcache</code>分成了三个部分，分别是<code>single</code>、<code>multi</code>和<code>inMemory</code>。</p>
+<p>三者区别如下：</p>
+<ul>
+<li><p><code>single</code>：如果一个<code>block</code>第一次被访问，放在该优先队列中；</p>
+</li>
+<li><p><code>multi</code>：如果一个<code>block</code>被多次访问，则从<code>single</code>队列转移到<code>multi</code>队列</p>
+</li>
+<li><p><code>inMemory</code>：优先级最高，常驻<code>cache</code>，因此一般只有<code>hbase</code>系统的元数据，如<code>meta</code>表之类的才会放到<code>inMemory</code>队列中。</p>
+</li>
+</ul>
+<h3 id="1-5-Max-Version"><a href="#1-5-Max-Version" class="headerlink" title="1.5 Max Version"></a>1.5 Max Version</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setMaxVersions(int maxVersions)</code>设置表中数据的最大版本，如果只需要保存最新版本的数据，那么可以设置<code>setMaxVersions(1)</code>，保留更多的版本信息会占用更多的存储空间。</p>
+<h3 id="1-6-Time-to-Live"><a href="#1-6-Time-to-Live" class="headerlink" title="1.6 Time to Live"></a>1.6 Time to Live</h3><p>创建表的时候，可以通过<code>ColumnFamilyDescriptorBuilder.setTimeToLive(int timeToLive)</code>设置表中数据的存储生命期，过期数据将自动被删除，例如如果只需要存储最近两天的数据，那么可以设置<code>setTimeToLive(2 * 24 * 60 * 60)</code>。</p>
+<h3 id="1-7-Compaction"><a href="#1-7-Compaction" class="headerlink" title="1.7 Compaction"></a>1.7 Compaction</h3><p>在<code>HBase</code>中，数据在更新时首先写入<code>WAL</code> 日志(<code>HLog</code>)和内存(<code>MemStore</code>)中，<code>MemStore</code>中的数据是排序的，当<code>MemStore</code>累计到一定阈值(<code>64MB</code>)时，就会创建一个新的<code>MemStore</code>，并且将老的<code>MemStore</code>添加到<code>flush</code>队列，由<strong>单独的线程</strong><code>flush</code>到磁盘上，成为一个<code>StoreFile</code>。于此同时， 系统会在<code>zookeeper</code>中记录一个<code>redo point</code>，表示这个时刻之前的变更已经持久化了<strong>(minor compact)</strong>。</p>
+<p><code>StoreFile</code>是只读的，一旦创建后就不可以再修改。因此<code>Hbase</code>的更新其实是不断追加的操作。当一个<code>Store</code>中的<code>StoreFile</code>达到一定的阈值后，就会进行一次合并<strong>(major compact)</strong>，将对同一个<code>key</code>的修改合并到一起，形成一个大的<code>StoreFile</code>，当<code>StoreFile</code>的大小达到一定阈值后，又会对<code>StoreFile</code>进行分割<strong>(split)</strong>，等分为两个<code>StoreFile</code>。</p>
+<p>由于对表的更新是不断追加的，处理读请求时，需要访问<code>Store</code>中全部的<code>StoreFile</code>和<code>MemStore</code>，将它们按照<code>row key</code>进行合并，由于<code>StoreFile</code>和<code>MemStore</code>都是经过排序的，并且<code>StoreFile</code>带有内存中索引，通常合并过程还是比较快的。</p>
+<p>实际应用中，可以考虑必要时手动进行<code>major compact</code>，将同一个<code>row key</code>的修改进行合并形成一个大的<code>StoreFile</code>。同时，可以将<code>StoreFile</code>设置大些，减少<code>split</code>的发生。</p>
+<p><code>hbase</code>为了防止小文件（被刷到磁盘的<code>menstore</code>）过多，以保证保证查询效率，<code>hbase</code>需要在必要的时候将这些小的<code>store file</code>合并成相对较大的<code>store file</code>，这个过程就称之为<code>compaction</code>。在<code>hbase</code>中，主要存在两种类型的<code>compaction</code>：<code>minor compaction</code>和<code>major compaction</code>。</p>
+<ol>
+<li><code>minor compaction</code>: 的是较小、很少文件的合并。<code>minor compaction</code>的运行机制要复杂一些，它由一下几个参数共同决定：</li>
+</ol>
+<ul>
+<li><p><code>hbase.hstore.compaction.min</code>: 默认值为<code>3</code>，表示至少需要三个满足条件的<code>store file</code>时，<code>minor compaction</code>才会启动</p>
+</li>
+<li><p><code>hbase.hstore.compaction.max</code>: 默认值为<code>10</code>，表示一次<code>minor compaction</code>中最多选取<code>10</code>个<code>store file</code></p>
+</li>
+<li><p><code>hbase.hstore.compaction.min.size</code>: 表示文件大小小于该值的<code>store file</code>一定会加入到<code>minor compaction</code>的<code>store file</code>中</p>
+</li>
+<li><p><code>hbase.hstore.compaction.max.size</code>: 表示文件大小大于该值的<code>store file</code>一定不会被添加到<code>minor compaction</code></p>
+</li>
+<li><p><code>hbase.hstore.compaction.ratio</code>: 将<code>StoreFile</code>按照文件年龄排序，<code>minor compaction</code>总是从<code>older store file</code>开始选择，如果该文件的<code>size</code>小于后面<code>hbase.hstore.compaction.max</code>个<code>store file size</code>之和乘以<code>ratio</code>的值，那么该<code>store file</code>将加入到<code>minor compaction</code>中。如果满足<code>minor compaction</code>条件的文件数量大于<code>hbase.hstore.compaction.min</code>，才会启动。</p>
+</li>
+</ul>
+<ol start="2">
+<li><code>major compaction</code>的功能是将所有的<code>store file</code>合并成一个，触发<code>major compaction</code>的可能条件有：</li>
+</ol>
+<ul>
+<li><p><code>major_compact</code>命令</p>
+</li>
+<li><p><code>majorCompact()``API</code>、</p>
+</li>
+<li><p><code>region server</code>自动运行</p>
+</li>
+</ul>
+<blockquote>
+<p><code>hbase.hregion.majorcompaction</code>默认为<code>24</code>小时</p>
+<p><code>hbase.hregion.majorcompaction.jetter</code>默认值为<code>0.2</code>为防止<code>region server</code>在同一时间进行<code>major compaction</code>。</p>
+<p><code>hbase.hregion.majorcompaction.jetter</code>参数的作用是：对参数<code>hbase.hregion.majorcompaction</code>规定的值起到浮动的作用，假如两个参数都为默认值<code>24</code>和<code>0.2</code>，那么<code>major compact</code>最终使用的数值为<code>19.2~28.8</code>这个范围。</p>
+</blockquote>
+<h2 id="2-hbase写数据优化点"><a href="#2-hbase写数据优化点" class="headerlink" title="2. hbase写数据优化点"></a>2. hbase写数据优化点</h2><h3 id="2-1-是否需要写WAL，WAL是否需要同步写入"><a href="#2-1-是否需要写WAL，WAL是否需要同步写入" class="headerlink" title="2.1 是否需要写WAL，WAL是否需要同步写入"></a>2.1 是否需要写WAL，WAL是否需要同步写入</h3><p>优化原理：数据写入流程可以理解为一次顺序写<code>WAL</code>(<code>HLog</code>)加上一次写缓存（<code>MemStore</code>），通常情况下写缓存延迟很低，因此提升写性能就只能从<code>WAL</code>入手。<code>WAL</code>机制一方面是为了确保数据即使写入缓存丢失也可以恢复，另一方面是为了集群之间异步复制。默认<code>WAL</code>机制开启且使用同步机制写入<code>WAL</code>。首先考虑业务是否需要写<code>WAL</code>，通常情况下大多数业务都会开启<code>WAL</code>机制（默认），但是对于部分业务可能并不特别关心异常情况下部分数据的丢失，而更关心数据写入吞吐量，比如某些推荐业务，这类业务即使丢失一部分用户行为数据可能对推荐结果并不构成很大影响，但是对于写入吞吐量要求很高，不能造成数据队列阻塞。这种场景下可以考虑关闭<code>WAL</code>写入，写入吞吐量可以提升<code>2x~3x</code>。退而求其次，有些业务不能接受不写<code>WAL</code>，但可以接受<code>WAL</code>异步写入，也是可以考虑优化的，通常也会带来<code>1x～2x</code>的性能提升。 </p>
+<p>优化推荐：根据业务关注点在<code>WAL</code>机制与写入吞吐量之间做出选择  </p>
+<h3 id="2-2-批量Put提交"><a href="#2-2-批量Put提交" class="headerlink" title="2.2 批量Put提交"></a>2.2 批量Put提交</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>put</code>以及批量<code>put</code>的<code>API</code>接口，使用批量<code>put</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高写入性能。另外需要注意的是，批量<code>put</code>请求要么全部成功返回，要么抛出异常。</p>
+<p>优化建议：使用批量<code>put</code>进行写入请求</p>
+<h3 id="2-3-异步批量Put提交"><a href="#2-3-异步批量Put提交" class="headerlink" title="2.3 异步批量Put提交"></a>2.3 异步批量Put提交</h3><p>优化原理：业务如果可以接受异常情况下少量数据丢失的话，还可以使用异步批量提交的方式提交请求。提交分为两阶段执行，用户提交写请求之后，数据会写入客户端缓存，并返回用户写入成功；当客户端缓存达到阈值（默认<code>2M</code>）之后批量提交给<code>RegionServer</code>。需要注意的是，在某些情况下客户端异常的情况下缓存数据有可能丢失。</p>
+<p>优化建议：在业务可以接受的情况下开启异步批量提交</p>
+<p>使用方式：<code>setAutoFlush(false)</code></p>
+<h3 id="2-4-Region个数调整"><a href="#2-4-Region个数调整" class="headerlink" title="2.4 Region个数调整"></a>2.4 Region个数调整</h3><p>优化原理：当前集群中表的<code>Region</code>个数如果小于<code>RegionServer</code>个数，即<code>Num(Region of Table) &lt; Num(RegionServer)</code>，可以考虑切分<code>Region</code>并尽可能分布到不同<code>RegionServer</code>来提高系统请求并发度，如果<code>Num(Region of Table) &gt; Num(RegionServer)</code>，再增<code>加Region</code>个数效果并不明显。</p>
+<p>优化建议：在<code>Num(Region of Table) &lt; Num(RegionServer)</code>的场景下切分部分请求负载高的<code>Region</code>并迁移到其他<code>RegionServer</code>；</p>
+<h3 id="2-5-写请求均衡"><a href="#2-5-写请求均衡" class="headerlink" title="2.5 写请求均衡"></a>2.5 写请求均衡</h3><p>优化原理：另一个需要考虑的问题是写入请求是否均衡，如果不均衡，一方面会导致系统并发度较低，另一方面也有可能造成部分节点负载很高，进而影响其他业务。分布式系统中特别害怕一个节点负载很高的情况，一个节点负载很高可能会拖慢整个集群，这是因为很多业务会使用Mutli批量提交读写请求，一旦其中一部分请求落到该节点无法得到及时响应，就会导致整个批量请求超时。因此不怕节点宕掉，就怕节点奄奄一息！</p>
+<p>优化建议：检查<code>rowkey</code>设计以及预分区策略，保证写入请求均衡。</p>
+<h3 id="2-6-写入KeyValue数据是否太大"><a href="#2-6-写入KeyValue数据是否太大" class="headerlink" title="2.6 写入KeyValue数据是否太大"></a>2.6 写入KeyValue数据是否太大</h3><p><code>KeyValue</code>大小对写入性能的影响巨大，一旦遇到写入性能比较差的情况，需要考虑是否由于写入<code>KeyValue</code>数据太大导致。随着单行数据大小不断变大，写入吞吐量急剧下降，写入延迟在<code>100K</code>之后会急剧增大。</p>
+<h3 id="2-7-Utilize-Flash-storage-for-WAL-HBASE-12848"><a href="#2-7-Utilize-Flash-storage-for-WAL-HBASE-12848" class="headerlink" title="2.7 Utilize Flash storage for WAL(HBASE-12848)"></a>2.7 Utilize Flash storage for WAL(HBASE-12848)</h3><p>这个特性意味着可以将<code>WAL</code>单独置于<code>SSD</code>上，这样即使在默认情况下（<code>WALSync</code>），写性能也会有很大的提升。需要注意的是，该特性建立在<code>HDFS 2.6.0+</code>的基础上，<code>HDFS</code>以前版本不支持该特性。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-12848" target="_blank" rel="noopener">HBASE-12848</a>。</p>
+<h3 id="2-8-Multiple-WALs-HBASE-14457"><a href="#2-8-Multiple-WALs-HBASE-14457" class="headerlink" title="2.8 Multiple WALs(HBASE-14457)"></a>2.8 Multiple WALs(HBASE-14457)</h3><p>该特性也是对<code>WAL</code>进行改造，当前<code>WAL</code>设计为一个<code>RegionServer</code>上所有<code>Region</code>共享一个<code>WAL</code>，可以想象在写入吞吐量较高的时候必然存在资源竞争，降低整体性能。针对这个问题，社区小伙伴提出<code>Multiple WALs</code>机制，管理员可以为每个<code>Namespace</code>下的所有表设置一个共享<code>WAL</code>，通过这种方式，写性能大约可以提升<code>20%～40%</code>左右。具体可以参考官方<a href="https://issues.apache.org/jira/browse/HBASE-14457" target="_blank" rel="noopener">HBASE-14457</a>。</p>
+<h2 id="3-hbase读数据优化点"><a href="#3-hbase读数据优化点" class="headerlink" title="3. hbase读数据优化点"></a>3. hbase读数据优化点</h2><h3 id="2-1-调整scan缓存"><a href="#2-1-调整scan缓存" class="headerlink" title="2.1. 调整scan缓存"></a>2.1. 调整scan缓存</h3><p>优化原理：在解释这个问题之前，首先需要解释什么是<code>scan</code>缓存，通常来讲一次<code>scan</code>会返回大量数据，因此客户端发起一次<code>scan</code>请求，实际并不会一次就将所有数据加载到本地，而是分成多次<code>RPC</code>请求进行加载，这样设计一方面是因为大量数据请求可能会导致网络带宽严重消耗进而影响其他业务，另一方面也有可能因为数据量太大导致本地客户端发生<code>OOM</code>。在这样的设计体系下用户会首先加载一部分数据到本地，然后遍历处理，再加载下一部分数据到本地处理，如此往复，直至所有数据都加载完成。数据加载到本地就存放在<code>scan</code>缓存中，默认<code>100</code>条数据大小。通常情况下，默认的<code>scan</code>缓存设置就可以正常工作的。但是在一些大<code>scan</code>（一次<code>scan</code>可能需要查询几万甚至几十万行数据）来说，每次请求<code>100</code>条数据意味着一次<code>scan</code>需要几百甚至几千次<code>RPC</code>请求，这种交互的代价无疑是很大的。因此可以考虑将<code>scan</code>缓存设置增大，比如设为<code>500</code>或者<code>1000</code>就可能更加合适。在一次<code>scan</code>扫描<code>10w+</code>条数据量的条件下，将<code>scan</code>缓存从<code>100</code>增加到<code>1000</code>，可以有效降低<code>scan</code>请求的总体延迟，延迟基本降低了<code>25%</code>左右。</p>
+<p>优化建议：大<code>scan</code>场景下将<code>scan</code>缓存从<code>100</code>增大到<code>500</code>或者<code>1000</code>，用以减少<code>RPC</code>次数.</p>
+<h3 id="2-2-批量get"><a href="#2-2-批量get" class="headerlink" title="2.2 批量get"></a>2.2 批量get</h3><p>优化原理：<code>HBase</code>分别提供了单条<code>get</code>以及批量<code>get</code>的<code>API</code>接口，使用批量<code>get</code>接口可以减少客户端到<code>RegionServer</code>之间的<code>RPC</code>连接数，提高读取性能。另外需要注意的是，批量<code>get</code>请求要么成功返回所有请求数据，要么抛出异常。</p>
+<p>优化建议：使用批量<code>get</code>进行读取请求</p>
+<h3 id="2-3-显示指定列族或者列"><a href="#2-3-显示指定列族或者列" class="headerlink" title="2.3 显示指定列族或者列"></a>2.3 显示指定列族或者列</h3><p>优化原理：<code>HBase</code>是典型的列族数据库，意味着同一列族的数据存储在一起，不同列族的数据分开存储在不同的目录下。如果一个表有多个列族，只是根据<code>rowkey</code>而不指定列族进行检索的话不同列族的数据需要独立进行检索，性能必然会比指定列族的查询差很多，很多情况下甚至会有<code>2倍～3倍</code>的性能损失。</p>
+<p>优化建议：可以指定列族或者列进行精确查找的尽量指定查找</p>
+<h3 id="2-4-离线批量读取时设置禁止缓存"><a href="#2-4-离线批量读取时设置禁止缓存" class="headerlink" title="2.4 离线批量读取时设置禁止缓存"></a>2.4 离线批量读取时设置禁止缓存</h3><p>优化原理：通常离线批量读取数据会进行一次性全表扫描，一方面数据量很大，另一方面请求只会执行一次。这种场景下如果使用<code>scan</code>默认设置，就会将数据从<code>HDFS</code>加载出来之后放到缓存。可想而知，大量数据进入缓存必将其他实时业务热点数据挤出，其他业务不得不从<code>HDFS</code>加载，进而会造成明显的读延迟</p>
+<p>优化建议：离线批量读取请求设置禁用缓存，<code>scan.setBlockCache(false)</code></p>
+<h3 id="2-5-读请求负载均衡"><a href="#2-5-读请求负载均衡" class="headerlink" title="2.5 读请求负载均衡"></a>2.5 读请求负载均衡</h3><p>优化原理：极端情况下假如所有的读请求都落在一台<code>RegionServer</code>的某几个<code>Region</code>上，这一方面不能发挥整个集群的并发处理能力，另一方面势必造成此台<code>RegionServer</code>资源严重消耗（比如<code>I/O</code>耗尽、<code>handler</code>耗尽等），落在该台<code>RegionServer</code>上的其他业务会因此受到很大的波及。可见，读请求不均衡不仅会造成本身业务性能很差，还会严重影响其他业务。当然，写请求不均衡也会造成类似的问题，可见负载不均衡是HBase的大忌。</p>
+<p>优化建议：<code>rowkey</code>必须进行散列化处理（比如<code>MD5</code>散列），同时建表必须进行预分区处理</p>
+<h3 id="2-6-BlockCache调节"><a href="#2-6-BlockCache调节" class="headerlink" title="2.6 BlockCache调节"></a>2.6 BlockCache调节</h3><p>优化原理：<code>BlockCache</code>作为读缓存，对于读性能来说至关重要。默认情况下<code>BlockCache</code>和<code>Memstore</code>的配置相对比较均衡（各占<code>40%</code>），可以根据集群业务进行修正，比如读多写少业务可以将<code>BlockCache</code>占比调大。另一方面，<code>BlockCache</code>的策略选择也很重要，不同策略对读性能来说影响并不是很大，但是对<code>GC</code>的影响却相当显著，尤其<code>BucketCache</code>的<code>offheap</code>模式下<code>GC</code>表现很优越。另外，<code>HBase 2.0</code>对<code>offheap</code>的改造（<code>HBASE-11425</code>）将会使<code>HBase</code>的读性能得到<code>2～4</code>倍的提升，同时<code>GC</code>表现会更好。观察所有RegionServer的缓存未命中率、配置文件相关配置项一级GC日志，确认BlockCache是否可以优化</p>
+<p>优化建议：<code>JVM Memory &lt; 20GB</code>，<code>BlockCache</code>策略选择<code>LRU</code>；否则选择<code>BucketCache</code>策略的<code>offheap</code>模式；</p>
+<h3 id="2-7-HFile文件数量"><a href="#2-7-HFile文件数量" class="headerlink" title="2.7 HFile文件数量"></a>2.7 HFile文件数量</h3><p>优化原理：<code>HBase</code>读取数据通常首先会到<code>Memstore</code>和<code>BlockCache</code>中检索（读取最近写入数据和热点数据），如果查找不到就会到文件中检索。HBase的类<code>LSM</code>结构会导致每个<code>store</code>包含多数<code>HFile</code>文件，文件越多，检索所需的<code>I/O</code>次数必然越多，读取延迟也就越高。文件数量通常取决于<code>Compaction</code>的执行策略，一般和两个配置参数有关：<code>hbase.hstore.compaction.min</code>和<code>hbase.hstore.compaction.max.size</code>，前者表示一个<code>store</code>中的文件数超过多少就应该进行合并，后者表示参数合并的文件大小最大是多少，超过此大小的文件不能参与合并。这两个参数不能设置太’松’（前者不能设置太大，后者不能设置太小），导致<code>Compaction</code>合并文件的实际效果不明显，进而很多文件得不到合并。这样就会导致<code>HFile</code>文件数变多。观察<code>RegionServer</code>级别以及<code>Region</code>级别的<code>storefile</code>数，确认<code>HFile</code>文件是否过多。</p>
+<p>优化建议：<code>hbase.hstore.compaction.min</code>设置不能太大，默认是3个；设置需要根据<code>Region</code>大小确定，通常可以简单的认为<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>。</p>
+<h3 id="8-控制Compaction消耗系统资源情况"><a href="#8-控制Compaction消耗系统资源情况" class="headerlink" title="8. 控制Compaction消耗系统资源情况"></a>8. 控制Compaction消耗系统资源情况</h3><p>优化原理：<code>Compaction</code>是将小文件合并为大文件，提高后续业务随机读性能，但是也会带来<code>I/O</code>放大以及带宽消耗问题（数据远程读取以及三副本写入都会消耗系统带宽）。正常配置情况下<code>Minor Compaction</code>并不会带来很大的系统资源消耗，除非因为配置不合理导致<code>Minor Compaction</code>太过频繁，或者<code>Region</code>设置太大情况下发生<code>Major Compaction</code>。观察系统<code>I/O</code>资源以及带宽资源使用情况，再观察<code>Compaction</code>队列长度，确认是否由于<code>Compaction</code>导致系统资源消耗过多。</p>
+<p>优化建议：<code>Minor Compaction</code>设置：<code>hbase.hstore.compaction.min</code>设置不能太小，又不能设置太大，因此建议设置为<code>5～6</code>；<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compaction.min</code>; <code>Major Compaction</code>设置：大<code>Region</code>读延迟敏感业务（ 100G以上）通常不建议开启自动<code>Major Compaction</code>，手动低峰期触发。小<code>Region</code>或者延迟不敏感业务可以开启<code>Major Compaction</code>，但建议限制流量。</p>
+<h4 id="9、调整数据本地率"><a href="#9、调整数据本地率" class="headerlink" title="9、调整数据本地率"></a>9、调整数据本地率</h4><p>数据本地率：<code>HDFS</code>数据通常存储三份，假如当前<code>RegionA</code>处于<code>Node1</code>上，数据<code>a</code>写入的时候三副本为(<code>Node1</code>,<code>Node2</code>,<code>Node3</code>)，数据<code>b</code>写入三副本是(<code>Node1</code>,<code>Node4</code>,<code>Node5</code>)，数据<code>c</code>写入三副本(<code>Node1</code>,<code>Node3</code>,<code>Node5</code>)，可以看出来所有数据写入本地<code>Node1</code>肯定会写一份，数据都在本地可以读到，因此数据本地率是<code>100%</code>。现在假设<code>RegionA</code>被迁移到了<code>Node2</code>上，只有数据<code>a</code>在该节点上，其他数据（<code>b</code>和<code>c</code>）读取只能远程跨节点读，本地率就为<code>33%</code>（假设<code>a</code>，<code>b</code>和<code>c</code>的数据大小相同）。</p>
+<p>优化原理：数据本地率太低很显然会产生大量的跨网络<code>I/O</code>请求，必然会导致读请求延迟较高，因此提高数据本地率可以有效优化随机读性能。数据本地率低的原因一般是因为<code>Region</code>迁移（自动<code>balance</code>开启、<code>RegionServer</code>宕机迁移、手动迁移等）,因此一方面可以通过避免<code>Region</code>无故迁移来保持数据本地率，另一方面如果数据本地率很低，也可以通过执行<code>major_compact</code>提升数据本地率到100%。</p>
+<p>优化建议：避免<code>Region</code>无故迁移，比如关闭自动<code>balance</code>、<code>RegionServer</code>宕机及时拉起并迁回飘走的<code>Region</code>等；在业务低峰期执行<code>major_compact</code>提升数据本地率。</p>
 
       
 
@@ -568,15 +359,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">优化</a>
         		</li>
       		
 		</ul>
@@ -588,11 +379,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Scala//" class="article-tag-list-link color1">Scala</a>
+        			<a href="/categories/大数据//" class="article-tag-list-link color4">大数据</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/bigdata//" class="article-tag-list-link color3">bigdata</a>
+        			<a href="/categories/HBase//" class="article-tag-list-link color1">HBase</a>
         		</li>
       		
 		</ul>
@@ -647,7 +438,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.zjwblog.cn/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.zjwblog.cn/HBaseOptimize.html" alt="微信分享二维码">
     </div>
 </div>
 
@@ -661,18 +452,18 @@
   
 <nav id="article-nav">
   
-    <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/Apollo%20Client%20%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.html" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          基于Kerberos认证的Hadoop Token过期问题Debug分享
+          Apollo Client 使用说明
         
       </div>
     </a>
   
   
-    <a href="/%E7%B2%BE%E5%B0%BD%20Netty%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%20%E2%80%94%E2%80%94%20Netty%20%E7%AE%80%E4%BB%8B%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6.html" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">精尽 Netty 源码分析 —— Netty 简介（二）之核心组件</div>
+    <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">基于Kerberos认证的Hadoop Token过期问题Debug分享</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -696,16 +487,6 @@
 </aside>
 
 
-
-  
-  
-  
-
-  
-
-  
-
-  
 
 
           </div>
