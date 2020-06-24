@@ -156,19 +156,19 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-正则表达式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-基于Kerberos认证的Hadoop Token过期问题Debug分享" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">正则表达式</a>
+      <a class="article-title" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">基于Kerberos认证的Hadoop Token过期问题Debug分享</a>
     </h1>
   
 
         
-        <a href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html" class="archive-article-date">
+        <a href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html" class="archive-article-date">
   	<time datetime="2019-10-10T03:21:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-10</time>
 </a>
         
@@ -176,355 +176,97 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-两种模糊匹配"><a href="#1-两种模糊匹配" class="headerlink" title="1.  两种模糊匹配"></a>1.  两种模糊匹配</h2><p>模糊匹配，有两个方向上的“模糊”：横向模糊和纵向模糊</p>
-<h3 id="1-1-横向模糊匹配"><a href="#1-1-横向模糊匹配" class="headerlink" title="1.1 横向模糊匹配"></a>1.1 横向模糊匹配</h3><p>横向模糊指的是，一个正则可匹配的字符串的长度不是固定的，可以是多种情况的。其实现的方式是使用量词。譬如{m,n}，表示连续出现最少m次，最多n次。比如/ab{2,5}c/表示匹配这样一个字符串：第一个字符是“a”，接下来是2到5个字符“b”，最后是字符“c”<br>例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /ab&#123;2,5&#125;c/g;</span><br><span class="line">var string = &quot;abc abbc abbbc abbbbc abbbbbc abbbbbbc&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;abbc&quot;, &quot;abbbc&quot;, &quot;abbbbc&quot;, &quot;abbbbbc&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>注意：案例中用的正则是/ab{2,5}c/g，后面多了g，它是正则的一个修饰符。表示全局匹配，即在目标字符串中按顺序找到满足匹配模式的所有子串，强调的是“所有”，而不只是“第一个”。g是单词global的首字母。</p>
-<h3 id="1-2-纵向模糊匹配"><a href="#1-2-纵向模糊匹配" class="headerlink" title="1.2 纵向模糊匹配"></a>1.2 纵向模糊匹配</h3><p>纵向模糊指的是，一个正则匹配的字符串，具体到某一位字符时，它可以不是某个确定的字符，可以有多种可能。其实现的方式是使用字符组。譬如[abc]，表示该字符是可以字符“a”、“b”、“c”中的任何一个。比如/a[123]b/可以匹配如下三种字符串：”a1b”、”a2b”、”a3b”。<br>例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/a[123]b/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"a0b a1b a2b a3b a4b"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["a1b", "a2b", "a3b"]</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="2-字符组"><a href="#2-字符组" class="headerlink" title="2. 字符组"></a>2. 字符组</h2><p>需要强调的是，虽叫字符组（字符类），但只是其中一个字符。例如[abc]，表示匹配一个字符，它可以是“a”、“b”、“c”之一。</p>
-<h3 id="2-1-范围表示法"><a href="#2-1-范围表示法" class="headerlink" title="2.1 范围表示法"></a>2.1 范围表示法</h3><p>如果字符组里的字符特别多的话，怎么办？可以使用范围表示法。比如[123456abcdefGHIJKLM]，可以写成[1-6a-fG-M]。用连字符-来省略和简写。因为连字符有特殊用途，那么要匹配“a”、“-”、“z”这三者中任意一个字符，该怎么做呢？不能写成[a-z]，因为其表示小写字符中的任何一个字符。可以写成如下的方式：[-az]或[az-]或[a-z]。即要么放在开头，要么放在结尾，要么转义。总之不会让引擎认为是范围表示法就行了。</p>
-<h3 id="2-2-排除字符组"><a href="#2-2-排除字符组" class="headerlink" title="2.2 排除字符组"></a>2.2 排除字符组</h3><p>纵向模糊匹配，还有一种情形就是，某位字符可以是任何东西，但就不能是”a”、”b”、”c”。此时就是排除字符组（反义字符组）的概念。例如[^abc]，表示是一个除”a”、”b”、”c”之外的任意一个字符。字符组的第一位放^（脱字符），表示求反的概念。</p>
-<h3 id="2-3-常见的简写形式"><a href="#2-3-常见的简写形式" class="headerlink" title="2.3 常见的简写形式"></a>2.3 常见的简写形式</h3><p>有了字符组的概念后，一些常见的符号我们也就理解了。因为它们都是系统自带的简写形式。</p>
-<blockquote>
-<p>\d就是[0-9]。表示是一位数字。记忆方式：其英文是digit（数字）。<br>\D就是[^0-9]。表示除数字外的任意字符。<br>\w就是[0-9a-zA-Z_]。表示数字、大小写字母和下划线。记忆方式：w是word的简写，也称单词字符。<br>\W是[^0-9a-zA-Z_]。非单词字符。<br>\s是[ \t\v\n\r\f]。表示空白符，包括空格、水平制表符、垂直制表符、换行符、回车符、换页符。记忆方式：s是space character的首字母。<br>\S是[^ \t\v\n\r\f]。 非空白符。<br>.就是[^\n\r\u2028\u2029]。通配符，表示几乎任意字符。换行符、回车符、行分隔符和段分隔符除外。记忆方式：想想省略号…中的每个点，都可以理解成占位符，表示任何类似的东西。</p>
-</blockquote>
-<p>如果要匹配任意字符怎么办？可以使用[\d\D]、[\w\W]、[\s\S]和[^]中任何的一个。</p>
-<h2 id="3-量词"><a href="#3-量词" class="headerlink" title="3. 量词"></a>3. 量词</h2><p>量词也称重复。掌握{m,n}的准确含义后，只需要记住一些简写形式。</p>
-<h3 id="3-1-简写形式"><a href="#3-1-简写形式" class="headerlink" title="3.1 简写形式"></a>3.1 简写形式</h3><blockquote>
-<p>{m,} 表示至少出现m次。<br>{m} 等价于{m,m}，表示出现m次。<br>? 等价于{0,1}，表示出现或者不出现。记忆方式：问号的意思表示，有吗？</p>
-<ul>
-<li>等价于{1,}，表示出现至少一次。记忆方式：加号是追加的意思，得先有一个，然后才考虑追加。</li>
+        <h2 id="1-Kerberos"><a href="#1-Kerberos" class="headerlink" title="1 Kerberos"></a>1 Kerberos</h2><p><code>Kerberos</code>是诞生于上个世纪90年代的计算机认证协议，被广泛应用于各大操作系统和Hadoop生态系统中。了解<code>Kerberos</code>认证的流程将有助于解决<code>Hadoop</code>集群中的安全配置过程中的问题。</p>
+<h3 id="1-1-Kerberos可以用来做什么"><a href="#1-1-Kerberos可以用来做什么" class="headerlink" title="1.1 Kerberos可以用来做什么"></a>1.1 Kerberos可以用来做什么</h3><p>简单地说，<code>Kerberos</code>提供了一种单点登录(SSO)的方法。考虑这样一个场景，在一个网络中有不同的服务器，比如，打印服务器、邮件服务器和文件服务器。这些服务器都有认证的需求。很自然的，不可能让每个服务器自己实现一套认证系统，而是提供一个中心认证服务器（AS-Authentication Server）供这些服务器使用。这样任何客户端就只需维护一个密码就能登录所有服务器。</p>
+<p>因此，在<code>Kerberos</code>系统中至少有三个角色：认证服务器（AS），客户端（Client）和普通服务器（Server）。客户端和服务器将在AS的帮助下完成相互认证。在<code>Kerberos</code>系统中，客户端和服务器都有一个唯一的名字，叫做<code>Principal</code>。同时，客户端和服务器都有自己的密码，并且它们的密码只有自己和认证服务器AS知道。</p>
+<h3 id="1-2-Kerberos术语"><a href="#1-2-Kerberos术语" class="headerlink" title="1.2 Kerberos术语"></a>1.2 Kerberos术语</h3><ul>
+<li>KDC(key distribution center): 密钥发放中心</li>
+<li>AS(authentication service): 认证服务，索取credential，发放 TGT</li>
+<li>TGS(ticket granting service): 票据授权服务，索取TGT，发放ST</li>
+<li><strong>TGT(ticket granting ticket)</strong>: 票据授权票据，由KDC的AS发放；获得这样一张票据后，以后申请其他应用的服务票据（ST）时，就不需要向KDC提交身份认证信息（credential），TGT具有一定的有效期，就像是kerberos进行kinit以后只是具有固定时间的有效期，需要不断的去renew来续约。</li>
+<li>ST(service ticket): 服务票据，由KDC的TGS发放，任何一个应用（application）都需要一张有效的服务票据才能访问；如果能正确接受ST，说明client和server之间的信任关系已经被建立，通常为一张数字加密的证书。</li>
+<li>Principal: 一个用户会以一个独一无二的身份来被KDC认证，该身份被称为principal。一个Principal由三个部分组成：primary, instance以及realm，其组成形式为primary/instance@realm。<ul>
+<li>primary: 可以是OS中的username，也可以是service name；</li>
+<li>instance: 用于区分属于同一个user或者service的多个principals，该项为optional；</li>
+<li>realm: 类似于DNS中的domain，定义了一组principals.</li>
 </ul>
-<ul>
-<li>等价于{0,}，表示出现任意次，有可能不出现。记忆方式：看看天上的星星，可能一颗没有，可能零散有几颗，可能数也数不过来。</li>
+</li>
 </ul>
-</blockquote>
-<h3 id="3-2-贪婪匹配和惰性匹配"><a href="#3-2-贪婪匹配和惰性匹配" class="headerlink" title="3.2 贪婪匹配和惰性匹配"></a>3.2 贪婪匹配和惰性匹配</h3><p>看如下的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;123&quot;, &quot;1234&quot;, &quot;12345&quot;, &quot;12345&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>其中正则/\d{2,5}/，表示数字连续出现2到5次。会匹配2位、3位、4位、5位连续数字</p>
-<p>但是其是贪婪的，它会尽可能多的匹配。你能给我6个，我就要6个。你能给我3个，我就3要个。反正只要在能力范围内，越多越好。</p>
-<p>我们知道有时贪婪不是一件好事（请看文章最后一个例子）。而惰性匹配，就是尽可能少的匹配：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /\d&#123;2,5&#125;?/g;</span><br><span class="line">var string = &quot;123 1234 12345 123456&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;12&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;12&quot;, &quot;34&quot;, &quot;56&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>其中/\d{2,5}?/表示，虽然2到5次都行，当2个就够的时候，就不在往下尝试了。</p>
-<p>通过在量词后面加个问号就能实现惰性匹配，因此所有惰性匹配情形如下：</p>
-<blockquote>
-<p>{m,n}?<br>{m,}?<br>??<br>+?<br>*?</p>
-</blockquote>
-<p>对惰性匹配的记忆方式是：量词后面加个问号，问一问你知足了吗，你很贪婪吗？</p>
-<h2 id="4-多选分支"><a href="#4-多选分支" class="headerlink" title="4. 多选分支"></a>4. 多选分支</h2><p>一个模式可以实现横向和纵向模糊匹配。而多选分支可以支持多个子模式任选其一。</p>
-<p>具体形式如下：(p1|p2|p3)，其中p1、p2和p3是子模式，用|（管道符）分隔，表示其中任何之一。</p>
-<p>例如要匹配”good”和”nice”可以使用/good|nice/。测试如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var regex = /good|nice/g;</span><br><span class="line">var string = &quot;good idea, nice try.&quot;;</span><br><span class="line">console.log( string.match(regex) ); </span><br><span class="line">// =&gt; [&quot;good&quot;, &quot;nice&quot;]</span><br></pre></td></tr></table></figure>
-
-<p>但有个事实我们应该注意，比如我用/good|goodbye/，去匹配”goodbye”字符串时，结果是”good”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/good|goodbye/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["good"]</span></span><br></pre></td></tr></table></figure>
-
-<p>而把正则改成/goodbye|good/，结果是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/goodbye|good/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"goodbye"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["goodbye"]</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说，分支结构也是惰性的，即当前面的匹配上了，后面的就不再尝试了。</p>
-<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><p>匹配字符，无非就是字符组、量词和分支结构的组合使用罢了。</p>
-<h3 id="5-1-匹配16进制颜色值"><a href="#5-1-匹配16进制颜色值" class="headerlink" title="5.1 匹配16进制颜色值"></a>5.1 匹配16进制颜色值</h3><p>要求匹配：</p>
-<blockquote>
-<p>#ffbbad</p>
-<p>#Fc01DF</p>
-<p>#FFF</p>
-<p>#ffE</p>
-</blockquote>
-<p>分析：</p>
-<p>表示一个16进制字符，可以用字符组<code>[0-9a-fA-F]</code>, 其中字符可以出现3或6次，需要是用量词和分支结构。使用分支结构时，需要注意顺序。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/#([0-9a-fA-F]&#123;6&#125;|[0-9a-fA-F]&#123;3&#125;)/g</span>;</span><br><span class="line"><span class="keyword">var</span> string = <span class="string">"#ffbbad #Fc01DF #FFF #ffE"</span>;</span><br><span class="line"><span class="built_in">console</span>.log( string.match(regex) ); </span><br><span class="line"><span class="comment">// =&gt; ["#ffbbad", "#Fc01DF", "#FFF", "#ffE"]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-2-匹配时间"><a href="#5-2-匹配时间" class="headerlink" title="5.2 匹配时间"></a>5.2 匹配时间</h3><p>以24小时制为例, 要求匹配：</p>
-<blockquote>
-<p>23:59</p>
-<p>02:07</p>
-</blockquote>
-<p>分析：</p>
-<p>共4位数字，第一位数字可以为<code>[0-2]</code>。当第1位为2时，第2位可以为<code>[0-3]</code>，其他情况时，第2位为<code>[0-9]</code>。第3位数字为<code>[0-5]</code>，第4位为<code>[0-9]</code>。</p>
-<p>正则如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^([01][0-9]|[2][0-3]):[0-5][0-9]$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>如果也要求匹配7:9，也就是说时分前面的0可以省略。此时正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^(0?[0-9]|1[0-9]|[2][0-3]):(0?[0-9]|[1-5][0-9])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"23:59"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"02:07"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"7:9"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-3-匹配日期"><a href="#5-3-匹配日期" class="headerlink" title="5.3 匹配日期"></a>5.3 匹配日期</h3><p>比如yyyy-mm-dd格式为例。要求匹配：</p>
-<blockquote>
-<p>2017-06-10</p>
-</blockquote>
-<p>分析：</p>
-<p>年，四位数字即可，可用<code>[0-9]{4}</code>。<br>月，共12个月，分两种情况01、02、……、09和10、11、12，可用<code>(0[1-9]|1[0-2])</code>。<br>日，最大31天，可用<code>(0[1-9]|[12][0-9]|3[01])</code>。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[0-9]&#123;4&#125;-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"2017-06-10"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="5-4-window操作系统文件路径"><a href="#5-4-window操作系统文件路径" class="headerlink" title="5.4 window操作系统文件路径"></a>5.4 window操作系统文件路径</h3><p>要求匹配：</p>
-<blockquote>
-<p>F:\study\javascript\regex\regular expression.pdf <br><br>F:\study\javascript\regex\ <br><br>F:\study\javascript <br><br>F:\</p>
-</blockquote>
-<p>分析：</p>
-<p>整体模式是: 盘符:\文件夹\文件夹\文件夹\</p>
-<p>其中匹配F:\，需要使用<code>[a-zA-Z]:\\</code>，其中盘符不区分大小写，注意<code>\</code>字符需要转义。</p>
-<p>文件名或者文件夹名，不能包含一些特殊字符，此时我们需要排除字符组<code>[^\\:*&lt;&gt;|&quot;?\r\n/]</code>来表示合法字符。另外不能为空名，至少有一个字符，也就是要使用量词<code>+</code>。因此匹配“文件夹\”，可用<code>[^\\:*&lt;&gt;|&quot;?\r\n/]+\\</code>。</p>
-<p>另外“文件夹\”，可以出现任意次。也就是<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+\\)*</code>。其中括号提供子表达式。</p>
-<p>路径的最后一部分可以是“文件夹”，没有<code>\</code>，因此需要添加<code>([^\\:*&lt;&gt;|&quot;?\r\n/]+)?</code>。</p>
-<p>最后拼接成了一个看起来比较复杂的正则：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/^[a-zA-Z]:\\([^\\:*&lt;&gt;|"?\r\n/]+\\)*([^\\:*&lt;&gt;|"?\r\n/]+)?$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\regular expression.pdf"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript\\regex\\"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\study\\javascript"</span>) ); </span><br><span class="line"><span class="built_in">console</span>.log( regex.test(<span class="string">"F:\\"</span>) ); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>其中，JS中字符串表示<code>\</code>时，也要转义。</p>
-<h3 id="5-5-匹配id"><a href="#5-5-匹配id" class="headerlink" title="5.5 匹配id"></a>5.5 匹配id</h3><p>要求从</p>
-<blockquote>
-<p>&lt;div id=”container” class=”main”&gt;&lt;/div&gt;</p>
-</blockquote>
-<p>提取出id=”container”。</p>
-<p>可能最开始想到的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container" class="main"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为<code>.</code>是通配符，本身就匹配双引号的，而量词<code>*</code>又是贪婪的，当遇到container后面双引号时，不会停下来，会继续匹配，直到遇到最后一个双引号为止。</p>
-<p>解决之道，可以使用惰性匹配：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id=".*?"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<p>当然，这样也会有个问题。效率比较低，因为其匹配原理会涉及到“回溯”这个概念（这里也只是顺便提一下，第四章会详细说明）。可以优化如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/id="[^"]*"/</span></span><br><span class="line"><span class="keyword">var</span> string = <span class="string">'&lt;div id="container" class="main"&gt;&lt;/div&gt;'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(string.match(regex)[<span class="number">0</span>]); </span><br><span class="line"><span class="comment">// =&gt; id="container"</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="位置匹配攻略"><a href="#位置匹配攻略" class="headerlink" title="位置匹配攻略"></a>位置匹配攻略</h1><h2 id="1-如何匹配位置"><a href="#1-如何匹配位置" class="headerlink" title="1. 如何匹配位置"></a>1. 如何匹配位置</h2><p>在ES5中，共有6个锚字符：</p>
-<blockquote>
-<p>^ $ \b \B (?=p) (?!p)</p>
-</blockquote>
-<h3 id="1-1-和"><a href="#1-1-和" class="headerlink" title="1.1 ^和$"></a>1.1 ^和$</h3><p><code>^</code>（脱字符）匹配开头，在多行匹配中匹配行开头。</p>
-<p><code>$</code>（美元符号）匹配结尾，在多行匹配中匹配行结尾。</p>
-<p>比如我们把字符串的开头和结尾用”#”替换（位置可以替换成字符的！）：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/^|$/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#hello#"</span></span><br></pre></td></tr></table></figure>
-
-<p>多行匹配模式时，二者是行的概念，这个需要我们的注意：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"I\nlove\njavascript"</span>.replace(<span class="regexp">/^|$/gm</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#I#</span></span><br><span class="line"><span class="comment">#love#</span></span><br><span class="line"><span class="comment">#javascript#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-2-b和-B"><a href="#1-2-b和-B" class="headerlink" title="1.2 \b和\B"></a>1.2 \b和\B</h3><p><code>\b</code>是单词边界，具体就是<code>\w</code>和<code>\W</code>之间的位置，也包括<code>\w</code>和<code>^</code>之间的位置，也包括<code>\w</code>和<code>$</code>之间的位置。</p>
-<p>比如一个文件名是”[JS] Lesson_01.mp4”中的<code>\b</code>，如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\b/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "[#JS#] #Lesson_01#.#mp4#"</span></span><br></pre></td></tr></table></figure>
-
-<p>为什么是这样呢？这需要仔细看看</p>
-<p>首先，我们知道，<code>\w</code>是字符组<code>[0-9a-zA-Z_]</code>的简写形式，即<code>\w</code>是字母数字或者下划线的中任何一个字符。而<code>\W</code>是排除字符组<code>[^0-9a-zA-Z_]</code>的简写形式，即<code>\W</code>是<code>\w</code>以外的任何一个字符。</p>
-<p>此时我们可以看看”[#JS#] #Lesson_01#.#mp4#”中的每一个”#”，是怎么来的。</p>
+<p>上面几个术语简单说下它们的关系：KDC由AS和TGS组成，AS进行身份认证发放TGT，TGT是用来避免多次请求而需要重复认证的凭证；TGS发放ST，ST用来访问某个service时的凭证，ST相当于告诉service你的身份被KDC认证为合法的一个凭证。</p>
+<h3 id="1-3-Kerberos原理"><a href="#1-3-Kerberos原理" class="headerlink" title="1.3 Kerberos原理"></a>1.3 Kerberos原理</h3><p><img src="/images/cas.png" alt="Kerberos" title="Kerberos原理"></p>
+<ol>
+<li><p>User向KDC中的AS请求身份验证，AS为user和TGS生成一个session key：SK_TGS，并发送{ TGT, SK_TGS } K_USER；</p>
+<p> 其中，{TGT, SK_TGS}K_USER表示使用user的密码加密的packet，包含了TGT和用户与TGS的session key；这个请求验证的过程实际上是使用kinit来完成的，kinit将username传给AS，AS查找username的密码，将TGT和SK_TGS使用用户密码加密后发送给kinit，kinit要求用户输入密码，解密后得到TGT和SK；其中，TGT使用TGS的密码加密，信息内容为{ user, address, tgs_name, start_time, lisftime, SK_TGS} K_TGS</p>
+</li>
+<li><p>User向KDC中的TGS请求访问某个Service的ST，发送[ TGT, Authenticator ]；</p>
+<p> 其中，Authenticator用于验证发送该请求的user就是TGT中所声明的user，内容为：{ user, addresss, start_time, lifetime}；Authenticator使用的TGS和user之间的session key加密的，防止TGT被盗。TGS先使用自己的密码解开TGT获得它与user之间的session key，然后使用session key解密Authenticator，验证用户和有效期。</p>
+</li>
+<li><p>TGS判断无误后，为user和Service之间生成一个新的session key：SK_Service；然后发送给user一个包：[ {SK_Service} SK_TGS, ST ]；</p>
+<p> 其中，ST是使用Service的密码加密的，SK_Service使用TGS和user之间的session key加密的；ST的内容为：{ user, address, start_time, lifetime, SK_Service } K_Service</p>
+</li>
+<li><p>User使用与TGS之间的会话秘钥解开包得到与Service之间的会话秘钥SK_Service，然后使用SK_Service生成一个Authenticator，向Service发送[ ST, Authenticator ]；</p>
+<p> 其中，此处的Authenticator是使用user和service之间的会话秘钥加密的，Service收到包后先使用自己的密码解密ST，或者会话秘钥SK_Service，然后使用SK_Service解密Authenticator来验证发送请求的用户就是票中所声明的用户。</p>
+</li>
+<li><p>Service向用户发送一个包以证明自己的身份，这个包使用SK_Service加密。</p>
+<p> 此后user与Service之间使用SK_Service进行通信，且在TGT有效期内，user直接跳过第一步直接从第二步使用TGT向TGS证明自己的身份。注意：user client会等待service server发送确认信息，如果不是正确的service server，就无法解开ST，也就无法获得会话秘钥，从而避免用户使用错误的服务器。</p>
+</li>
+</ol>
+<h3 id="1-4-类比学习"><a href="#1-4-类比学习" class="headerlink" title="1.4 类比学习"></a>1.4 类比学习</h3><ol>
+<li><p>用户要去游乐场，首先要在门口检查用户的身份(即 CHECK 用户的 ID 和 PASS), 如果用户通过验证，游乐场的门卫 (AS) 即提供给用户一张门卡 (TGT)。</p>
+</li>
+<li><p>这张卡片的用处就是告诉游乐场的各个场所，用户是通过正门进来，而不是后门偷爬进来的，并且也是获取进入场所一把钥匙。</p>
+</li>
+<li><p>现在用户有张卡，但是这对用户来不重要，因为用户来游乐场不是为了拿这张卡的而是为了游览游乐项目，这时用户摩天楼，并想游玩。</p>
+</li>
+<li><p>这时摩天轮的服务员 (client) 拦下用户，向用户要求摩天轮的 (ST) 票据，用户说用户只有一个门卡 (TGT), 那用户只要把 TGT 放在一旁的票据授权机 (TGS) 上刷一下。</p>
+</li>
+<li><p>票据授权机 (TGS) 就根据用户现在所在的摩天轮，给用户一张摩天轮的票据 (ST), 这样用户有了摩天轮的票据，现在用户可以畅通无阻的进入摩天轮里游玩了。</p>
+</li>
+<li><p>当然如果用户玩完摩天轮后，想去游乐园的咖啡厅休息下，那用户一样只要带着那张门卡 (TGT). 到相应的咖啡厅的票据授权机 (TGS) 刷一下，得到咖啡厅的票据 (ST) 就可以进入咖啡厅</p>
+</li>
+<li><p>当用户离开游乐场后，想用这张 TGT 去刷打的回家的费用，对不起，用户的 TGT 已经过期了，在用户离开游乐场那刻开始，用户的 TGT 就已经销毁了。</p>
+</li>
+</ol>
+<h2 id="2-HDFS-认证"><a href="#2-HDFS-认证" class="headerlink" title="2 HDFS 认证"></a>2 HDFS 认证</h2><h3 id="2-1-什么是-Delegation-Token"><a href="#2-1-什么是-Delegation-Token" class="headerlink" title="2.1 什么是 Delegation Token"></a>2.1 什么是 Delegation Token</h3><p>delegation token其实就是hadoop里一种轻量级认证方法，作为kerberos认证的一种补充。理论上只使用kerberos来认证是足够了，为什么hadoop还要自己开发一套使用delegation token的认证方式呢？这是因为如果在一个很大的分布式系统当中，如果每个节点访问某个服务的时候都使用kerberos来作为认证方式，那么势必对KDC造成很大的压力，KDC就会成为一个系统的瓶颈。</p>
+<h3 id="2-2-Delegation-Token-期限"><a href="#2-2-Delegation-Token-期限" class="headerlink" title="2.2 Delegation Token 期限"></a>2.2 Delegation Token 期限</h3><p>delegation token有过期时间，需要定期刷新才能保证token有效。但是刷新次数不是无限的，也就是说每个token都有个最大生存时间，超过该时间，该token就失效。比如token每个24小时需要刷新一次，否则就失效。同时每个token最大生命值为7天，那么七天后该token就不能在被使用。</p>
+<h3 id="2-3-Delegation-Token-过期的原因和解决思路"><a href="#2-3-Delegation-Token-过期的原因和解决思路" class="headerlink" title="2.3 Delegation Token 过期的原因和解决思路"></a>2.3 Delegation Token 过期的原因和解决思路</h3><p>delegation token会失效，集群默认配置是renew的间隔为一天，token最大生存时间为7天。对于像mapreduce这种批处理任务可能不会面临token失效的问题，但对于spark streaming, storm等这种长时运行应用来说，不得不面临一个问题：token存在最大生命周期。当token达到其最大生命周期的时候，比如七天，所有的工作节点（比如spark streaming的executor）中使用的token都会失效，此时在使用该token去访问hdfs就会被namenode拒绝，导致应用异常退出。</p>
+<p>一种解决思路是将keytab文件分发给Am及每个container，让am和container去访问kdc来认证，但这种方式会造成文章开头所说的问题：对KDC造成很大的访问压力，导致KDC会误认为自己遭受了DDos攻击，从而影响程序性能。</p>
+<p>另一种解决思路是先由client把keytab文件放到hdfs上。然后在Am中使用keytab登录，并申请delegation token。AM在启动worker的时候把该token分发给相应的容器。当token快要过期的时候，AM重新登录一次，并重新获取delegation token，并告知所有的worker使用更新后的token访问服务。</p>
+<h3 id="2-4-Spark中怎么解决-Delegation-Token-过期问题"><a href="#2-4-Spark中怎么解决-Delegation-Token-过期问题" class="headerlink" title="2.4 Spark中怎么解决 Delegation Token 过期问题"></a>2.4 Spark中怎么解决 Delegation Token 过期问题</h3><p>spark 为了解决DT失效问题，加了两个参数”–keytab”和”–principal”，分别指定用于kerberos登录的keytab文件和principal。</p>
+<p><code>--keytab</code>参数指定一个keytab文件，Spark会根据<code>--keytab</code>指定的Kerberos认证文件生成 HDFS Token，然后再将生成的Token信息放到HDFS的某一个目录中供Executor和Driver使用。</p>
+<p>流程如下：</p>
+<ol>
+<li>Spark ApplicationMaster在Delegation Token将要失效的时候（75% of the renewal interval) 会通过Keytab文件重新认证并获取一个新的Delegation Token，然后将新的Delegation Token写入到指定的HDFS文件中；</li>
+<li>Spark Executor在Delegation Token将要失效的时候（80% of the validity)读取HDFS上的最新的Delegation Token文件，然后更新自己的Delegation Token；</li>
+</ol>
+<p>理论上这样就能解决掉Token过期的问题，然而在配置了HA的Hadoop集群上2.9.0之前的版本依然存在问题，问题在于配置了HA的Hadoop集群中，Executor读取新的Token信息之后只更新的HDFS的逻辑地址，而未同步更新真正的<code>HDFS Namenode URI</code>对应的Token，从而导致Namenode URI下面的Token会慢慢过期失效。</p>
+<h3 id="2-5-问题复现与原因分析"><a href="#2-5-问题复现与原因分析" class="headerlink" title="2.5 问题复现与原因分析"></a>2.5 问题复现与原因分析</h3><ol>
+<li>修改Hadoop的默认Token过期时间和刷新时间，Hadoop Token的默认过期时间为7天，刷新时间为24小时，将其修改为过期时间10分钟，刷新时间5分钟</li>
+<li>编写一个Spark-Streaming的WordCount程序，每一分钟访问一次HDFS将WordCount的结果写入到HDFS的一个目录中</li>
+<li>在HDFS的Token最大期限（10分钟）之后就复现了线上的HDFS Token过期问题，最终导致WordCount异常退出</li>
+</ol>
+<p>原因分析：如果Namenode URI下面的Token一直不变，那这个Token短时间内是不应该失效的，因为前面说过Yarn Server一直在为这个Token进行定期更新操作（假设Token配置的可更新时间足够长，并且没有出现Token更新操作的异常），问题就在于其实Namenode URI对应的Token也会更新，只不过永远比“逻辑地址”对应的Token的更新慢一步，导致Namenode URI下面的Token比较旧所以会失效。</p>
+<p>Namenode URI对应的Token是这样被更新的：</p>
 <ul>
-<li>第一个”#”，两边是”[“与”J”，是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第二个”#”，两边是”S”与”]”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第三个”#”，两边是空格与”L”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第四个”#”，两边是”1”与”.”，也就是<code>\w</code>和<code>\W</code>之间的位置。</li>
-<li>第五个”#”，两边是”.”与”m”，也就是<code>\W</code>和<code>\w</code>之间的位置。</li>
-<li>第六个”#”，其对应的位置是结尾，但其前面的字符”4”是<code>\w</code>，即<code>\w</code>和<code>$</code>之间的位置。</li>
+<li>在Spark Executor读取新的Token文件的时候，需要获取一个FileSystem；默认FileSystem是缓存的，每次通过FileSystem.get(hadoopConf)获取的应该都是同一个FileSystem；但是Spark在此处是强制初始化了一个新的FileSystem（通过配置Hadoop Conf的fs.hdfs.impl.disable.cache为true实现的）；</li>
+<li>FileSystem的运行类型为DistributedFileSystem，在初始化的时候会生成新的DFSClient, DFSClient在初始化的时候会生成新的Failover Proxy：ZkConfiguredFailoverProxyProvider；</li>
+<li>ZkConfiguredFailoverProxyProvider在初始化的时候会将“逻辑地址”下面的Token拷贝到Namenode URI下面；</li>
 </ul>
-<p>知道了<code>\b</code>的概念后，那么<code>\B</code>也就相对好理解了。</p>
-<p><code>\B</code>就是<code>\b</code>的反面的意思，非单词边界。例如在字符串中所有位置中，扣掉<code>\b</code>，剩下的都是<code>\B</code>的。</p>
-<p>具体说来就是<code>\w</code>与<code>\w</code>、<code>\W</code>与<code>\W</code>、<code>^</code>与<code>\W</code>，<code>\W</code>与<code>$</code>之间的位置。</p>
-<p>比如上面的例子，把所有<code>\B</code>替换成”#”：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"[JS] Lesson_01.mp4"</span>.replace(<span class="regexp">/\B/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#[J#S]# L#e#s#s#o#n#_#0#1.m#p#4"</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1-3-p-和-p"><a href="#1-3-p-和-p" class="headerlink" title="1.3 (?=p)和(?!p)"></a>1.3 (?=p)和(?!p)</h3><p><code>(?=p)</code>，其中<code>p</code>是一个子模式，即<code>p</code>前面的位置。</p>
-<p>比如<code>(?=l)</code>，表示’l’字符前面的位置，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?=l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "he#l#lo"</span></span><br></pre></td></tr></table></figure>
-
-<p>而<code>(?!p)</code>就是<code>(?=p)</code>的反面意思，比如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"hello"</span>.replace(<span class="regexp">/(?!l)/g</span>, <span class="string">'#'</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "#h#ell#o#"</span></span><br></pre></td></tr></table></figure>
-
-<p>二者的学名分别是positive lookahead和negative lookahead。</p>
-<p>ES6中，还支持positive lookbehind和negative lookbehind。</p>
-<p>但一般书上，没有很好强调这四者是个位置。</p>
-<p>比如(?=p)，一般都理解成：要求接下来的字符与p匹配，但不能包括p的那些字符。</p>
-<p>而在本人看来(?=p)就与^一样好理解，就是p前面的那个位置。</p>
-<h2 id="2-位置的特性"><a href="#2-位置的特性" class="headerlink" title="2. 位置的特性"></a>2. 位置的特性</h2><p>对于位置的理解，我们可以理解成空字符””。</p>
-<p>比如”hello”字符串等价于如下的形式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">"h"</span> + <span class="string">""</span> + <span class="string">"e"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">""</span> + <span class="string">"l"</span> + <span class="string">"o"</span> + <span class="string">""</span>;</span><br></pre></td></tr></table></figure>
-
-<p>也等价于：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"hello"</span> == <span class="string">""</span> + <span class="string">""</span> + <span class="string">"hello"</span></span><br></pre></td></tr></table></figure>
-
-<p>因此，把<code>/^hello$/</code>写成<code>/^^hello$$$/</code>，是没有任何问题的：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/^^hello$$$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>甚至可以写成更复杂的:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="regexp">/(?=he)^^he(?=\w)llo$\b\b$/</span>.test(<span class="string">"hello"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; true</span></span><br></pre></td></tr></table></figure>
-
-<p>也就是说字符之间的位置，可以写成多个。</p>
-<p>把位置理解空字符，是对位置非常有效的理解方式。</p>
-<h2 id="3-相关案例"><a href="#3-相关案例" class="headerlink" title="3. 相关案例"></a>3. 相关案例</h2><h3 id="3-1-不匹配任何东西的正则"><a href="#3-1-不匹配任何东西的正则" class="headerlink" title="3.1 不匹配任何东西的正则"></a>3.1 不匹配任何东西的正则</h3><p>让你写个正则不匹配任何东西</p>
-<p>easy，<code>/.^/</code></p>
-<p>因为此正则要求只有一个字符，但该字符后面是开头。</p>
-<h3 id="3-2-数字的千位分隔符表示法"><a href="#3-2-数字的千位分隔符表示法" class="headerlink" title="3.2 数字的千位分隔符表示法"></a>3.2 数字的千位分隔符表示法</h3><p>比如把”12345678”，变成”12,345,678”。</p>
-<p>可见是需要把相应的位置替换成”,”。</p>
-<p>思路是什么呢？</p>
-<h4 id="3-2-1-弄出最后一个逗号"><a href="#3-2-1-弄出最后一个逗号" class="headerlink" title="3.2.1 弄出最后一个逗号"></a>3.2.1 弄出最后一个逗号</h4><p>使用<code>(?=\d{3}$)</code>就可以做到：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=\d&#123;3&#125;$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-2-弄出所有的逗号"><a href="#3-2-2-弄出所有的逗号" class="headerlink" title="3.2.2 弄出所有的逗号"></a>3.2.2 弄出所有的逗号</h4><p>因为逗号出现的位置，要求后面3个数字一组，也就是\d{3}至少出现一次。</p>
-<p>此时可以使用量词+：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"12345678"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-3-匹配其余案例"><a href="#3-2-3-匹配其余案例" class="headerlink" title="3.2.3 匹配其余案例"></a>3.2.3 匹配其余案例</h4><p>写完正则后，要多验证几个案例，此时我们会发现问题：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="string">"123456789"</span>.replace(<span class="regexp">/(?=(\d&#123;3&#125;)+$)/g</span>, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; ",123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>因为上面的正则，仅仅表示把从结尾向前数，一但是3的倍数，就把其前面的位置替换成逗号。因此才会出现这个问题。</p>
-<p>怎么解决呢？我们要求匹配的到这个位置不能是开头。</p>
-<p>我们知道匹配开头可以使用<code>^</code>，但要求这个位置不是开头怎么办？</p>
-<p>easy，<code>(?!^)</code>，你想到了吗？测试如下：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string1 = <span class="string">"12345678"</span>,</span><br><span class="line">string2 = <span class="string">"123456789"</span>;</span><br><span class="line">reg = <span class="regexp">/(?!^)(?=(\d&#123;3&#125;)+$)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string1.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678"</span></span><br><span class="line"></span><br><span class="line">result = string2.replace(reg, <span class="string">','</span>);</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-2-4-支持其他形式"><a href="#3-2-4-支持其他形式" class="headerlink" title="3.2.4 支持其他形式"></a>3.2.4 支持其他形式</h4><p>如果要把”12345678 123456789”替换成”12,345,678 123,456,789”。</p>
-<p>此时我们需要修改正则，把里面的开头<code>^</code>和结尾<code>$</code>，替换成<code>\b</code>：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> string = <span class="string">"12345678 123456789"</span>,</span><br><span class="line">reg = <span class="regexp">/(?!\b)(?=(\d&#123;3&#125;)+\b)/g</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> result = string.replace(reg, <span class="string">','</span>)</span><br><span class="line"><span class="built_in">console</span>.log(result); </span><br><span class="line"><span class="comment">// =&gt; "12,345,678 123,456,789"</span></span><br></pre></td></tr></table></figure>
-
-<p>其中<code>(?!\b)</code>怎么理解呢？</p>
-<p>要求当前是一个位置，但不是<code>\b</code>前面的位置，其实<code>(?!\b)</code>说的就是<code>\B</code>。</p>
-<p>因此最终正则变成了：<code>/\B(?=(\d{3})+\b)/g</code>。</p>
-<h3 id="3-3-验证密码问题"><a href="#3-3-验证密码问题" class="headerlink" title="3.3 验证密码问题"></a>3.3 验证密码问题</h3><p>密码长度6-12位，由数字、小写字符和大写字母组成，但必须至少包括2种字符。</p>
-<p>此题，如果写成多个正则来判断，比较容易。但要写成一个正则就比较困难。</p>
-<p>那么，我们就来挑战一下。看看我们对位置的理解是否深刻。</p>
-<h4 id="3-3-1-简化"><a href="#3-3-1-简化" class="headerlink" title="3.3.1 简化"></a>3.3.1 简化</h4><p>不考虑“但必须至少包括2种字符”这一条件。我们可以容易写出：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-2-判断是否包含有某一种字符"><a href="#3-3-2-判断是否包含有某一种字符" class="headerlink" title="3.3.2 判断是否包含有某一种字符"></a>3.3.2 判断是否包含有某一种字符</h4><p>假设，要求的必须包含数字，怎么办？此时我们可以使用(?=.*[0-9])来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-3-同时包含具体两种字符"><a href="#3-3-3-同时包含具体两种字符" class="headerlink" title="3.3.3 同时包含具体两种字符"></a>3.3.3 同时包含具体两种字符</h4><p>比如同时包含数字和小写字母，可以用<code>(?=.*[0-9])(?=.*[a-z])</code>来做。</p>
-<p>因此正则变成：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?=.*[0-9])(?=.*[a-z])^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-4-解答"><a href="#3-3-4-解答" class="headerlink" title="3.3.4 解答"></a>3.3.4 解答</h4><p>我们可以把原题变成下列几种情况之一：</p>
-<ul>
-<li>同时包含数字和小写字母</li>
-<li>同时包含数字和大写字母</li>
-<li>同时包含小写字母和大写字母</li>
-<li>同时包含数字、小写字母和大写字母</li>
-</ul>
-<p>以上的4种情况是或的关系（实际上，可以不用第4条）。</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/((?=.*[0-9])(?=.*[a-z])|(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[A-Z]))^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="3-3-5-解惑"><a href="#3-3-5-解惑" class="headerlink" title="3.3.5 解惑"></a>3.3.5 解惑</h4><p>上面的正则看起来比较复杂，只要理解了第二步，其余就全部理解了。</p>
-<p><code>/(?=.*[0-9])^[0-9A-Za-z]{6,12}$/</code></p>
-<p>对于这个正则，我们只需要弄明白<code>(?=.*[0-9])^</code>即可。</p>
-<p>分开来看就是<code>(?=.*[0-9])</code>和<code>^</code>。</p>
-<p>表示开头前面还有个位置（当然也是开头，即同一个位置，想想之前的空字符类比）。</p>
-<p><code>(?=.*[0-9])</code>表示该位置后面的字符匹配<code>.*[0-9]</code>，即，有任何多个任意字符，后面再跟个数字。</p>
-<p>翻译成大白话，就是接下来的字符，必须包含个数字。</p>
-<h4 id="3-3-6-另外一种解法"><a href="#3-3-6-另外一种解法" class="headerlink" title="3.3.6 另外一种解法"></a>3.3.6 另外一种解法</h4><p>“至少包含两种字符”的意思就是说，不能全部都是数字，也不能全部都是小写字母，也不能全部都是大写字母。</p>
-<p>那么要求“不能全部都是数字”，怎么做呢？<code>(?!p)</code>出马！</p>
-<p>对应的正则是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br></pre></td></tr></table></figure>
-
-<p>三种“都不能”呢？</p>
-<p>最终答案是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> reg = <span class="regexp">/(?!^[0-9]&#123;6,12&#125;$)(?!^[a-z]&#123;6,12&#125;$)(?!^[A-Z]&#123;6,12&#125;$)^[0-9A-Za-z]&#123;6,12&#125;$/</span>;</span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"1234567"</span>) ); <span class="comment">// false 全是数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdef"</span>) ); <span class="comment">// false 全是小写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEFGH"</span>) ); <span class="comment">// false 全是大写字母</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ab23C"</span>) ); <span class="comment">// false 不足6位</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"ABCDEF234"</span>) ); <span class="comment">// true 大写字母和数字</span></span><br><span class="line"><span class="built_in">console</span>.log( reg.test(<span class="string">"abcdEF234"</span>) ); <span class="comment">// true 三者都有</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p>例如：</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1001</li>
+<li>NameNode1     -&gt; Token 1000</li>
+<li>NameNode2     -&gt; Token 1000</li>
+</ol>
+<p>经过一次Token更新之后</p>
+<ol>
+<li>逻辑地址       -&gt; Token 1002</li>
+<li>NameNode1     -&gt; Token 1001</li>
+<li>NameNode2     -&gt; Token 1001</li>
+</ol>
+<p>其中1001是在逻辑地址的Token还有20%的有效期时被更新的，而1001在经过一次Token更新之后依然被NameNode1和NameNode2所使用，所以在过去一小段时间之后应用程序再通过1001访问HDFS将出现Token过期的异常</p>
+<h3 id="2-6-解决办法"><a href="#2-6-解决办法" class="headerlink" title="2.6 解决办法"></a>2.6 解决办法</h3><p>1、UserGroupInformation.getCurrentUser.addCredentials(newCredentials)的时候，把Namenode URI下面的Token一并更新了。社区HDFSissue为：<a href="https://issues.apache.org/jira/browse/HDFS-9276" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HDFS-9276</a></p>
+<p>2、可以设法将Token更新的时间设置为小于50%，这样可以是更新到NameNode1和NameNode2下的Token依然有至少50%的有效期时长，保证在下一次更新Token时依然有效</p>
 
       
 
@@ -538,40 +280,21 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">hadoop</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Kerberos</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">架构</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">大数据</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">bigdata</a>
         		</li>
       		
 		</ul>
 	</div>
 
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Scala//" class="article-tag-list-link color1">Scala</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/bigdata//" class="article-tag-list-link color3">bigdata</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">展开全文 >></a>
+          <a class="article-more-a" href="/%E5%9F%BA%E4%BA%8EKerberos%E8%AE%A4%E8%AF%81%E7%9A%84Hadoop%20Token%E8%BF%87%E6%9C%9F%E9%97%AE%E9%A2%98Debug%E5%88%86%E4%BA%AB.html">展开全文 >></a>
         </p>
       
 
@@ -926,34 +649,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">架构</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">大数据</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Log4j</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Filter</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">scala</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">cm</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
@@ -966,23 +661,23 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">hadoop</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">架构</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">大数据</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Scala</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Akka</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Kerberos</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">bigdata</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -995,6 +690,34 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">pointcut</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">scala</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">cm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Log4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Filter</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Dispatcher</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Kerberos</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">bigdata</a>
               </li>
             
             <div class="clearfix"></div>
